@@ -8,6 +8,6 @@ export default {
   input,
   plugins: [typescript(), terser({ compress: true, mangle: true })],
   output: {
-    file: 'dist/index.js',
+    file: 'dist/insight.js',
   },
 };
