@@ -7,12 +7,14 @@
   "author": "Meemaw <ematej.snuderl@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest",
+    "build": "rollup -c rollup.config.js",
     "lint": "concurrently \"npm run prettier\" \"npm run eslint\"",
     "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
     "prettier": "prettier -l 'src/**/*'"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^3.0.0"
+  },
   "peerDependencies": {}
 }
