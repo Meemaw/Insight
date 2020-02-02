@@ -50,6 +50,7 @@ jobs:
       - uses: actions/download-artifact@v1
         with:
           name: s
+          path: deployment/s
       - uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks --delete
@@ -58,4 +59,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: 's'
+          SOURCE_DIR: 'deployment'
