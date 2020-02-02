@@ -6,6 +6,7 @@ on:
 
 jobs:
   lint_test_build:
+    name: Lint, Test & Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
