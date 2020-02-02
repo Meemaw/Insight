@@ -37,7 +37,7 @@ jobs:
           yarn build
       - uses: actions/upload-artifact@v1
         with:
-          name: tracking-dist
+          name: s
           path: browser/tracking/dist
 
   deploy:
@@ -48,6 +48,13 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
         with:
-          name: tracking-dist
-      - run: ls -a
-      - run: cat tracking-dist/index.js
+          name: s
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: 's'
