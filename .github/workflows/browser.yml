@@ -51,9 +51,12 @@ jobs:
         with:
           name: s
           path: deployment/s
+      - name: Prepare files for deployment
+        run: |
+          mv deployment/s/insight.js.gz deployment/s/insight.js
       - uses: jakejarvis/s3-sync-action@master
         with:
-          args: --follow-symlinks --delete
+          args: --follow-symlinks --delete --content-encoding gzip
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
