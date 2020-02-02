@@ -12,3 +12,6 @@ jobs:
         with:
           tf_actions_version: 0.12.20
           tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: 'infrastructure'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
