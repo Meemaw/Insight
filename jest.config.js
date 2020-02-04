@@ -3,8 +3,7 @@ module.exports = {
   transform: {
     '.ts': 'ts-jest',
   },
-  modulePaths: ['src'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testEnvironment: 'node',
   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 };

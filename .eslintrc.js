@@ -18,9 +18,10 @@ module.exports = {
   rules: {
     'import/no-unresolved': ['off'],
     'import/no-extraneous-dependencies': ['off'],
-
     'import/prefer-default-export': ['off'],
     'import/extensions': ['off'],
+
+    'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
 
     '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-unused-vars': [

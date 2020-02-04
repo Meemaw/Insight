@@ -3,9 +3,15 @@
   "version": "0.0.1",
   "description": "Insight browser bootstrap script",
   "source": "src/index.ts",
-  "repository": "https://github.com/Meemaw/insight",
-  "author": "Meemaw <ematej.snuderl@gmail.com>",
   "license": "MIT",
+  "author": "Meemaw <ematej.snuderl@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Meemaw/insight"
+  },
+  "bugs": {
+    "url": "https://github.com/Meemaw/insight/issues"
+  },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "pretest": "yarn build",

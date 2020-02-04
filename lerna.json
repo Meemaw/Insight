@@ -1,5 +1,5 @@
 {
-  "packages": ["browser/*"],
+  "packages": ["browser/*", "frontend/*"],
   "npmClient": "yarn",
   "useWorkspaces": true,
   "version": "independent"
