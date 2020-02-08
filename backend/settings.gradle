@@ -10,6 +10,6 @@ pluginManagement {
     }
 }
 
-include 'page-service'
-
 rootProject.name = 'backend'
+
+include 'page-service'
