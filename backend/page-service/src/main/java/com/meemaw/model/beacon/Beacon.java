@@ -5,29 +5,29 @@ import java.util.Objects;
 
 public class Beacon {
 
-    private final int timestamp;
-    private final int sequence;
-    private final List<BeaconEventDTO> events;
+  private final int timestamp;
+  private final int sequence;
+  private final List<BeaconEventDTO> events;
 
-    private Beacon(BeaconDTO dto) {
-        this.timestamp = dto.getTimestamp();
-        this.sequence = dto.getSequence();
-        this.events = dto.getEvents();
-    }
+  private Beacon(BeaconDTO dto) {
+    this.timestamp = dto.getTimestamp();
+    this.sequence = dto.getSequence();
+    this.events = dto.getEvents();
+  }
 
-    public static Beacon from(BeaconDTO dto) {
-        return new Beacon(Objects.requireNonNull(dto));
-    }
+  public static Beacon from(BeaconDTO dto) {
+    return new Beacon(Objects.requireNonNull(dto));
+  }
 
-    public int getTimestamp() {
-        return timestamp;
-    }
+  public int getTimestamp() {
+    return timestamp;
+  }
 
-    public int getSequence() {
-        return sequence;
-    }
+  public int getSequence() {
+    return sequence;
+  }
 
-    public List<BeaconEventDTO> getEvents() {
-        return events;
-    }
+  public List<BeaconEventDTO> getEvents() {
+    return events;
+  }
 }

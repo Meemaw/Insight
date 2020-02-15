@@ -7,8 +7,9 @@ module.exports = {
     'plugin:jest/recommended',
     'plugin:lodash/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:testing-library/react',
   ],
-  plugins: ['prettier', 'jest', 'import', 'lodash'],
+  plugins: ['prettier', 'jest', 'import', 'lodash', 'testing-library'],
   env: {
     browser: true,
     jest: true,
@@ -21,7 +22,12 @@ module.exports = {
     'import/prefer-default-export': ['off'],
     'import/extensions': ['off'],
 
+    'lodash/prefer-lodash-method': ['off'],
+
+    'react/jsx-props-no-spreading': ['off'],
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
+
+    'jsx-a11y/anchor-is-valid': ['off'],
 
     '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-unused-vars': [

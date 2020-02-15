@@ -16,12 +16,21 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
+    "lint": "concurrently \"npm run prettier\" \"npm run eslint\"",
+    "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
+    "prettier": "prettier -l 'src/**/*'",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
+    "@blueprintjs/core": "^3.23.1",
+    "formik": "^2.1.4",
+    "ky": "^0.17.0",
+    "ky-universal": "^0.4.0",
     "next": "^9.2.0",
+    "next-cookies": "^2.0.3",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "yup": "^0.28.1"
   },
   "devDependencies": {
     "@storybook/react": "5.3.10",
@@ -29,6 +38,7 @@
     "@testing-library/react": "^9.4.0",
     "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.5",
+    "@types/yup": "^0.26.30",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
     "tsconfig-paths-webpack-plugin": "^3.2.0"

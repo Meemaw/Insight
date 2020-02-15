@@ -7,8 +7,8 @@ import org.eclipse.microprofile.health.Liveness;
 @Liveness
 public class LivenessHealthCheck implements HealthCheck {
 
-    @Override
-    public HealthCheckResponse call() {
-        return HealthCheckResponse.up("LivenessHealthCheck");
-    }
+  @Override
+  public HealthCheckResponse call() {
+    return HealthCheckResponse.up("LivenessHealthCheck");
+  }
 }

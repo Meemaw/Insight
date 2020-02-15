@@ -9,10 +9,10 @@ import java.time.OffsetDateTime;
 @Readiness
 public class ReadinessHealthCheck implements HealthCheck {
 
-    private static OffsetDateTime readySince;
+  private static OffsetDateTime readySince;
 
-    @Override
-    public HealthCheckResponse call() {
-        return HealthCheckResponse.up("ReadinessHealthCheck");
-    }
+  @Override
+  public HealthCheckResponse call() {
+    return HealthCheckResponse.up("ReadinessHealthCheck");
+  }
 }

@@ -17,8 +17,9 @@ import java.util.concurrent.CompletionStage;
 @Produces(MediaType.APPLICATION_JSON)
 public interface PageResource {
 
-    String PATH = "v1/page";
+  String PATH = "v1/page";
 
-    @POST
-    CompletionStage<Response> page(@NotNull(message = "Payload may not be blank") @Valid PageDTO payload);
+  @POST
+  CompletionStage<Response> page(
+      @NotNull(message = "Payload may not be blank") @Valid PageDTO payload);
 }

@@ -7,12 +7,12 @@ import java.util.List;
 
 public class BeaconEventDTO extends Recorded {
 
-    @JsonProperty("k")
-    @NotNull(message = "k may not be null")
-    private BeaconEventType beaconEventType;
+  @JsonProperty("k")
+  @NotNull(message = "k may not be null")
+  private BeaconEventType beaconEventType;
 
-    @JsonProperty("a")
-    @NotNull(message = "a may not be null")
-    private List<Object> args;
+  @JsonProperty("a")
+  @NotNull(message = "a may not be null")
+  private List<Object> args;
 
 }

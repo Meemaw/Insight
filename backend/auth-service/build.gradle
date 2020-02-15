@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id 'jacoco'
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-resteasy'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-logging-json'
+    implementation 'io.quarkus:quarkus-resteasy-jackson'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-reactive-pg-client'
+    implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-mailer'
+    implementation 'org.mindrot:jbcrypt:0.4'
+    implementation 'com.hazelcast:hazelcast:4.0'
+    implementation project(":shared")
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
+    testImplementation 'org.testcontainers:testcontainers:1.12.5'
+    testImplementation 'org.testcontainers:junit-jupiter:1.12.5'
+    testImplementation 'org.testcontainers:postgresql:1.12.5'
+    testImplementation 'org.jsoup:jsoup:1.12.2'
+    testImplementation project(":testing-utils")
+}
+
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}

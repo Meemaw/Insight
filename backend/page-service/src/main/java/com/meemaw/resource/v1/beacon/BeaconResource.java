@@ -17,9 +17,9 @@ import java.util.concurrent.CompletionStage;
 @Produces(MediaType.APPLICATION_JSON)
 public interface BeaconResource {
 
-    String PATH = "v1/beacon";
+  String PATH = "v1/beacon";
 
-    @POST
-    CompletionStage<Response> beacon(@NotNull(message = "Payload may not be blank")
-                                     @Valid BeaconDTO payload);
+  @POST
+  CompletionStage<Response> beacon(
+      @NotNull(message = "Payload may not be blank") @Valid BeaconDTO payload);
 }

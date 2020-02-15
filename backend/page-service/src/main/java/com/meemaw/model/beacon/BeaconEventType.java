@@ -2,15 +2,15 @@ package com.meemaw.model.beacon;
 
 public enum BeaconEventType {
 
-    LOAD(0), RESIZE(1);
+  LOAD(0), RESIZE(1);
 
-    private final int value;
+  private final int value;
 
-    BeaconEventType(final int newValue) {
-        value = newValue;
-    }
+  BeaconEventType(final int newValue) {
+    value = newValue;
+  }
 
-    public int getValue() {
-        return value;
-    }
+  public int getValue() {
+    return value;
+  }
 }

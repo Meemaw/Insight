@@ -4,6 +4,7 @@ module.exports = {
     '.ts': 'ts-jest',
   },
   testEnvironment: 'node',
-  coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
+  coveragePathIgnorePatterns: ['/node_modules/'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  moduleDirectories: ['node_modules', 'src'],
 };

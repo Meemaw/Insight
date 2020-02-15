@@ -1,8 +1,13 @@
 import React from 'react';
-import FirstComponent from 'components/FirstComponent';
+import authenticated from 'hoc/auth';
+import AppLayout from 'components/AppLayout';
 
 const Home = () => {
-  return <FirstComponent />;
+  return (
+    <AppLayout>
+      <div>Home</div>
+    </AppLayout>
+  );
 };
 
-export default Home;
+export default authenticated(Home);
