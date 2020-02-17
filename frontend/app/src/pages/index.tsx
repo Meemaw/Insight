@@ -1,6 +1,6 @@
 import React from 'react';
 import authenticated from 'hoc/auth';
-import AppLayout from 'components/AppLayout';
+import AppLayout from 'components/common/app/Layout';
 
 const Home = () => {
   return (

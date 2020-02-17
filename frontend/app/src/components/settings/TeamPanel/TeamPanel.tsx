@@ -1,34 +1,27 @@
-/* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
-import { Button, Popover, Intent, InputGroup } from '@blueprintjs/core';
+import useInvites from 'hooks/useInvites';
+import { InviteApi } from 'api';
+import SpacedBetween from 'components/common/flex/SpacedBetween';
+import { H3 } from '@blueprintjs/core';
+
+import SendInvite from './SendInvite';
+import PendingInvitesList from './PendingInvitesList';
 
 const TeamPanel = () => {
-  return (
-    <div>
-      <Popover
-        position="bottom"
-        content={
-          <div style={{ padding: 12 }}>
-            <InputGroup
-              placeholder="Email address"
-              autoFocus
-              style={{ marginBottom: 8 }}
-            />
+  const { invites, deleteInvite, createInvite } = useInvites();
 
-            <Button intent={Intent.PRIMARY}>Send invitation</Button>
-            <Button minimal style={{ marginLeft: 8 }}>
-              Cancel
-            </Button>
-          </div>
-        }
-      >
-        <Button
-          text="Invite teamate..."
-          icon="envelope"
-          intent={Intent.PRIMARY}
-        />
-      </Popover>
-    </div>
+  return (
+    <>
+      <SpacedBetween>
+        <H3>Team Settings</H3>
+        <SendInvite createInvite={createInvite} />
+      </SpacedBetween>
+      <PendingInvitesList
+        invites={invites}
+        deleteInvite={deleteInvite}
+        resendInvite={InviteApi.resend}
+      />
+    </>
   );
 };
 

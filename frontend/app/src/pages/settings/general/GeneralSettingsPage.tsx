@@ -1,9 +1,11 @@
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { useState } from 'react';
 import authenticated from 'hoc/auth';
-import AppLayout from 'components/AppLayout';
+import AppLayout from 'components/common/app/Layout';
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import dynamic from 'next/dynamic';
+
+import { StyledGeneralSettingsSection } from './elements';
 
 const LazySetupPanel = dynamic(() => import('components/settings/SetupPanel'));
 const LazyTeamPanel = dynamic(() => import('components/settings/TeamPanel'));
@@ -19,7 +21,7 @@ const GeneralSettings = () => {
 
   return (
     <AppLayout>
-      <div style={{ background: '#F9F9F9', height: '100%' }}>
+      <StyledGeneralSettingsSection>
         <Tabs
           vertical
           onChange={handleTabChange}
@@ -57,7 +59,7 @@ const GeneralSettings = () => {
             panel={<LazyTeamPanel />}
           />
         </Tabs>
-      </div>
+      </StyledGeneralSettingsSection>
     </AppLayout>
   );
 };
