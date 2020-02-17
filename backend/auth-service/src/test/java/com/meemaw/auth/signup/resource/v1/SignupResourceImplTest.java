@@ -1,12 +1,12 @@
-package com.meemaw.auth.core.resource.v1.signup;
+package com.meemaw.auth.signup.resource.v1;
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.meemaw.auth.core.resource.v1.sso.SsoResourceImplTest;
-import com.meemaw.auth.signup.resource.v1.SignupResource;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
+import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.Postgres;
 import io.quarkus.mailer.Mail;
@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
@@ -79,82 +80,38 @@ public class SignupResourceImplTest {
   }
 
   @Test
-  public void signupVerify_should_fail_when_invalid_contentType() {
+  public void signupExists_should_fail_when_no_payload() {
     given()
         .when()
-        .contentType(MediaType.TEXT_PLAIN).post(SignupResource.PATH + "/verify")
-        .then()
-        .statusCode(415)
-        .body(sameJson(
-            "{\"error\":{\"statusCode\":415,\"reason\":\"Unsupported Media Type\",\"message\":\"Media type not supported.\"}}"));
-  }
-
-  @Test
-  public void signupVerify_should_fail_when_no_payload() {
-    given()
-        .when()
-        .contentType(MediaType.APPLICATION_JSON)
-        .post(SignupResource.PATH + "/verify")
+        .get(SignupResource.PATH + "/exists")
         .then()
         .statusCode(400)
         .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Payload is required\"}}}"));
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg2\":\"token is required\",\"arg1\":\"org is required\",\"arg0\":\"email is required\"}}}"));
   }
 
   @Test
-  public void signupVerify_should_fail_when_empty_payload() {
+  public void signupExists_should_fail_when_invalid_params() {
     given()
         .when()
-        .contentType(MediaType.APPLICATION_JSON).body("{}")
-        .post(SignupResource.PATH + "/verify")
+        .queryParam("email", "notEmail")
+        .queryParam("org", "")
+        .queryParam("token", "4f113105-94d9-4470-8621-0e633fa46977")
+        .get(SignupResource.PATH + "/exists")
         .then()
         .statusCode(400)
         .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"org\":\"Required\",\"email\":\"Required\",\"token\":\"Required\"}}}"));
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg1\":\"org is required\",\"arg0\":\"must be a well-formed email address\"}}}"));
   }
 
   @Test
-  public void signupVerify_should_fail_when_invalid_payload_1()
-      throws URISyntaxException, IOException {
-    String payload = Files.readString(Path.of(getClass().getResource(
-        "/signup/verify/invalidFirst.json").toURI()));
-
+  public void signupExists_should_return_false_when_missing_params() {
     given()
         .when()
-        .contentType(MediaType.APPLICATION_JSON).body(payload)
-        .post(SignupResource.PATH + "/verify")
-        .then()
-        .statusCode(400)
-        .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Cannot deserialize value of type `java.util.UUID` from String \\\"notReallyAnUuid\\\": UUID has to be represented by standard 36-char representation\"}}"));
-  }
-
-  @Test
-  public void signupVerify_should_fail_when_invalid_payload_2()
-      throws URISyntaxException, IOException {
-    String payload = Files.readString(Path.of(getClass().getResource(
-        "/signup/verify/invalidSecond.json").toURI()));
-
-    given()
-        .when()
-        .contentType(MediaType.APPLICATION_JSON).body(payload)
-        .post(SignupResource.PATH + "/verify")
-        .then()
-        .statusCode(400)
-        .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"org\":\"Required\",\"email\":\"must be a well-formed email address\"}}}"));
-  }
-
-  @Test
-  public void signupVerify_should_return_false_when_missing_payload()
-      throws URISyntaxException, IOException {
-    String payload = Files.readString(Path.of(getClass().getResource(
-        "/signup/verify/missing.json").toURI()));
-
-    given()
-        .when()
-        .contentType(MediaType.APPLICATION_JSON).body(payload)
-        .post(SignupResource.PATH + "/verify")
+        .queryParam("email", "test@gmail.com")
+        .queryParam("org", "random")
+        .queryParam("token", "4f113105-94d9-4470-8621-0e633fa4697")
+        .get(SignupResource.PATH + "/exists")
         .then()
         .statusCode(200)
         .body(sameJson("{\"data\":false}"));
@@ -264,28 +221,32 @@ public class SignupResourceImplTest {
     tokenMatcher.matches();
     String token = tokenMatcher.group(1);
 
-    // verify that the SignupRequest is still valid
-    ObjectNode node = JacksonMapper.get().createObjectNode();
-    node.put("email", signupEmail);
-    node.put("org", orgId);
-    node.put("token", token);
-
+    // verify that the SignupRequest still exists & is valid
     given()
         .when()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(node)
-        .post(SignupResource.PATH + "/verify")
+        .formParam("email", signupEmail)
+        .queryParam("org", orgId)
+        .queryParam("token", token)
+        .get(SignupResource.PATH + "/exists")
         .then()
         .statusCode(200)
         .body(sameJson("{\"data\":true}"));
 
-    node.put("password", signupPassword);
+    SignupRequestCompleteDTO signupCompleteRequest = new SignupRequestCompleteDTO(signupEmail,
+        orgId, UUID.fromString(token), signupPassword);
+
+    String body;
+    try {
+      body = JacksonMapper.get().writeValueAsString(signupCompleteRequest);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
 
     // complete the signup
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(node)
+        .body(body)
         .post(SignupResource.PATH + "/complete")
         .then()
         .statusCode(200)

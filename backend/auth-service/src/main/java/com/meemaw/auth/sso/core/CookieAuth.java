@@ -1,4 +1,4 @@
-package com.meemaw.auth.sso;
+package com.meemaw.auth.sso.core;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

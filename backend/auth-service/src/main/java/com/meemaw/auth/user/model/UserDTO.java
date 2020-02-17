@@ -1,45 +1,19 @@
-package com.meemaw.auth.model.user;
+package com.meemaw.auth.user.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
+
+@Value
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class UserDTO {
 
-  @JsonProperty("id")
-  protected UUID id;
-
-  @JsonProperty("email")
-  protected String email;
-
-  @JsonProperty("role")
-  protected UserRole role;
-
-  @JsonProperty("org")
-  protected String org;
-
-  public UserDTO() {
-  }
-
-  public UserDTO(UUID id, String email, UserRole role, String org) {
-    this.id = id;
-    this.email = email;
-    this.role = role;
-    this.org = org;
-  }
-
-  public UUID getId() {
-    return id;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public UserRole getRole() {
-    return role;
-  }
-
-  public String getOrg() {
-    return org;
-  }
+  UUID id;
+  String email;
+  UserRole role;
+  String org;
 }

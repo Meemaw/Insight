@@ -1,4 +1,4 @@
-package com.meemaw.auth.signup.model;
+package com.meemaw.auth.signup.model.dto;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

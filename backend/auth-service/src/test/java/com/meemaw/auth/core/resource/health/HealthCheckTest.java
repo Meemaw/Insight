@@ -1,11 +1,15 @@
-package com.meemaw.auth.resource.health;
+package com.meemaw.auth.core.resource.health;
 
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@QuarkusTest
+@Tag("integration")
 public class HealthCheckTest {
 
   @Test

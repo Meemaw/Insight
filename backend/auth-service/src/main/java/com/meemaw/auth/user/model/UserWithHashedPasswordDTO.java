@@ -4,13 +4,13 @@ import java.util.UUID;
 import lombok.Value;
 
 @Value
-public class UserWithPasswordHashDTO {
+public class UserWithHashedPasswordDTO {
 
   UUID id;
   String email;
   UserRole role;
   String org;
-  String hashedPassword;
+  String password;
 
   public UserDTO user() {
     return new UserDTO(id, email, role, org);

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id 'jacoco'
+    id 'io.freefair.lombok'
 }
 
 dependencies {
@@ -18,13 +19,6 @@ dependencies {
     implementation 'com.hazelcast:hazelcast:4.0'
     implementation project(":shared")
 
-    testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.rest-assured:rest-assured'
-    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
-    testImplementation 'org.testcontainers:testcontainers:1.12.5'
-    testImplementation 'org.testcontainers:junit-jupiter:1.12.5'
-    testImplementation 'org.testcontainers:postgresql:1.12.5'
-    testImplementation 'org.jsoup:jsoup:1.12.2'
     testImplementation project(":testing-utils")
 }
 

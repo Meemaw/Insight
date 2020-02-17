@@ -1,4 +1,4 @@
-package com.meemaw.auth.resource.health;
+package com.meemaw.auth.core.resource.health;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;

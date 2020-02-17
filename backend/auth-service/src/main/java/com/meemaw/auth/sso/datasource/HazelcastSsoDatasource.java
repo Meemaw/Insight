@@ -1,9 +1,9 @@
-package com.meemaw.auth.datasource.sso;
+package com.meemaw.auth.sso.datasource;
 
 import com.hazelcast.map.IMap;
-import com.meemaw.auth.model.sso.SsoSession;
-import com.meemaw.auth.model.sso.SsoUser;
-import com.meemaw.auth.model.user.UserDTO;
+import com.meemaw.auth.sso.model.SsoSession;
+import com.meemaw.auth.sso.model.SsoUser;
+import com.meemaw.auth.user.model.UserDTO;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;

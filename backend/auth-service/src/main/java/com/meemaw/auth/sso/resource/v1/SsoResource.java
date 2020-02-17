@@ -1,9 +1,8 @@
-package com.meemaw.auth.resource.v1.sso;
+package com.meemaw.auth.sso.resource.v1;
 
-import com.meemaw.auth.model.sso.SsoSession;
+import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.shared.validators.Password;
 import java.util.concurrent.CompletionStage;
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

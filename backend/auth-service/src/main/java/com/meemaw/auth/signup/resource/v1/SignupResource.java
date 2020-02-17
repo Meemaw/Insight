@@ -1,7 +1,7 @@
-package com.meemaw.auth.resource.v1.signup;
+package com.meemaw.auth.signup.resource.v1;
 
-import com.meemaw.auth.model.signup.dto.SignupCompleteRequestDTO;
-import com.meemaw.auth.model.signup.dto.SignupVerifyRequestDTO;
+import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
+import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -9,8 +9,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,16 +26,17 @@ public interface SignupResource {
   CompletionStage<Response> signup(
       @NotBlank(message = "Email is required") @Email @FormParam("email") String email);
 
-  @POST
-  @Path("verify")
-  @Consumes(MediaType.APPLICATION_JSON)
-  CompletionStage<Response> signupVerify(
-      @NotNull(message = "Payload is required") @Valid SignupVerifyRequestDTO req);
+  @GET
+  @Path("exists")
+  CompletionStage<Response> signupExists(
+      @NotBlank(message = "email is required") @Email @QueryParam("email") String email,
+      @NotBlank(message = "org is required") @QueryParam("org") String org,
+      @NotNull(message = "token is required") @QueryParam("token") UUID token);
 
   @POST
   @Path("complete")
   @Consumes(MediaType.APPLICATION_JSON)
   CompletionStage<Response> signupComplete(
-      @NotNull(message = "Payload is required") @Valid SignupCompleteRequestDTO req);
+      @NotNull(message = "Payload is required") @Valid SignupRequestCompleteDTO req);
 
 }

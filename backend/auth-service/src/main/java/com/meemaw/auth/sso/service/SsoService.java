@@ -1,6 +1,6 @@
-package com.meemaw.auth.service.sso;
+package com.meemaw.auth.sso.service;
 
-import com.meemaw.auth.model.user.UserDTO;
+import com.meemaw.auth.user.model.UserDTO;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 

@@ -1,7 +1,7 @@
-package com.meemaw.auth.sso;
+package com.meemaw.auth.sso.core;
 
-import com.meemaw.auth.model.sso.SsoUser;
-import com.meemaw.auth.model.user.UserRole;
+import com.meemaw.auth.sso.model.SsoUser;
+import com.meemaw.auth.user.model.UserRole;
 import java.security.Principal;
 import javax.ws.rs.core.SecurityContext;
 

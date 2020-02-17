@@ -1,4 +1,4 @@
-package com.meemaw.auth.core.resource.v1.sso;
+package com.meemaw.auth.sso.resource.v1;
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
@@ -194,6 +194,11 @@ public class SsoResourceImplTest {
         .then()
         .statusCode(204)
         .cookie(SsoSession.COOKIE_NAME, "");
+  }
+
+  public static String signupAndLogin(MockMailbox mailbox, String email, String password) {
+    SignupResourceImplTest.signup(mailbox, email, password);
+    return SsoResourceImplTest.login(email, password);
   }
 
   public static String login(String email, String password) {

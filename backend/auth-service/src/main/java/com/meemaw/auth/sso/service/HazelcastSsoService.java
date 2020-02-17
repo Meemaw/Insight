@@ -1,9 +1,9 @@
-package com.meemaw.auth.service.sso;
+package com.meemaw.auth.sso.service;
 
-import com.meemaw.auth.datasource.sso.SsoDatasource;
-import com.meemaw.auth.model.sso.SsoUser;
-import com.meemaw.auth.model.user.UserDTO;
-import com.meemaw.auth.service.password.PasswordService;
+import com.meemaw.auth.sso.datasource.SsoDatasource;
+import com.meemaw.auth.sso.model.SsoUser;
+import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.auth.password.service.PasswordService;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;

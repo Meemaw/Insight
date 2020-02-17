@@ -1,4 +1,4 @@
-package com.meemaw.auth.resource.health;
+package com.meemaw.auth.core.resource.health;
 
 import java.time.OffsetDateTime;
 import org.eclipse.microprofile.health.HealthCheck;

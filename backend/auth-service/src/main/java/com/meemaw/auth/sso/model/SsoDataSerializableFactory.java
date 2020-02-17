@@ -1,4 +1,4 @@
-package com.meemaw.auth.model.sso;
+package com.meemaw.auth.sso.model;
 
 import com.hazelcast.nio.serialization.DataSerializableFactory;
 import com.hazelcast.nio.serialization.IdentifiedDataSerializable;

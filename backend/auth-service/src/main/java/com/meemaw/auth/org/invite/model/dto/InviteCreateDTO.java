@@ -1,4 +1,4 @@
-package com.meemaw.auth.org.invite.model;
+package com.meemaw.auth.org.invite.model.dto;
 
 import com.meemaw.auth.user.model.UserRole;
 import javax.validation.constraints.Email;

@@ -1,45 +1,81 @@
 package com.meemaw.auth.org.invite.resource.v1;
 
-import com.meemaw.auth.org.invite.datasource.TeamInviteDatasource;
-import com.meemaw.auth.org.invite.model.TeamInviteCreateIdentifiedDTO;
-import com.meemaw.auth.org.invite.model.TeamInviteAcceptDTO;
-import com.meemaw.auth.org.invite.model.TeamInviteCreateDTO;
-import com.meemaw.auth.signup.service.SignupService;
+import com.meemaw.auth.org.invite.datasource.InviteDatasource;
+import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteCreateIdentifiedDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
+import com.meemaw.auth.org.invite.service.InviteService;
 import com.meemaw.auth.sso.core.InsightPrincipal;
+import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.response.DataResponse;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import lombok.extern.slf4j.Slf4j;
 
-public class OrganizationResourceImpl implements InviteResource {
+@Slf4j
+public class InviteResourceImpl implements InviteResource {
 
   @Inject
   InsightPrincipal principal;
 
   @Inject
-  SignupService signupService;
+  InviteService inviteService;
 
   @Inject
-  TeamInviteDatasource teamInviteDatasource;
+  InviteDatasource inviteDatasource;
 
   @Override
-  public CompletionStage<Response> listInvites() {
-    return teamInviteDatasource.findAll(principal.getOrg()).thenApply(DataResponse::ok);
-  }
-
-  @Override
-  public CompletionStage<Response> createInvite(TeamInviteCreateDTO teamInviteCreate) {
+  public CompletionStage<Response> create(InviteCreateDTO teamInviteCreate) {
     UUID creator = principal.getUserId();
     String org = principal.getOrg();
 
-    TeamInviteCreateIdentifiedDTO identified = new TeamInviteCreateIdentifiedDTO(
+    InviteCreateIdentifiedDTO identified = new InviteCreateIdentifiedDTO(
         teamInviteCreate.getEmail(), org, teamInviteCreate.getRole(), creator);
-    return signupService.invite(identified).thenApply(DataResponse::created);
+    return inviteService.create(identified).thenApply(DataResponse::created);
   }
 
   @Override
-  public CompletionStage<Response> acceptInvite(TeamInviteAcceptDTO teamInviteAccept) {
-    return signupService.acceptInvite(teamInviteAccept).thenApply(DataResponse::created);
+  public CompletionStage<Response> delete(UUID token) {
+    String org = principal.getOrg();
+    return inviteDatasource.delete(token, org).thenApply(deleted -> {
+      if (!deleted) {
+        throw Boom.status(Status.NOT_FOUND).exception();
+      }
+      return DataResponse.ok(true);
+    });
+  }
+
+  @Override
+  public CompletionStage<Response> list() {
+    return inviteDatasource.findAll(principal.getOrg()).thenApply(DataResponse::ok);
+  }
+
+  @Override
+  public CompletionStage<Response> accept(InviteAcceptDTO teamInviteAccept) {
+    return inviteService.accept(teamInviteAccept).thenApply(DataResponse::created);
+  }
+
+  @Override
+  public CompletionStage<Response> send(InviteSendDTO inviteSend) {
+    String org = principal.getOrg();
+    String email = inviteSend.getEmail();
+
+    return inviteDatasource.find(email, org)
+        .thenApply(maybeInvite -> maybeInvite.orElseThrow(() -> {
+          log.error("Failed to find invite for user={} org={}", email, org);
+          throw Boom.status(Status.NOT_FOUND).exception();
+        }))
+        .thenCompose(invite -> {
+          UUID token = invite.getToken();
+          log.info("Sending invite email to user={} org={} role={} token={}", email, org,
+              invite.getRole(),
+              token);
+          return inviteService.send(token, invite);
+        })
+        .thenApply(x -> DataResponse.ok(true));
   }
 }

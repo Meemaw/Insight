@@ -1,6 +1,6 @@
-package com.meemaw.auth.sso;
+package com.meemaw.auth.sso.core;
 
-import com.meemaw.auth.model.sso.SsoUser;
+import com.meemaw.auth.sso.model.SsoUser;
 import java.util.UUID;
 import javax.enterprise.context.RequestScoped;
 

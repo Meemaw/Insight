@@ -1,6 +1,6 @@
-package com.meemaw.auth.service.password;
+package com.meemaw.auth.password.service;
 
-import com.meemaw.auth.model.user.UserDTO;
+import com.meemaw.auth.user.model.UserDTO;
 import java.util.concurrent.CompletionStage;
 
 public interface PasswordService {

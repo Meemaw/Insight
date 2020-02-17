@@ -1,8 +1,8 @@
-package com.meemaw.auth.sso;
+package com.meemaw.auth.sso.core;
 
-import com.meemaw.auth.datasource.sso.SsoDatasource;
-import com.meemaw.auth.model.sso.SsoSession;
-import com.meemaw.auth.model.sso.SsoUser;
+import com.meemaw.auth.sso.datasource.SsoDatasource;
+import com.meemaw.auth.sso.model.SsoSession;
+import com.meemaw.auth.sso.model.SsoUser;
 import com.meemaw.shared.rest.response.Boom;
 import java.util.Map;
 import java.util.Optional;

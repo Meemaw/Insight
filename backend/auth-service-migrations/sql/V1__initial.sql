@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS auth.user
     email      TEXT        NOT NULL UNIQUE,
     org        TEXT        NOT NULL,
     role       TEXT        NOT NULL,
+    first_name TEXT,
+    last_name  TEXT,
+    phone      TEXT,
     created_at TIMESTAMPTZ NOT NULL        DEFAULT now(),
 
     PRIMARY KEY (id, email, org),

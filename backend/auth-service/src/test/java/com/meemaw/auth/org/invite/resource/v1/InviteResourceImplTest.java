@@ -1,13 +1,15 @@
-package com.meemaw.auth.org.resource.v1;
+package com.meemaw.auth.org.invite.resource.v1;
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.meemaw.auth.org.invite.model.TeamInviteCreateDTO;
-import com.meemaw.auth.org.invite.resource.v1.InviteResource;
-import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
+import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.auth.user.model.UserRole;
@@ -16,11 +18,13 @@ import com.meemaw.test.testconainers.Postgres;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
@@ -32,13 +36,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.is;
-
 
 @Postgres
 @QuarkusTest
 @Tag("integration")
-public class OrganizationResourceImplTest {
+public class InviteResourceImplTest {
 
   @Inject
   MockMailbox mailbox;
@@ -54,9 +56,7 @@ public class OrganizationResourceImplTest {
     if (sessionId == null) {
       String email = "org_invite_test@gmail.com";
       String password = "org_invite_test_password";
-
-      SignupResourceImplTest.signup(mailbox, email, password);
-      sessionId = SsoResourceImplTest.login(email, password);
+      sessionId = SsoResourceImplTest.signupAndLogin(mailbox, email, password);
     }
 
     return sessionId;
@@ -68,7 +68,7 @@ public class OrganizationResourceImplTest {
     given()
         .when()
         .contentType(MediaType.TEXT_PLAIN)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(415)
         .body(sameJson(
@@ -80,7 +80,7 @@ public class OrganizationResourceImplTest {
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(401)
         .body(sameJson(
@@ -93,7 +93,7 @@ public class OrganizationResourceImplTest {
         .when()
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -107,7 +107,7 @@ public class OrganizationResourceImplTest {
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
         .body("{}")
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -124,7 +124,7 @@ public class OrganizationResourceImplTest {
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
         .body(payload)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -134,14 +134,14 @@ public class OrganizationResourceImplTest {
   @Test
   public void invite_should_fail_when_invalid_email() throws IOException {
     String payload = JacksonMapper.get()
-        .writeValueAsString(new TeamInviteCreateDTO("notEmail", UserRole.ADMIN));
+        .writeValueAsString(new InviteCreateDTO("notEmail", UserRole.ADMIN));
 
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
         .body(payload)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -152,14 +152,14 @@ public class OrganizationResourceImplTest {
   public void invite_flow_should_succeed_on_valid_payload() throws IOException {
     String payload = JacksonMapper.get()
         .writeValueAsString(
-            new TeamInviteCreateDTO("test-team-invitation@gmail.com", UserRole.ADMIN));
+            new InviteCreateDTO("test-team-invitation@gmail.com", UserRole.ADMIN));
 
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
         .body(payload)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(201);
 
@@ -169,7 +169,7 @@ public class OrganizationResourceImplTest {
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
         .body(payload)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH)
         .then()
         .statusCode(409)
         .body(sameJson(
@@ -197,17 +197,17 @@ public class OrganizationResourceImplTest {
     tokenMatcher.matches();
     String token = tokenMatcher.group(1);
 
-    ObjectNode node = JacksonMapper.get().createObjectNode();
-    node.put("email", email);
-    node.put("org", orgId);
-    node.put("token", token);
-    node.put("password", "superDuperPassword123");
+    String inviteAcceptPayload = JacksonMapper.get().writeValueAsString(new InviteAcceptDTO(
+        email,
+        orgId,
+        UUID.fromString(token),
+        "superDuperPassword123"));
 
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(node)
-        .post(InviteResource.PATH + "/invite/accept")
+        .body(inviteAcceptPayload)
+        .post(InviteResource.PATH + "/accept")
         .then()
         .statusCode(201)
         .body(sameJson("{\"data\":true}"));
@@ -217,7 +217,7 @@ public class OrganizationResourceImplTest {
   public void list_invites_should_fail_when_not_authenticated() {
     given()
         .when()
-        .get(InviteResource.PATH + "/invites")
+        .get(InviteResource.PATH)
         .then()
         .statusCode(401)
         .body(sameJson(
@@ -225,11 +225,14 @@ public class OrganizationResourceImplTest {
   }
 
   @Test
-  public void list_invites_should_return_collection() throws URISyntaxException, IOException {
+  public void list_invites_should_return_collection() throws IOException {
+    String sessionId = SsoResourceImplTest
+        .signupAndLogin(mailbox, "list-invites-fetcher@gmail.com", "list-invites-fetcher");
+
     given()
         .when()
-        .cookie(SsoSession.COOKIE_NAME, getSessionId())
-        .get(InviteResource.PATH + "/invites")
+        .cookie(SsoSession.COOKIE_NAME, sessionId)
+        .get(InviteResource.PATH)
         .then()
         .statusCode(200)
         .body(sameJson("{\"data\":[]}"))
@@ -237,24 +240,180 @@ public class OrganizationResourceImplTest {
 
     String payload = JacksonMapper.get()
         .writeValueAsString(
-            new TeamInviteCreateDTO("list-invites-test@gmail.com", UserRole.STANDARD));
+            new InviteCreateDTO("list-invites-test@gmail.com", UserRole.STANDARD));
+
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(SsoSession.COOKIE_NAME, sessionId)
+        .body(payload)
+        .post(InviteResource.PATH)
+        .then()
+        .statusCode(201);
+
+    Response response = given()
+        .when()
+        .cookie(SsoSession.COOKIE_NAME, sessionId)
+        .get(InviteResource.PATH);
+    response.then().statusCode(200).body("data.size()", is(1));
+
+    UUID token = UUID.fromString(response.body().path("data[0].token"));
+
+    // delete the created invite
+    given()
+        .when()
+        .cookie(SsoSession.COOKIE_NAME, sessionId)
+        .pathParam("token", token)
+        .delete(InviteResource.PATH + "/{token}")
+        .then()
+        .statusCode(200)
+        .body(sameJson("{\"data\":true}"));
+
+    // should return 0 invites now
+    given()
+        .when()
+        .cookie(SsoSession.COOKIE_NAME, sessionId)
+        .get(InviteResource.PATH)
+        .then()
+        .statusCode(200)
+        .body(sameJson("{\"data\":[]}"))
+        .body("data.size()", is(0));
+  }
+
+
+  @Test
+  public void delete_invite_should_fail_when_no_token_param() {
+    given()
+        .when()
+        .delete(InviteResource.PATH)
+        .then()
+        .statusCode(405)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":405,\"reason\":\"Method Not Allowed\",\"message\":\"Method Not Allowed\"}}"));
+  }
+
+  @Test
+  public void delete_invite_should_fail_when_not_authenticated() {
+    given()
+        .when()
+        .pathParam("token", UUID.randomUUID())
+        .delete(InviteResource.PATH + "/{token}")
+        .then()
+        .statusCode(401)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":401,\"reason\":\"Unauthorized\",\"message\":\"Unauthorized\"}}"));
+  }
+
+  @Test
+  public void delete_invite_should_fail_when_invalid_token_param() {
+    given()
+        .when()
+        .cookie(SsoSession.COOKIE_NAME, sessionId)
+        .pathParam("token", "randomToken")
+        .delete(InviteResource.PATH + "/{token}")
+        .then()
+        .statusCode(404)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Resource Not Found\"}}"));
+  }
+
+  @Test
+  public void send_invite_should_fail_when_invalid_contentType() {
+    given()
+        .when()
+        .contentType(MediaType.TEXT_PLAIN)
+        .post(InviteResource.PATH + "/send")
+        .then()
+        .statusCode(415)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":415,\"reason\":\"Unsupported Media Type\",\"message\":\"Media type not supported.\"}}"));
+  }
+
+  @Test
+  public void send_invite_should_fail_when_not_authenticated() {
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .post(InviteResource.PATH + "/send")
+        .then()
+        .statusCode(401)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":401,\"reason\":\"Unauthorized\",\"message\":\"Unauthorized\"}}"));
+  }
+
+  @Test
+  public void send_invite_should_fail_when_no_payload() {
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(SsoSession.COOKIE_NAME, getSessionId())
+        .post(InviteResource.PATH + "/send")
+        .then()
+        .statusCode(400)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Payload is required\"}}}"));
+  }
+
+  @Test
+  public void send_invite_should_fail_when_empty_payload() {
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(SsoSession.COOKIE_NAME, getSessionId())
+        .body("{}")
+        .post(InviteResource.PATH + "/send")
+        .then()
+        .statusCode(400)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"Required\"}}}"));
+  }
+
+  @Test
+  public void send_invite_should_fail_when_invalid_payload() throws JsonProcessingException {
+    InviteSendDTO inviteSendDTO = new InviteSendDTO("random");
+    String payload = JacksonMapper.get().writeValueAsString(inviteSendDTO);
 
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
         .body(payload)
-        .post(InviteResource.PATH + "/invites")
+        .post(InviteResource.PATH + "/send")
         .then()
-        .statusCode(201);
+        .statusCode(400)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"must be a well-formed email address\"}}}"));
+  }
+
+  @Test
+  public void send_invite_flow_should_succeed_on_existing_invite() throws JsonProcessingException {
+    String email = "send-invite-flow@gmail.com";
+    String invitePayload = JacksonMapper.get()
+        .writeValueAsString(new InviteCreateDTO(email, UserRole.ADMIN));
 
     given()
         .when()
+        .contentType(MediaType.APPLICATION_JSON)
         .cookie(SsoSession.COOKIE_NAME, getSessionId())
-        .get(InviteResource.PATH + "/invites")
+        .body(invitePayload)
+        .post(InviteResource.PATH)
+        .then()
+        .statusCode(201);
+
+    assertEquals(1, mailbox.getMessagesSentTo(email).size());
+
+    String sendInvitePayload = JacksonMapper.get().writeValueAsString(new InviteSendDTO(email));
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .cookie(SsoSession.COOKIE_NAME, getSessionId())
+        .body(sendInvitePayload)
+        .post(InviteResource.PATH + "/send")
         .then()
         .statusCode(200)
-        .body("data.size()", is(1));
+        .body(sameJson("{\"data\":true}"));
+
+    assertEquals(2, mailbox.getMessagesSentTo(email).size());
   }
 
 }

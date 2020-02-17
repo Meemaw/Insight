@@ -1,13 +1,11 @@
-package com.meemaw.auth.resource.v1.sso;
+package com.meemaw.auth.sso.resource.v1;
 
-import com.meemaw.auth.model.sso.SsoSession;
-import com.meemaw.auth.service.sso.SsoService;
+import com.meemaw.auth.sso.model.SsoSession;
+import com.meemaw.auth.sso.service.SsoService;
 import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.response.DataResponse;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.slf4j.Logger;

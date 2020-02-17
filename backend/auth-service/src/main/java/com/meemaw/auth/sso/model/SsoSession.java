@@ -1,4 +1,4 @@
-package com.meemaw.auth.model.sso;
+package com.meemaw.auth.sso.model;
 
 import com.meemaw.shared.string.RandomString;
 import javax.ws.rs.core.NewCookie;

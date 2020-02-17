@@ -1,30 +1,28 @@
-package com.meemaw.auth.service.password;
+package com.meemaw.auth.password.service;
 
-import com.meemaw.auth.datasource.user.UserDatasource;
-import com.meemaw.auth.model.user.UserDTO;
-import com.meemaw.auth.model.user.UserWithPasswordHashDTO;
+import com.meemaw.auth.password.datasource.PasswordDatasource;
+import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.auth.user.model.UserWithHashedPasswordDTO;
 import com.meemaw.shared.rest.exception.BoomException;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.shared.rest.response.Boom;
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
+@Slf4j
 public class PgPasswordService implements PasswordService {
 
-  private static final Logger log = LoggerFactory.getLogger(PgPasswordService.class);
-
   @Inject
-  UserDatasource userDatasource;
+  PasswordDatasource passwordDatasource;
 
   public CompletionStage<UserDTO> verifyPassword(String email, String password) {
-    return userDatasource.findUserWithPasswordHash(email)
+    return passwordDatasource.findUserWithPassword(email)
         .thenApply(maybeUserWithPasswordHash -> {
-          UserWithPasswordHashDTO userWithPasswordHash = maybeUserWithPasswordHash
+          UserWithHashedPasswordDTO userWithPasswordHash = maybeUserWithPasswordHash
               .orElseThrow(() -> {
                 log.info("User {} not found", email);
                 throw new BoomException(Boom.badRequest().message("Invalid email or password"));

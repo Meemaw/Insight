@@ -14,6 +14,5 @@ public class SignupRequest {
 
   String email;
   String org;
-  UUID token;
   UUID userId;
 }

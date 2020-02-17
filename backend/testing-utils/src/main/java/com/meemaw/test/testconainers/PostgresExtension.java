@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.testcontainers.junit.jupiter.Container;
 
+
 public class PostgresExtension implements BeforeAllCallback {
 
   @Container
@@ -24,6 +25,7 @@ public class PostgresExtension implements BeforeAllCallback {
     String projectName = new File(projectPath).getName();
     String migrationsProjectName = String.format("%s-migrations", projectName);
     Path migrationsSqlPath = Paths.get(projectPath, "..", migrationsProjectName, "sql");
+    System.out.println("Applying migrations from: " + migrationsSqlPath.toAbsolutePath());
 
     Files.walk(migrationsSqlPath).filter(path -> !Files.isDirectory(path)).forEach(path -> {
       try {

@@ -41,11 +41,11 @@ public class SameJSON extends TypeSafeDiagnosingMatcher<String> {
     description.appendText("is ").appendValue(this.expected);
   }
 
-  public static Matcher sameJson(String expected) {
+  public static Matcher<String> sameJson(String expected) {
     return sameJson(expected, JSONCompareMode.STRICT);
   }
 
-  public static Matcher sameJson(String expected, JSONCompareMode compareMode) {
+  public static Matcher<String> sameJson(String expected, JSONCompareMode compareMode) {
     return new SameJSON(expected, compareMode);
   }
 

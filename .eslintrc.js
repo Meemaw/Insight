@@ -21,11 +21,24 @@ module.exports = {
     'import/no-extraneous-dependencies': ['off'],
     'import/prefer-default-export': ['off'],
     'import/extensions': ['off'],
+    'import/order': [
+      1,
+      {
+        'newlines-between': 'always',
+        groups: [
+          'builtin',
+          ['external', 'internal'],
+          'parent',
+          ['sibling', 'index'],
+        ],
+      },
+    ],
 
     'lodash/prefer-lodash-method': ['off'],
 
     'react/jsx-props-no-spreading': ['off'],
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
+    'react/jsx-wrap-multilines': ['off'],
 
     'jsx-a11y/anchor-is-valid': ['off'],
 

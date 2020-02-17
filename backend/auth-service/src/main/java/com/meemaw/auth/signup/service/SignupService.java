@@ -1,25 +1,16 @@
-package com.meemaw.auth.service.signup;
+package com.meemaw.auth.signup.service;
 
-import com.meemaw.auth.model.signup.SignupRequest;
-import com.meemaw.auth.model.signup.TeamInviteCreateIdentified;
-import com.meemaw.auth.model.signup.dto.SignupCompleteRequestDTO;
-import com.meemaw.auth.model.signup.dto.SignupVerifyRequestDTO;
-import com.meemaw.auth.model.signup.dto.TeamInviteAcceptDTO;
-import com.meemaw.auth.model.signup.dto.TeamInviteDTO;
-import com.meemaw.auth.model.user.UserDTO;
+import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
+import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
+import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
 public interface SignupService {
 
-  CompletionStage<Boolean> verifySignupRequestExists(SignupVerifyRequestDTO verifySignup);
+  CompletionStage<Boolean> exists(String email, String org, UUID token);
 
-  CompletionStage<SignupRequest> signup(final String email);
+  CompletionStage<SignupRequestDTO> create(final String email);
 
-  CompletionStage<Boolean> completeSignup(SignupCompleteRequestDTO completeSignup);
-
-  CompletionStage<TeamInviteDTO> invite(TeamInviteCreateIdentified teamInviteCreate);
-
-  CompletionStage<Boolean> acceptInvite(TeamInviteAcceptDTO teamInviteAccept);
-
+  CompletionStage<Boolean> complete(SignupRequestCompleteDTO completeSignup);
 
 }

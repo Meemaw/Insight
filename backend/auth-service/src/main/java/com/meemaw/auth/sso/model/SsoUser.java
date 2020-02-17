@@ -1,18 +1,25 @@
-package com.meemaw.auth.model.sso;
+package com.meemaw.auth.sso.model;
 
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
-import com.meemaw.auth.model.user.UserDTO;
-import com.meemaw.auth.model.user.UserRole;
+import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.auth.user.model.UserRole;
 import java.io.IOException;
 import java.util.UUID;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
-public class SsoUser extends UserDTO implements IdentifiedDataSerializable {
 
+@Data
+@NoArgsConstructor
+public class SsoUser implements IdentifiedDataSerializable {
 
-  public SsoUser() {
-  }
+  UUID id;
+  String email;
+  UserRole role;
+  String org;
 
   public SsoUser(UserDTO userDTO) {
     this.id = userDTO.getId();

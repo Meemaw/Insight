@@ -1,40 +1,54 @@
-package com.meemaw.auth.org.resource.v1;
+package com.meemaw.auth.org.invite.resource.v1;
 
-import com.meemaw.auth.org.resource.model.dto.TeamInviteAcceptDTO;
-import com.meemaw.auth.org.resource.model.dto.TeamInviteCreateDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
+import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.sso.core.CookieAuth;
+import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path(OrganizationResource.PATH)
+@Path(InviteResource.PATH)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public interface OrganizationResource {
+public interface InviteResource {
 
-  String PATH = "v1/org";
+  String PATH = "v1/org/invites";
 
   @POST
-  @Path("invites")
   @CookieAuth
-  CompletionStage<Response> createInvite(
-      @NotNull(message = "Payload is required") @Valid TeamInviteCreateDTO teamInviteCreate);
+  CompletionStage<Response> create(
+      @NotNull(message = "Payload is required") @Valid InviteCreateDTO teamInviteCreate);
 
   @GET
-  @Path("invites")
   @CookieAuth
-  CompletionStage<Response> listInvites();
+  CompletionStage<Response> list();
+
+
+  @DELETE
+  @CookieAuth
+  @Path("{token}")
+  CompletionStage<Response> delete(@PathParam("token") UUID token);
 
   @POST
-  @Path("invite/accept")
-  CompletionStage<Response> acceptInvite(
-      @NotNull(message = "Payload is required") @Valid TeamInviteAcceptDTO teamInviteAccept);
+  @Path("accept")
+  CompletionStage<Response> accept(
+      @NotNull(message = "Payload is required") @Valid InviteAcceptDTO teamInviteAccept);
+
+  @POST
+  @CookieAuth
+  @Path("send")
+  CompletionStage<Response> send(
+      @NotNull(message = "Payload is required") @Valid InviteSendDTO inviteSend);
 
 }

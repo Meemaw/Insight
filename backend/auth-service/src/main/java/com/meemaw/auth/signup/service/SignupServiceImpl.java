@@ -1,15 +1,10 @@
 package com.meemaw.auth.signup.service;
 
-import com.meemaw.auth.org.invite.datasource.InviteDatasource;
-import com.meemaw.auth.org.invite.model.CanInviteSend;
 import com.meemaw.auth.password.datasource.PasswordDatasource;
 import com.meemaw.auth.signup.datasource.SignupDatasource;
-import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
 import com.meemaw.auth.signup.model.SignupRequest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
-import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
-import com.meemaw.auth.org.invite.model.dto.InviteCreateIdentifiedDTO;
-import com.meemaw.auth.org.invite.model.dto.InviteDTO;
+import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
 import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.shared.rest.response.Boom;
@@ -18,7 +13,6 @@ import io.quarkus.mailer.ReactiveMailer;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 import io.vertx.axle.pgclient.PgPool;
-import io.vertx.axle.sqlclient.Transaction;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
@@ -29,7 +23,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 @ApplicationScoped
 @Slf4j
-public class PgSignupService implements SignupService {
+public class SignupServiceImpl implements SignupService {
 
   @ResourcePath("signup/welcome")
   Template welcomeTemplate;

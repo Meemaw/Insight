@@ -14,7 +14,7 @@ import lombok.Value;
 @Value
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class SignupCompleteRequestDTO {
+public class SignupRequestCompleteDTO {
 
   @NotBlank(message = "Required")
   @Email
