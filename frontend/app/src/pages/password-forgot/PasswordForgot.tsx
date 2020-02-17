@@ -1,7 +1,8 @@
 import React from 'react';
-import AuthLayout from 'components/auth/AuthLayout';
+import AuthLayout from 'components/common/auth/Layout';
 import Link from 'next/link';
-import Input from 'components/Input';
+import Input from 'components/common/auth/Input';
+
 import usePasswordForgot from './usePasswordForgot';
 
 const PasswordForgot = () => {

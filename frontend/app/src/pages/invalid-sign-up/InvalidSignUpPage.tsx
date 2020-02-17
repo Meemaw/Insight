@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthLayout from 'components/auth/AuthLayout';
+import AuthLayout from 'components/common/auth/Layout';
 import Link from 'next/link';
 
 const InvalidSignUpPage = () => {

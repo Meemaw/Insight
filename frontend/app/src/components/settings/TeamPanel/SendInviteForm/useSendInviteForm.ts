@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import * as api from 'api';
+import { InviteApi, UserRole } from 'api';
 import { errorToast, successToast } from 'components/common/app/Toaster';
 import { emailSchema } from 'validation/email';
 import * as Yup from 'yup';
@@ -12,11 +12,11 @@ const SendInviteSchema = Yup.object().shape({
   email: emailSchema,
 });
 
-const useSendInvite = (createInvite: typeof api.createInvite) => {
+const useSendInvite = (createInvite: typeof InviteApi.create) => {
   const formik = useFormik({
     initialValues: {
       email: '',
-      role: 'ADMIN' as api.UserRole,
+      role: 'ADMIN' as UserRole,
     },
     onSubmit: (values, { setSubmitting }) => {
       createInvite(values.role, values.email)

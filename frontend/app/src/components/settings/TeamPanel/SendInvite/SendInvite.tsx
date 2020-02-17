@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { Popover, Button, Intent } from '@blueprintjs/core';
-import * as api from 'api';
+import { InviteApi, UserRole } from 'api';
 
 import SendInviteForm from '../SendInviteForm';
 
 type Props = {
-  createInvite: typeof api.createInvite;
+  createInvite: typeof InviteApi.create;
 };
 
 const SendInvite = ({ createInvite }: Props) => {
@@ -21,7 +21,7 @@ const SendInvite = ({ createInvite }: Props) => {
   }, []);
 
   const onCreateInvite = useCallback(
-    (role: api.UserRole, email: string) => {
+    (role: UserRole, email: string) => {
       onCancel();
       setSendingInvite(true);
       return createInvite(role, email).finally(() => {

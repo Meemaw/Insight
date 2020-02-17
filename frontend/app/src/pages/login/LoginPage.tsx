@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
-import Input from 'components/Input';
+import Input from 'components/common/auth/Input';
 import Link from 'next/link';
-import AuthLayout from 'components/auth/AuthLayout';
+import AuthLayout from 'components/common/auth/Layout';
 
 import useLogin from './useLogin';
 

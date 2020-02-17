@@ -1,13 +1,14 @@
 import React from 'react';
-import * as api from 'api';
+import { InviteApi, TeamInvite } from 'api';
 
 import InviteRow from '../InviteRow';
+
 import { StyledPendingInviteList } from './elements';
 
 type Props = {
-  invites: api.TeamInvite[];
-  deleteInvite: typeof api.deleteInvite;
-  resendInvite: typeof api.resendInvite;
+  invites: TeamInvite[];
+  deleteInvite: typeof InviteApi.delete;
+  resendInvite: typeof InviteApi.resend;
 };
 
 const PendingInvitesList = ({ invites, deleteInvite, resendInvite }: Props) => {

@@ -1,5 +1,6 @@
-import { NextPageContext } from 'next';
 import { IncomingMessage, ServerResponse } from 'http';
+
+import { NextPageContext } from 'next';
 
 type ServerNextPageContext = NextPageContext & {
   req: IncomingMessage;

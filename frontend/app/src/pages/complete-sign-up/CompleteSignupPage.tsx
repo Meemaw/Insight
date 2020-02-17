@@ -1,9 +1,10 @@
 import React from 'react';
-import AuthLayout from 'components/auth/AuthLayout';
+import AuthLayout from 'components/common/auth/Layout';
 import { NextPageContext } from 'next';
 import Router from 'next/router';
 import { verifySignup, SignupRequestDTO } from 'api';
-import Input from 'components/Input';
+import Input from 'components/common/auth/Input';
+
 import useCompleteSignup from './useCompleteSignUp';
 
 type Props = {
