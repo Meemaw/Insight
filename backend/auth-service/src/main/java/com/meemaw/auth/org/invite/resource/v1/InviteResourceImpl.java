@@ -7,6 +7,7 @@ import com.meemaw.auth.org.invite.model.dto.InviteCreateIdentifiedDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.org.invite.service.InviteService;
 import com.meemaw.auth.sso.core.InsightPrincipal;
+import com.meemaw.auth.user.model.UserRole;
 import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.response.DataResponse;
 import java.util.UUID;
@@ -63,16 +64,16 @@ public class InviteResourceImpl implements InviteResource {
   public CompletionStage<Response> send(InviteSendDTO inviteSend) {
     String org = principal.getOrg();
     String email = inviteSend.getEmail();
+    UUID token = inviteSend.getToken();
 
-    return inviteDatasource.find(email, org)
+    return inviteDatasource.find(email, org, token)
         .thenApply(maybeInvite -> maybeInvite.orElseThrow(() -> {
           log.error("Failed to find invite for user={} org={}", email, org);
           throw Boom.status(Status.NOT_FOUND).exception();
         }))
         .thenCompose(invite -> {
-          UUID token = invite.getToken();
-          log.info("Sending invite email to user={} org={} role={} token={}", email, org,
-              invite.getRole(),
+          UserRole role = invite.getRole();
+          log.info("Sending invite email to user={} org={} role={} token={}", email, org, role,
               token);
           return inviteService.send(token, invite);
         })

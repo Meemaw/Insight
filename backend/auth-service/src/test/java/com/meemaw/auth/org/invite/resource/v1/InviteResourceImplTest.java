@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
@@ -365,12 +364,12 @@ public class InviteResourceImplTest {
         .then()
         .statusCode(400)
         .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"Required\"}}}"));
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"Required\",\"token\":\"Required\"}}}"));
   }
 
   @Test
   public void send_invite_should_fail_when_invalid_payload() throws JsonProcessingException {
-    InviteSendDTO inviteSendDTO = new InviteSendDTO("random");
+    InviteSendDTO inviteSendDTO = new InviteSendDTO("random", UUID.randomUUID());
     String payload = JacksonMapper.get().writeValueAsString(inviteSendDTO);
 
     given()
@@ -391,6 +390,7 @@ public class InviteResourceImplTest {
     String invitePayload = JacksonMapper.get()
         .writeValueAsString(new InviteCreateDTO(email, UserRole.ADMIN));
 
+    // Invite the user
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
@@ -400,9 +400,24 @@ public class InviteResourceImplTest {
         .then()
         .statusCode(201);
 
-    assertEquals(1, mailbox.getMessagesSentTo(email).size());
+    List<Mail> sent = mailbox.getMessagesSentTo(email);
+    assertEquals(1, sent.size());
+    Mail actual = sent.get(0);
+    assertEquals("Insight Support <support@insight.com>", actual.getFrom());
 
-    String sendInvitePayload = JacksonMapper.get().writeValueAsString(new InviteSendDTO(email));
+    Document doc = Jsoup.parse(actual.getHtml());
+    Elements link = doc.select("a");
+    String acceptInviteUrl = link.attr("href");
+
+    // extract the token
+    Matcher tokenMatcher = Pattern.compile("^.*token=(.*)$").matcher(acceptInviteUrl);
+    tokenMatcher.matches();
+    String token = tokenMatcher.group(1);
+
+    // resend the invite email
+    String sendInvitePayload = JacksonMapper.get()
+        .writeValueAsString(new InviteSendDTO(email, UUID.fromString(token)));
+
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)

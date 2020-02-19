@@ -1,6 +1,6 @@
 package com.meemaw.auth.signup.service;
 
-import com.meemaw.auth.password.datasource.PasswordDatasource;
+import com.meemaw.auth.password.service.PasswordService;
 import com.meemaw.auth.signup.datasource.SignupDatasource;
 import com.meemaw.auth.signup.model.SignupRequest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
@@ -19,7 +19,6 @@ import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
 
 @ApplicationScoped
 @Slf4j
@@ -41,7 +40,7 @@ public class SignupServiceImpl implements SignupService {
   SignupDatasource signupDatasource;
 
   @Inject
-  PasswordDatasource passwordDatasource;
+  PasswordService passwordService;
 
 
   private static final String FROM_SUPPORT = "Insight Support <support@insight.com>";
@@ -126,17 +125,10 @@ public class SignupServiceImpl implements SignupService {
           })
           .thenCompose(signup -> {
             UUID userId = signup.getUserId();
-            log.info("Storing password email={} userId={} org={}", email, userId, org);
-            String hashedPassword = BCrypt
-                .hashpw(completeSignup.getPassword(), BCrypt.gensalt(13));
-
-            return passwordDatasource.create(transaction, userId, hashedPassword)
-                .thenApply(x -> transaction.commit())
-                .thenApply(x -> {
-                  log.info("signup complete email={} userId={} org={}", email, userId, org);
-                  return true;
-                });
-          });
+            String password = completeSignup.getPassword();
+            return passwordService.create(transaction, userId, email, org, password);
+          })
+          .thenCompose(created -> transaction.commit().thenApply(x -> created));
     });
   }
 

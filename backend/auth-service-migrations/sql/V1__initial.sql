@@ -41,11 +41,29 @@ CREATE TABLE IF NOT EXISTS auth.password
     hash       TEXT        NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
-    PRIMARY KEY (user_id, hash),
+    PRIMARY KEY (user_id, hash, created_at),
     FOREIGN KEY (user_id) REFERENCES auth.user (id)
 );
 
-CREATE INDEX IF NOT EXISTS user_password_ix ON auth.password (user_id, created_at);
+CREATE TABLE IF NOT EXISTS auth.password_reset_request
+(
+    token      UUID        NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+    email      TEXT        NOT NULL,
+    user_id    UUID        NOT NULL,
+    org        TEXT        NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL        DEFAULT now(),
+
+    FOREIGN KEY (org) REFERENCES auth.org (id),
+    FOREIGN KEY (user_id) REFERENCES auth.user (id),
+    FOREIGN KEY (email) REFERENCES auth.user (email),
+    PRIMARY KEY (token, email, org, created_at)
+);
+
+ALTER TABLE auth.password_reset_request
+    DROP CONSTRAINT IF EXISTS password_reset_request_email_len;
+
+ALTER TABLE auth.password_reset_request
+    ADD CONSTRAINT password_reset_request_email_len CHECK (length(auth.password_reset_request.email) < 255);
 
 CREATE TABLE IF NOT EXISTS auth.signup
 (

@@ -13,11 +13,12 @@ import io.vertx.axle.sqlclient.Transaction;
 import io.vertx.axle.sqlclient.Tuple;
 import io.vertx.pgclient.PgException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -30,15 +31,12 @@ public class PgInviteDatasource implements InviteDatasource {
   @Inject
   PgPool pgPool;
 
-  private static final String FIND_INVITE_NO_TOKEN_RAW_SQL = "SELECT * FROM auth.invite WHERE user_email = $1 AND org = $2";
+  private static final String FIND_INVITE_RAW_SQL = "SELECT * FROM auth.invite WHERE user_email = $1 AND org = $2 AND token = $3";
 
   @Override
-  public CompletionStage<Optional<InviteDTO>> find(String email, String org) {
-    return pgPool.preparedQuery(FIND_INVITE_NO_TOKEN_RAW_SQL, Tuple.of(email, org))
-        .thenApply(this::fromRowSet);
+  public CompletionStage<Optional<InviteDTO>> find(String email, String org, UUID token) {
+    return pgPool.begin().thenCompose(t -> find(t, email, org, token));
   }
-
-  private static final String FIND_INVITE_RAW_SQL = "SELECT * FROM auth.invite WHERE user_email = $1 AND org = $2 AND token = $3";
 
   @Override
   public CompletionStage<Optional<InviteDTO>> find(Transaction transaction, String email,
@@ -53,13 +51,9 @@ public class PgInviteDatasource implements InviteDatasource {
   @Override
   public CompletionStage<List<InviteDTO>> findAll(String org) {
     return pgPool.preparedQuery(FIND_ALL_INVITES_RAW_SQL, Tuple.of(org))
-        .thenApply(pgRowSet -> {
-          List<InviteDTO> invites = new ArrayList<>();
-          for (Row row : pgRowSet) {
-            invites.add(fromRow(row));
-          }
-          return invites;
-        });
+        .thenApply(
+            pgRowSet -> StreamSupport.stream(pgRowSet.spliterator(), false).map(this::fromRow)
+                .collect(Collectors.toList()));
   }
 
   private static final String DELETE_INVITE_RAW_SQL = "DELETE FROM auth.invite WHERE token = $1 AND org = $2";

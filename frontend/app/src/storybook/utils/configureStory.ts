@@ -3,7 +3,7 @@ import { DecoratorFunction } from '@storybook/addons';
 import { SetupMocks } from './useSandbox';
 import mockDecorator from './mockDecorator';
 
-type StoryConfiguration<T> = {
+export type StoryConfiguration<T> = {
   name?: string;
   decorators?: DecoratorFunction[];
   setupMocks?: SetupMocks<T>;

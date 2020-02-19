@@ -72,6 +72,10 @@ public class Boom<T> {
     return Boom.status(Status.BAD_REQUEST);
   }
 
+  public static <T> Boom<T> notFound() {
+    return Boom.status(Status.NOT_FOUND);
+  }
+
   public static <T> Boom<T> serverError() {
     return Boom.status(Status.INTERNAL_SERVER_ERROR);
   }
