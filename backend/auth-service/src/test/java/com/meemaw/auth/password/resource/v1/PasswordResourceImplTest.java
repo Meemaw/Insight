@@ -119,6 +119,8 @@ public class PasswordResourceImplTest {
     String password = "superHardPassword";
     SignupResourceImplTest.signup(mailbox, email, password);
     PasswordResourceImplTest.passwordForgot(email);
+    // can trigger the forgot flow multiple times!!
+    PasswordResourceImplTest.passwordForgot(email);
   }
 
 
@@ -249,14 +251,14 @@ public class PasswordResourceImplTest {
     String email = emailMatcher.group(1);
 
     String newPassword = "superDuperNewFancyPassword";
-    String payload = JacksonMapper.get()
+    String resetPasswordPayload = JacksonMapper.get()
         .writeValueAsString(
             new PasswordResetRequestDTO(email, orgId, UUID.fromString(token), newPassword));
 
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(payload)
+        .body(resetPasswordPayload)
         .post(PasswordResource.PATH + "/reset")
         .then()
         .statusCode(200)
@@ -283,6 +285,17 @@ public class PasswordResourceImplTest {
         .post(SsoResource.PATH + "/login")
         .then()
         .statusCode(204);
+
+    // trying to do the rest with same params again should fail
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(resetPasswordPayload)
+        .post(PasswordResource.PATH + "/reset")
+        .then()
+        .statusCode(404)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Password reset request not found\"}}"));
   }
 
 }

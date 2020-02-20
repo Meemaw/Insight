@@ -83,8 +83,7 @@ public class InviteServiceImpl implements InviteService {
             throw Boom.badRequest().message("Team invite does not exist.").exception();
           });
 
-          Instant lastActive = teamInvite.getCreatedAt().plusDays(1).toInstant();
-          if (Instant.now().isAfter(lastActive)) {
+          if (teamInvite.hasExpired()) {
             log.info("Team invite expired user={} org={} token={}", email, org, token);
             throw Boom.badRequest().message("Team invite expired").exception();
           }

@@ -18,5 +18,6 @@ public interface SignupDatasource {
       String org,
       UUID token);
 
-  CompletionStage<Boolean> delete(Transaction transaction, SignupRequestDTO signupRequest);
+  CompletionStage<Boolean> delete(Transaction transaction, String email, String orgId, UUID userId);
+
 }

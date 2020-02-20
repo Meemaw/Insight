@@ -79,9 +79,10 @@ public class PgSignupDatasource implements SignupDatasource {
 
   private static final String DELETE_SIGNUP_RAW_SQL = "DELETE FROM auth.signup WHERE user_email = $1 AND org = $2 AND user_id = $3";
 
-  public CompletionStage<Boolean> delete(Transaction transaction, SignupRequestDTO signupRequest) {
-    Tuple values = Tuple
-        .of(signupRequest.getEmail(), signupRequest.getOrg(), signupRequest.getUserId());
+  public CompletionStage<Boolean> delete(Transaction transaction, String email, String orgId,
+      UUID userId) {
+    Tuple values = Tuple.of(email, orgId, userId);
     return transaction.preparedQuery(DELETE_SIGNUP_RAW_SQL, values).thenApply(pgRowSet -> true);
   }
+
 }

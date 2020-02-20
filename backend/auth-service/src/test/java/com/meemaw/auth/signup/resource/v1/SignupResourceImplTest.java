@@ -5,6 +5,9 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
+import com.meemaw.auth.password.resource.v1.PasswordResource;
+import com.meemaw.auth.password.resource.v1.PasswordResourceImplTest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.test.rest.mappers.JacksonMapper;
@@ -179,9 +182,9 @@ public class SignupResourceImplTest {
         .contentType(MediaType.APPLICATION_JSON).body(payload)
         .post(SignupResource.PATH + "/complete")
         .then()
-        .statusCode(400)
+        .statusCode(404)
         .body(sameJson(
-            " {\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Signup request does not exist.\"}}"));
+            " {\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Signup request does not exist.\"}}"));
   }
 
   @Test
@@ -193,6 +196,84 @@ public class SignupResourceImplTest {
 
     // should be able to login with the newly created account
     SsoResourceImplTest.login(signupEmail, signupPassword);
+  }
+
+
+  @Test
+  public void signup_flow_should_be_completable_with_password_reset()
+      throws JsonProcessingException {
+    String signupEmail = "signup-with-password-reset@gmail.com";
+
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        .param("email", signupEmail)
+        .post(SignupResource.PATH)
+        .then()
+        .statusCode(200);
+
+    PasswordResourceImplTest.passwordForgot(signupEmail);
+
+    List<Mail> sent = mailbox.getMessagesSentTo(signupEmail);
+    assertEquals(2, sent.size());
+    Mail passwordResetMail = sent.get(1);
+    assertEquals("Insight Support <support@insight.com>", passwordResetMail.getFrom());
+    Document doc = Jsoup.parse(passwordResetMail.getHtml());
+    Elements link = doc.select("a");
+    String passwordForgotLink = link.attr("href");
+    Matcher orgMatcher = Pattern.compile("^.*orgId=(.*)&.*$").matcher(passwordForgotLink);
+    orgMatcher.matches();
+    String passwordResetOrgId = orgMatcher.group(1);
+    Matcher tokenMatcher = Pattern.compile("^.*token=(.*)$").matcher(passwordForgotLink);
+    tokenMatcher.matches();
+    String passwordResetToken = tokenMatcher.group(1);
+    Matcher emailMatcher = Pattern.compile("^.*email=(.*\\.com).*$").matcher(passwordForgotLink);
+    emailMatcher.matches();
+    String passwordResetEmail = emailMatcher.group(1);
+
+    String password = "superDuperPassword";
+    String resetPasswordPayload = JacksonMapper.get()
+        .writeValueAsString(
+            new PasswordResetRequestDTO(passwordResetEmail, passwordResetOrgId,
+                UUID.fromString(passwordResetToken), password));
+
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(resetPasswordPayload)
+        .post(PasswordResource.PATH + "/reset")
+        .then()
+        .statusCode(200)
+        .body(sameJson("{\"data\":true}"));
+
+    // should be able to login with the password
+    SsoResourceImplTest.login(signupEmail, password);
+
+    Mail signupCompleteEmail = sent.get(0);
+    assertEquals("Insight Support <support@insight.com>", signupCompleteEmail.getFrom());
+    doc = Jsoup.parse(signupCompleteEmail.getHtml());
+    link = doc.select("a");
+    String signupCompleteUrl = link.attr("href");
+    orgMatcher = Pattern.compile("^.*orgId=(.*)&.*$").matcher(signupCompleteUrl);
+    orgMatcher.matches();
+    String orgId = orgMatcher.group(1);
+    tokenMatcher = Pattern.compile("^.*token=(.*)$").matcher(signupCompleteUrl);
+    tokenMatcher.matches();
+    String token = tokenMatcher.group(1);
+
+    String completeSignupPayload = JacksonMapper.get()
+        .writeValueAsString(new SignupRequestCompleteDTO(signupEmail,
+            orgId, UUID.fromString(token), "somePasswordHere"));
+
+    // trying to complete the signup should fail at this point
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON).body(completeSignupPayload)
+        .post(SignupResource.PATH + "/complete")
+        .then()
+        .statusCode(404)
+        .body(sameJson(
+            " {\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Signup request does not exist.\"}}"));
   }
 
   public static void signup(MockMailbox mailbox, String signupEmail, String signupPassword) {
@@ -252,5 +333,6 @@ public class SignupResourceImplTest {
         .statusCode(200)
         .body(sameJson("{\"data\":true}"));
   }
+
 
 }

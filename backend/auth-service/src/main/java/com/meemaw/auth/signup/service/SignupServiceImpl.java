@@ -13,7 +13,6 @@ import io.quarkus.mailer.ReactiveMailer;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 import io.vertx.axle.pgclient.PgPool;
-import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
@@ -101,11 +100,10 @@ public class SignupServiceImpl implements SignupService {
           .thenApply(maybeSignup -> {
             SignupRequestDTO signup = maybeSignup.orElseThrow(() -> {
               log.info("Signup request does not exist email={} org={} token={}", email, org, token);
-              throw Boom.badRequest().message("Signup request does not exist.").exception();
+              throw Boom.notFound().message("Signup request does not exist.").exception();
             });
 
-            Instant lastActive = signup.getCreatedAt().plusDays(1).toInstant();
-            if (Instant.now().isAfter(lastActive)) {
+            if (signup.hasExpired()) {
               log.info("Signup request expired email={} org={} token={}", email, org, token);
               throw Boom.badRequest().message("Signup request expired").exception();
             }
@@ -114,7 +112,7 @@ public class SignupServiceImpl implements SignupService {
           })
           .thenCompose(signup -> {
             log.info("Deleting existing signup requests email={} org={}", email, org);
-            return signupDatasource.delete(transaction, signup)
+            return signupDatasource.delete(transaction, email, org, signup.getUserId())
                 .thenApply(isDeleted -> {
                   if (!isDeleted) {
                     log.info("Failed to delete signup requests email={} org={}", email, org);

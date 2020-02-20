@@ -3,6 +3,7 @@ package com.meemaw.auth.password.service;
 import com.meemaw.auth.password.datasource.PasswordDatasource;
 import com.meemaw.auth.password.model.PasswordResetRequest;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
+import com.meemaw.auth.signup.datasource.SignupDatasource;
 import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.auth.user.model.UserDTO;
 import com.meemaw.auth.user.model.UserWithHashedPasswordDTO;
@@ -33,6 +34,9 @@ public class PasswordServiceImpl implements PasswordService {
 
   @Inject
   UserDatasource userDatasource;
+
+  @Inject
+  SignupDatasource signupDatasource;
 
   @ResourcePath("password/reset")
   Template passwordResetTemplate;
@@ -141,14 +145,15 @@ public class PasswordServiceImpl implements PasswordService {
     String email = passwordResetRequest.getEmail();
     String org = passwordResetRequest.getOrg();
     UUID userId = passwordResetRequest.getUserId();
-    Instant lastActive = passwordResetRequest.getCreatedAt().plusDays(1).toInstant();
-    if (Instant.now().isAfter(lastActive)) {
+
+    if (passwordResetRequest.hasExpired()) {
       log.info("Password reset request expired email={} org={} token={}", email, org, token);
       throw Boom.badRequest().message("Password reset request expired").exception();
     }
 
     return pgPool.begin().thenCompose(
         transaction -> passwordDatasource.deleteRequestRequest(transaction, token, email, org)
+            .thenCompose(deleted -> signupDatasource.delete(transaction, email, org, userId))
             .thenCompose(
                 deleted -> create(transaction, userId, email, org, newPassword))
             .thenCompose(created -> transaction.commit())
