@@ -1,6 +1,6 @@
 package com.meemaw.auth.password.model;
 
-import com.meemaw.auth.shared.Expirable;
+import com.meemaw.auth.shared.CanExpire;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor
-public class PasswordResetRequest implements Expirable {
+public class PasswordResetRequest implements CanExpire {
 
   UUID token;
   UUID userId;

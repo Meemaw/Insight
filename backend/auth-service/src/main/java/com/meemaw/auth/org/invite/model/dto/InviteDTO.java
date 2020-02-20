@@ -1,7 +1,7 @@
 package com.meemaw.auth.org.invite.model.dto;
 
 import com.meemaw.auth.org.invite.model.CanInviteSend;
-import com.meemaw.auth.shared.Expirable;
+import com.meemaw.auth.shared.CanExpire;
 import com.meemaw.auth.user.model.UserRole;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -10,7 +10,7 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor
-public class InviteDTO implements CanInviteSend, Expirable {
+public class InviteDTO implements CanInviteSend, CanExpire {
 
   UUID token;
   String email;

@@ -3,7 +3,7 @@ package com.meemaw.auth.shared;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 
-public interface Expirable {
+public interface CanExpire {
 
   OffsetDateTime getCreatedAt();
 
