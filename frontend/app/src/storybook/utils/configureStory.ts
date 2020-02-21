@@ -9,16 +9,16 @@ export type StoryConfiguration<T> = {
   setupMocks?: SetupMocks<T>;
 };
 
-const configureStory = <T, C extends StoryConfiguration<T>>({
+const configureStory = <T, S extends StoryConfiguration<T>>({
   setupMocks,
   decorators: passedDecorators = [],
   ...rest
-}: C): C => {
+}: S): S => {
   const decorators = setupMocks
     ? [...passedDecorators, mockDecorator<T, unknown>(setupMocks)]
     : passedDecorators;
 
-  return { ...rest, decorators, setupMocks } as C;
+  return { ...rest, decorators, setupMocks } as S;
 };
 
 export default configureStory;

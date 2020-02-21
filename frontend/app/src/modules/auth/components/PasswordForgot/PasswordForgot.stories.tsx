@@ -1,0 +1,42 @@
+import React from 'react';
+import fullHeightDecorator from 'storybook/decorators/fullHeightDecorator';
+import configureStory from 'storybook/utils/configureStory';
+import { PasswordApi } from 'api';
+import { mockApiError } from 'test/utils/error';
+
+import PasswordForgot from './PasswordForgot';
+
+export default {
+  title: 'Auth|PasswordForgot',
+  decorators: [fullHeightDecorator],
+};
+
+export const Base = () => {
+  return <PasswordForgot />;
+};
+Base.story = configureStory({
+  setupMocks: sandbox => {
+    return sandbox.stub(PasswordApi, 'forgot').callsFake(_ => {
+      const response = { data: true };
+      return new Promise(resolve => setTimeout(() => resolve(response), 1000));
+    });
+  },
+});
+
+export const WithError = () => {
+  return <PasswordForgot />;
+};
+WithError.story = configureStory({
+  setupMocks: sandbox => {
+    return sandbox.stub(PasswordApi, 'forgot').callsFake(_ => {
+      const error = mockApiError({
+        message: 'Something went wrong. Please try again later.',
+        statusCode: 500,
+        reason: 'Internal Server Error',
+      });
+      return new Promise((_resolve, reject) =>
+        setTimeout(() => reject(error), 1000)
+      );
+    });
+  },
+});

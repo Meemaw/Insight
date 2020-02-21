@@ -42,7 +42,7 @@ public class PgInviteDatasource implements InviteDatasource {
   public CompletionStage<Optional<InviteDTO>> find(Transaction transaction, String email,
       String org, UUID token) {
     return transaction.preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(email, org, token))
-        .thenApply(this::fromRowSet);
+        .thenApply(this::inviteFromRowSet);
   }
 
 
@@ -52,7 +52,7 @@ public class PgInviteDatasource implements InviteDatasource {
   public CompletionStage<List<InviteDTO>> findAll(String org) {
     return pgPool.preparedQuery(FIND_ALL_INVITES_RAW_SQL, Tuple.of(org))
         .thenApply(
-            pgRowSet -> StreamSupport.stream(pgRowSet.spliterator(), false).map(this::fromRow)
+            pgRowSet -> StreamSupport.stream(pgRowSet.spliterator(), false).map(this::inviteFromRow)
                 .collect(Collectors.toList()));
   }
 
@@ -61,8 +61,7 @@ public class PgInviteDatasource implements InviteDatasource {
   @Override
   public CompletionStage<Boolean> delete(UUID token, String org) {
     Tuple values = Tuple.of(token, org);
-    return pgPool.preparedQuery(DELETE_INVITE_RAW_SQL, values)
-        .thenApply(pgRowSet -> true);
+    return pgPool.preparedQuery(DELETE_INVITE_RAW_SQL, values).thenApply(pgRowSet -> true);
   }
 
   private static final String DELETE_ALL_INVITES_RAW_SQL = "DELETE FROM auth.invite WHERE user_email = $1 AND org = $2";
@@ -83,8 +82,8 @@ public class PgInviteDatasource implements InviteDatasource {
     String email = teamInvite.getEmail();
     String org = teamInvite.getOrg();
     UserRole role = teamInvite.getRole();
-    Tuple values = Tuple.of(creator, email, org, role.toString());
 
+    Tuple values = Tuple.of(creator, email, org, role.toString());
     return transaction.preparedQuery(CREATE_INVITE_RAW_SQL, values)
         .thenApply(pgRowSet -> {
           Row row = pgRowSet.iterator().next();
@@ -108,14 +107,14 @@ public class PgInviteDatasource implements InviteDatasource {
         });
   }
 
-  private Optional<InviteDTO> fromRowSet(RowSet<Row> rowSet) {
+  private Optional<InviteDTO> inviteFromRowSet(RowSet<Row> rowSet) {
     if (!rowSet.iterator().hasNext()) {
       return Optional.empty();
     }
-    return Optional.of(fromRow(rowSet.iterator().next()));
+    return Optional.of(inviteFromRow(rowSet.iterator().next()));
   }
 
-  private InviteDTO fromRow(Row row) {
+  private InviteDTO inviteFromRow(Row row) {
     return new InviteDTO(
         row.getUUID("token"),
         row.getString("user_email"),

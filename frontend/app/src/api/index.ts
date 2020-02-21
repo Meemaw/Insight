@@ -6,13 +6,38 @@ export type DataResponse<T> = {
   data: T;
 };
 
-export const login = (email: string, password: string) => {
-  const body = new URLSearchParams();
-  body.set('email', email);
-  body.set('password', password);
-  return ky
-    .post(`${baseURL}/v1/sso/login`, { body, credentials: 'include' })
-    .json();
+export const SsoApi = {
+  login: (email: string, password: string) => {
+    const body = new URLSearchParams();
+    body.set('email', email);
+    body.set('password', password);
+    return ky
+      .post(`${baseURL}/v1/sso/login`, { body, credentials: 'include' })
+      .json();
+  },
+};
+
+export type PasswordResetRequestBase = {
+  email: string;
+  token: string;
+  org: string;
+};
+
+export type PasswordResetRequestDTO = PasswordResetRequestBase & {
+  password: string;
+};
+
+export const PasswordApi = {
+  forgot: (email: string) => {
+    return ky
+      .post(`${baseURL}/v1/password/forgot`, { json: { email } })
+      .json<DataResponse<boolean>>();
+  },
+  reset: (json: PasswordResetRequestDTO) => {
+    return ky
+      .post(`${baseURL}/v1/password/reset`, { json })
+      .json<DataResponse<boolean>>();
+  },
 };
 
 export type SignupRequestDTO = {
@@ -21,20 +46,18 @@ export type SignupRequestDTO = {
   org: string;
 };
 
-export const verifySignup = (signupRequest: SignupRequestDTO) => {
+export const verifySignup = (json: SignupRequestDTO) => {
   const url = `${baseURL}/v1/signup/verify`;
-  return ky.post(url, { json: signupRequest }).json<DataResponse<boolean>>();
+  return ky.post(url, { json }).json<DataResponse<boolean>>();
 };
 
 type CompleteSignupRequestDTO = SignupRequestDTO & {
   password: string;
 };
 
-export const completeSignup = (
-  completeSignupRequest: CompleteSignupRequestDTO
-) => {
+export const completeSignup = (json: CompleteSignupRequestDTO) => {
   return ky
-    .post(`${baseURL}/v1/signup/complete`, { json: completeSignupRequest })
+    .post(`${baseURL}/v1/signup/complete`, { json })
     .json<DataResponse<boolean>>();
 };
 
@@ -99,4 +122,14 @@ export const InviteApi = {
       })
       .json<DataResponse<boolean>>();
   },
+};
+
+export type APIErrorDataResponse = {
+  error: APIError;
+};
+
+export type APIError = {
+  statusCode: number;
+  reason: string;
+  message: string;
 };

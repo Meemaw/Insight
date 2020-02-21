@@ -80,6 +80,22 @@ public class PasswordResourceImplTest {
   }
 
   @Test
+  public void forgot_should_fail_when_empty_email() throws JsonProcessingException {
+    String payload = JacksonMapper.get()
+        .writeValueAsString(new PasswordForgotRequestDTO(""));
+
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(payload)
+        .post(PasswordResource.PATH + "/forgot")
+        .then()
+        .statusCode(400)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"Required\"}}}"));
+  }
+
+  @Test
   public void forgot_should_fail_on_invalid_email() throws JsonProcessingException {
     String payload = JacksonMapper.get()
         .writeValueAsString(new PasswordForgotRequestDTO("notEmail"));

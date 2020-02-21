@@ -1,19 +1,21 @@
 import React from 'react';
 import {
-  render,
   waitForElement,
   waitForElementToBeRemoved,
   wait,
 } from '@testing-library/react';
-import { typeText, clickElement } from 'test/utils';
+import { typeText, clickElement, sandbox, render } from 'test/utils';
 
-import { Base } from './LoginPage.stories';
+import { Base } from './Login.stories';
 
-describe('<LoginPage />', () => {
+describe('<Login />', () => {
   it('Should correctly validate fields', async () => {
-    const { getByPlaceholderText, queryByText, getByText } = render(<Base />);
+    Base.story.setupMocks(sandbox);
+    const { getByPlaceholderText, queryByText, getByText, replace } = render(
+      <Base />
+    );
 
-    const emailInput = getByPlaceholderText('Email');
+    const emailInput = getByPlaceholderText('me@example.com');
 
     typeText(emailInput, 'text');
     await waitForElement(() =>
@@ -40,15 +42,11 @@ describe('<LoginPage />', () => {
       queryByText('Password should be at least 8 characters long.')
     );
 
-    const consoleSpy = jest.spyOn(console, 'log');
-    const submitButton = getByText('Log in');
+    const submitButton = getByText('Sign in');
     clickElement(submitButton);
 
     await wait(() => {
-      expect(consoleSpy).toHaveBeenCalledWith({
-        email: 'ematej.snuderl@gmail.com',
-        password: 'abcdefgh',
-      });
+      sandbox.assert.calledWithExactly(replace, '/');
     });
   });
 });

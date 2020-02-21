@@ -6,6 +6,7 @@ import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteCreateIdentifiedDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteDTO;
 import com.meemaw.auth.user.datasource.UserDatasource;
+import com.meemaw.auth.user.model.UserRole;
 import com.meemaw.shared.rest.response.Boom;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.ReactiveMailer;
@@ -89,8 +90,10 @@ public class InviteServiceImpl implements InviteService {
           }
           return teamInvite;
         })
-        .thenCompose(
-            teamInvite -> userDatasource.createUser(transaction, email, org, teamInvite.getRole()))
+        .thenCompose(teamInvite -> {
+          UserRole role = teamInvite.getRole();
+          return userDatasource.createUser(transaction, email, org, role);
+        })
         .thenCompose(userId -> inviteDatasource.deleteAll(transaction, email, org))
         .thenCompose(deleted -> transaction.commit().thenApply(x -> {
           log.info("Invite accepted user={} org={} token={}", email, org, token);

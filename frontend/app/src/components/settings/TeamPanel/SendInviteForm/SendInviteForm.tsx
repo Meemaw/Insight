@@ -9,7 +9,7 @@ import {
 } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import { InviteApi, UserRole } from 'api';
-import SpacedBetween from 'components/common/flex/SpacedBetween';
+import SpacedBetween from 'shared/components/flex/SpacedBetween';
 
 import useSendInviteForm from './useSendInviteForm';
 import { StyledSendInviteForm } from './elements';

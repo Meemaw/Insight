@@ -9,7 +9,7 @@ import {
   Classes,
 } from '@blueprintjs/core';
 import { TeamInvite, DataResponse } from 'api';
-import VerticalAligned from 'components/common/flex/VerticalAligned';
+import VerticalAligned from 'shared/components/flex/VerticalAligned';
 import { formatDistance } from 'date-fns';
 import { successToast, errorToast } from 'components/common/app/Toaster';
 

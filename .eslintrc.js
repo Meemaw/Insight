@@ -36,6 +36,8 @@ module.exports = {
 
     'lodash/prefer-lodash-method': ['off'],
 
+    'jest/expect-expect': ['off'],
+
     'react/jsx-props-no-spreading': ['off'],
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
     'react/jsx-wrap-multilines': ['off'],

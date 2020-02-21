@@ -13,5 +13,4 @@ public interface CanInviteSend {
 
   UUID getCreator();
 
-
 }
