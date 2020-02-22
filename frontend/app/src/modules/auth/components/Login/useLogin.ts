@@ -1,10 +1,11 @@
-import { SsoApi, APIErrorDataResponse } from 'api';
+import SsoApi from 'api/sso';
 import { useFormik } from 'formik';
 import { emailSchema } from 'validation/email';
 import { passwordSchema } from 'validation/password';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { APIErrorDataResponse } from 'api';
 
 const LoginSchema = Yup.object().shape({
   email: emailSchema,

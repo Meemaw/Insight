@@ -1,5 +1,5 @@
 import React from 'react';
-import { logout } from 'api';
+import SsoApi from 'api/sso';
 import Router from 'next/router';
 import {
   Navbar,
@@ -14,7 +14,7 @@ import {
 
 const AppNavbar = () => {
   const onLogoutClick = async () => {
-    await logout();
+    await SsoApi.logout();
     Router.push('/login');
   };
 

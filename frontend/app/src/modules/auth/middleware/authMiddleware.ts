@@ -1,11 +1,13 @@
+import { OutgoingHttpHeaders } from 'http';
+
 import { NextPageContext } from 'next';
 import nextCookie from 'next-cookies';
 import Router from 'next/router';
-import { session, UserDTO, DataResponse } from 'api';
+import SsoApi from 'api/sso';
+import { UserDTO, DataResponse } from 'api';
 import { isServer } from 'utils/next';
-import { OutgoingHttpHeaders } from 'http';
 
-const auth = async (ctx: NextPageContext) => {
+const authMiddleware = async (ctx: NextPageContext) => {
   const { SessionId } = nextCookie(ctx);
 
   const redirectToLogin = (headers?: OutgoingHttpHeaders) => {
@@ -26,7 +28,7 @@ const auth = async (ctx: NextPageContext) => {
     return undefined;
   }
 
-  const response = await session(SessionId);
+  const response = await SsoApi.session(SessionId);
   if (response.status === 204) {
     const setCookie = response.headers.get('set-cookie');
     return redirectToLogin({ 'set-cookie': setCookie || undefined });
@@ -36,4 +38,4 @@ const auth = async (ctx: NextPageContext) => {
   return dataResponse.data;
 };
 
-export default auth;
+export default authMiddleware;

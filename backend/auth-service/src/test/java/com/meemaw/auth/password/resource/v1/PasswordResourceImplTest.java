@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meemaw.auth.password.model.dto.PasswordForgotRequestDTO;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
+import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResource;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.Postgres;
@@ -227,6 +228,30 @@ public class PasswordResourceImplTest {
             "{\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Password reset request not found\"}}"));
   }
 
+  @Test
+  public void reset_exists_should_fail_when_no_payload() {
+    given()
+        .when()
+        .get(PasswordResource.PATH + "/reset/exists")
+        .then()
+        .statusCode(400)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg2\":\"token is required\",\"arg1\":\"org is required\",\"arg0\":\"email is required\"}}}"));
+  }
+
+  @Test
+  public void reset_exists_should_return_false_when_missing_params() {
+    given()
+        .when()
+        .queryParam("email", "test@gmail.com")
+        .queryParam("org", "random")
+        .queryParam("token", "4f113105-94d9-4470-8621-0e633fa4697")
+        .get(PasswordResource.PATH + "/reset/exists")
+        .then()
+        .statusCode(200)
+        .body(sameJson("{\"data\":false}"));
+  }
+
 
   @Test
   public void reset_flow_should_succeed_after_signup() throws JsonProcessingException {
@@ -266,19 +291,31 @@ public class PasswordResourceImplTest {
     emailMatcher.matches();
     String email = emailMatcher.group(1);
 
+    // reset request should exist
+    given()
+        .when()
+        .queryParam("email", email)
+        .queryParam("org", orgId)
+        .queryParam("token", token)
+        .get(PasswordResource.PATH + "/reset/exists")
+        .then()
+        .statusCode(200)
+        .body(sameJson("{\"data\":true}"));
+
     String newPassword = "superDuperNewFancyPassword";
     String resetPasswordPayload = JacksonMapper.get()
         .writeValueAsString(
             new PasswordResetRequestDTO(email, orgId, UUID.fromString(token), newPassword));
 
+    // successful reset should login the user
     given()
         .when()
         .contentType(MediaType.APPLICATION_JSON)
         .body(resetPasswordPayload)
         .post(PasswordResource.PATH + "/reset")
         .then()
-        .statusCode(200)
-        .body(sameJson("{\"data\":true}"));
+        .statusCode(204)
+        .cookie(SsoSession.COOKIE_NAME);
 
     // login with "oldPassword" should fail
     given()
@@ -300,7 +337,8 @@ public class PasswordResourceImplTest {
         .param("password", newPassword)
         .post(SsoResource.PATH + "/login")
         .then()
-        .statusCode(204);
+        .statusCode(204)
+        .cookie(SsoSession.COOKIE_NAME);
 
     // trying to do the rest with same params again should fail
     given()

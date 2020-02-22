@@ -1,7 +1,8 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { emailSchema } from 'validation/email';
-import { PasswordApi, APIErrorDataResponse } from 'api';
+import { APIErrorDataResponse } from 'api';
+import PasswordApi from 'api/password';
 import { useState } from 'react';
 
 const PasswordForgotSchema = Yup.object().shape({

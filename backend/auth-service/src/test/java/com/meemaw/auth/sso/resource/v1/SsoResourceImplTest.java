@@ -4,6 +4,7 @@ import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.meemaw.auth.signup.resource.v1.SignupResource;
 import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.user.model.UserDTO;
@@ -81,6 +82,29 @@ public class SsoResourceImplTest {
         .when()
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .param("email", "test@gmail.com")
+        .param("password", "superFancyPassword")
+        .post(SsoResource.PATH + "/login")
+        .then()
+        .statusCode(400)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Invalid email or password\"}}"));
+  }
+
+  @Test
+  public void login_should_fail_when_user_with_unfinished_signup() {
+    String signupEmail = "login-no-complete@gmail.com";
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        .param("email", signupEmail)
+        .post(SignupResource.PATH)
+        .then()
+        .statusCode(200);
+
+    given()
+        .when()
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        .param("email", signupEmail)
         .param("password", "superFancyPassword")
         .post(SsoResource.PATH + "/login")
         .then()

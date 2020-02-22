@@ -2,11 +2,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { passwordSchema } from 'validation/password';
 import { useState } from 'react';
-import {
-  PasswordApi,
-  APIErrorDataResponse,
-  PasswordResetRequestBase,
-} from 'api';
+import { APIErrorDataResponse } from 'api';
+import PasswordApi, { PasswordResetRequestBase } from 'api/password';
 import { useRouter } from 'next/router';
 
 const PasswordResetSchema = Yup.object().shape({

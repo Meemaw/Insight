@@ -17,5 +17,6 @@ public interface PasswordService {
   CompletionStage<Boolean> create(Transaction transaction, UUID userId, String email, String org,
       String password);
 
+  CompletionStage<Boolean> resetRequestExists(String email, String org, UUID token);
 
 }

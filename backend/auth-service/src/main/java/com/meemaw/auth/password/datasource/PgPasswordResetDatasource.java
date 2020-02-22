@@ -1,7 +1,6 @@
 package com.meemaw.auth.password.datasource;
 
 import com.meemaw.auth.password.model.PasswordResetRequest;
-import com.meemaw.shared.rest.exception.DatabaseException;
 import io.vertx.axle.pgclient.PgPool;
 import io.vertx.axle.sqlclient.Row;
 import io.vertx.axle.sqlclient.RowSet;
@@ -55,21 +54,16 @@ public class PgPasswordResetDatasource implements PasswordResetDatasource {
         });
   }
 
+  @Override
+  public CompletionStage<Boolean> exists(String email, String org, UUID token) {
+    return find(token, email, org).thenApply(Optional::isPresent);
+  }
+
   private Optional<PasswordResetRequest> resetRequestFromRowSet(RowSet<Row> rowSet) {
     if (!rowSet.iterator().hasNext()) {
       return Optional.empty();
     }
-    return Optional.of(resetRequestFromRow(rowSet.iterator().next()));
-  }
-
-  private PasswordResetRequest resetRequestFromRow(Row row) {
-    return new PasswordResetRequest(
-        row.getUUID("token"),
-        row.getUUID("user_id"),
-        row.getString("email"),
-        row.getString("org"),
-        row.getOffsetDateTime("created_at")
-    );
+    return Optional.of(PasswordResetRequest.fromSqlRow(rowSet.iterator().next()));
   }
 
 }

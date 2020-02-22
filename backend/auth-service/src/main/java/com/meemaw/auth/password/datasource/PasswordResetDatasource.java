@@ -14,4 +14,6 @@ public interface PasswordResetDatasource {
 
   CompletionStage<PasswordResetRequest> create(Transaction transaction, String email, UUID userId,
       String org);
+
+  CompletionStage<Boolean> exists(String email, String org, UUID token);
 }

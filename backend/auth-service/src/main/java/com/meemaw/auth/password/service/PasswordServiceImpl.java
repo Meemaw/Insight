@@ -62,8 +62,8 @@ public class PasswordServiceImpl implements PasswordService {
 
           String hashedPassword = withPassword.getPassword();
           if (hashedPassword == null) {
-            log.info("User {} unfinished sign up", email);
-            throw new BoomException(Boom.badRequest().message("Invalid email or password"));
+            log.info("Could not associate password with user={}", email);
+            throw Boom.badRequest().message("Invalid email or password").exception();
           }
 
           if (!BCrypt.checkpw(password, hashedPassword)) {
@@ -172,8 +172,13 @@ public class PasswordServiceImpl implements PasswordService {
 
     return passwordDatasource.create(transaction, userId, hashedPassword)
         .thenApply(x -> {
-          log.info("signup complete email={} userId={} org={}", email, userId, org);
+          log.info("Password stored email={} userId={} org={}", email, userId, org);
           return true;
         });
+  }
+
+  @Override
+  public CompletionStage<Boolean> resetRequestExists(String email, String org, UUID token) {
+    return passwordResetDatasource.exists(email, org, token);
   }
 }

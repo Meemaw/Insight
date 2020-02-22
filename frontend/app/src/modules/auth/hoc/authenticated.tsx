@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { UserDTO } from 'api';
-import authMiddleware from 'middleware/auth';
+import authMiddleware from 'modules/auth/middleware/authMiddleware';
 import { NextPageContext, NextComponentType } from 'next';
 
 type WithAuthProps = {
