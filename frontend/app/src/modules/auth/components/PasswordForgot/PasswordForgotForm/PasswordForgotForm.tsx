@@ -2,7 +2,7 @@ import React from 'react';
 import { Intent, FormGroup, InputGroup, Button, H3 } from '@blueprintjs/core';
 import Link from 'next/link';
 
-import { PasswordForgotFormConfig } from './usePasswordForgot';
+import { PasswordForgotFormConfig } from '../usePasswordForgot';
 
 type Props = Pick<
   PasswordForgotFormConfig,

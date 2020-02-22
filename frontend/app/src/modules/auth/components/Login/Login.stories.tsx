@@ -17,7 +17,7 @@ Base.story = configureStory({
   setupMocks: sandbox => {
     return sandbox.stub(SsoApi, 'login').callsFake(_ => {
       const response = { data: true };
-      return new Promise(resolve => setTimeout(() => resolve(response), 1000));
+      return new Promise(resolve => setTimeout(() => resolve(response), 250));
     });
   },
 });
@@ -36,7 +36,7 @@ WithError.story = configureStory({
       });
 
       return new Promise((_resolve, reject) =>
-        setTimeout(() => reject(error), 1000)
+        setTimeout(() => reject(error), 250)
       );
     });
   },
