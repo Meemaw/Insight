@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
-import { InviteApi, UserRole } from 'api';
+import InviteApi, { UserRole } from 'api/invite';
 import { errorToast, successToast } from 'components/common/app/Toaster';
-import { emailSchema } from 'validation/email';
+import { emailSchema } from 'modules/auth/validation/email';
 import * as Yup from 'yup';
 
 type HTTPError = {

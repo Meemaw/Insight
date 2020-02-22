@@ -1,6 +1,6 @@
 import React from 'react';
 import { NextPageContext } from 'next';
-import { isServer } from 'utils/next';
+import { isServer } from 'shared/utils/next';
 import Router from 'next/router';
 
 type Props = {

@@ -1,16 +1,16 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { passwordSchema } from 'modules/auth/validation/password';
-import { useState } from 'react';
+import SignupApi, { SignupRequestDTO } from 'api/signup';
 import { APIErrorDataResponse } from 'api';
-import PasswordApi, { PasswordResetRequestBase } from 'api/password';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-const PasswordResetSchema = Yup.object().shape({
+const CompleteSignupSchema = Yup.object().shape({
   password: passwordSchema,
 });
 
-const usePasswordReset = (props: PasswordResetRequestBase) => {
+const useCompleteSignup = (signupRequest: SignupRequestDTO) => {
   const router = useRouter();
   const [formError, setFormError] = useState<string | undefined>();
 
@@ -19,7 +19,7 @@ const usePasswordReset = (props: PasswordResetRequestBase) => {
       password: '',
     },
     onSubmit: (values, { setSubmitting }) => {
-      PasswordApi.reset({ ...props, password: values.password })
+      SignupApi.complete({ ...signupRequest, password: values.password })
         .then(_ => router.replace('/'))
         .catch(async error => {
           const errorDTO: APIErrorDataResponse = await error.response.json();
@@ -27,10 +27,10 @@ const usePasswordReset = (props: PasswordResetRequestBase) => {
         })
         .finally(() => setSubmitting(false));
     },
-    validationSchema: PasswordResetSchema,
+    validationSchema: CompleteSignupSchema,
   });
 
-  return { formError, ...formik };
+  return { ...formik, formError };
 };
 
-export default usePasswordReset;
+export default useCompleteSignup;

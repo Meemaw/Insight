@@ -5,7 +5,7 @@ import nextCookie from 'next-cookies';
 import Router from 'next/router';
 import SsoApi from 'api/sso';
 import { UserDTO, DataResponse } from 'api';
-import { isServer } from 'utils/next';
+import { isServer } from 'shared/utils/next';
 
 const authMiddleware = async (ctx: NextPageContext) => {
   const { SessionId } = nextCookie(ctx);

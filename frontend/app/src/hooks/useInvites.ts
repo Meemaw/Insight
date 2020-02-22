@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import useSWR, { mutate } from 'swr';
-import { InviteApi, TeamInvite, UserRole } from 'api';
+import InviteApi, { TeamInvite, UserRole } from 'api/invite';
 
 const cacheKey = '/v1/org/invites';
 const EMPTY_LIST: TeamInvite[] = [];

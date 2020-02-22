@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { emailSchema } from 'validation/email';
+import { emailSchema } from 'modules/auth/validation/email';
 import { APIErrorDataResponse } from 'api';
 import PasswordApi from 'api/password';
 import { useState } from 'react';

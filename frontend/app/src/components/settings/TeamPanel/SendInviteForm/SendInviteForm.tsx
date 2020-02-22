@@ -8,7 +8,7 @@ import {
   FormGroup,
 } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
-import { InviteApi, UserRole } from 'api';
+import InviteApi, { UserRole } from 'api/invite';
 import SpacedBetween from 'shared/components/flex/SpacedBetween';
 
 import useSendInviteForm from './useSendInviteForm';

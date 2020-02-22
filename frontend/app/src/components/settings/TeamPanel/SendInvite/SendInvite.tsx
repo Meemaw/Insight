@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Popover, Button, Intent } from '@blueprintjs/core';
-import { InviteApi, UserRole } from 'api';
+import InviteApi, { UserRole } from 'api/invite';
 
 import SendInviteForm from '../SendInviteForm';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import useInvites from 'hooks/useInvites';
-import { InviteApi } from 'api';
+import InviteApi from 'api/invite';
 import SpacedBetween from 'shared/components/flex/SpacedBetween';
 import { H3 } from '@blueprintjs/core';
 

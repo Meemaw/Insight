@@ -1,6 +1,6 @@
 import React from 'react';
 import configureStory from 'storybook/utils/configureStory';
-import { InviteApi } from 'api';
+import InviteApi from 'api/invite';
 import uuid from 'uuid';
 
 import TeamPanel from './TeamPanel';

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { useState } from 'react';
-import authenticated from 'hoc/auth';
+import authenticated from 'modules/auth/hoc/authenticated';
 import AppLayout from 'components/common/app/Layout';
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import dynamic from 'next/dynamic';

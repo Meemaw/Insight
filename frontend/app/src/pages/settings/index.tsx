@@ -1,7 +1,7 @@
 import React from 'react';
 import Router from 'next/router';
 import { NextPageContext } from 'next';
-import { isServer } from 'utils/next';
+import { isServer } from 'shared/utils/next';
 
 const Settings = () => {
   return <div />;

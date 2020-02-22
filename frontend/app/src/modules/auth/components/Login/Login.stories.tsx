@@ -1,6 +1,6 @@
 import React from 'react';
 import fullHeightDecorator from 'storybook/decorators/fullHeightDecorator';
-import { SsoApi } from 'api';
+import SsoApi from 'api/sso';
 import configureStory from 'storybook/utils/configureStory';
 
 import Login from './Login';

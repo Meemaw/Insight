@@ -9,6 +9,7 @@ import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.password.resource.v1.PasswordResource;
 import com.meemaw.auth.password.resource.v1.PasswordResourceImplTest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
+import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.Postgres;
@@ -243,8 +244,8 @@ public class SignupResourceImplTest {
         .body(resetPasswordPayload)
         .post(PasswordResource.PATH + "/reset")
         .then()
-        .statusCode(200)
-        .body(sameJson("{\"data\":true}"));
+        .statusCode(204)
+        .cookie(SsoSession.COOKIE_NAME);
 
     // should be able to login with the password
     SsoResourceImplTest.login(signupEmail, password);
@@ -330,8 +331,8 @@ public class SignupResourceImplTest {
         .body(body)
         .post(SignupResource.PATH + "/complete")
         .then()
-        .statusCode(200)
-        .body(sameJson("{\"data\":true}"));
+        .statusCode(204)
+        .cookie(SsoSession.COOKIE_NAME);
   }
 
 

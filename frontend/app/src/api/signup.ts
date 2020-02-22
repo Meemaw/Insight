@@ -5,7 +5,7 @@ import { baseURL, DataResponse } from './base';
 
 export type SignupRequestDTO = PasswordResetRequestBase;
 
-type CompleteSignupRequestDTO = SignupRequestDTO & {
+export type CompleteSignupRequestDTO = SignupRequestDTO & {
   password: string;
 };
 

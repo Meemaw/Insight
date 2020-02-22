@@ -1,5 +1,5 @@
 import React from 'react';
-import { InviteApi, TeamInvite } from 'api';
+import InviteApi, { TeamInvite } from 'api/invite';
 
 import InviteRow from '../InviteRow';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import fullHeightDecorator from 'storybook/decorators/fullHeightDecorator';
 import configureStory from 'storybook/utils/configureStory';
-import { PasswordApi } from 'api';
+import PasswordApi from 'api/password';
 import { mockApiError } from 'test/utils/error';
 
 import PasswordReset from './PasswordReset';
