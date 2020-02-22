@@ -28,6 +28,7 @@ const useLogin = (dest: string) => {
       SsoApi.login(values.email, values.password)
         .then(_ => router.replace(decodeURIComponent(dest)))
         .catch(async error => {
+          console.log({ error, response: error.response });
           const errorDTO: APIErrorDataResponse = await error.response.json();
           setFormError(errorDTO.error.message);
         })
