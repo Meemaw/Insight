@@ -11,7 +11,7 @@ export default {
 };
 
 export const Base = () => {
-  return <Login />;
+  return <Login dest={encodeURIComponent('/')} />;
 };
 Base.story = configureStory({
   setupMocks: sandbox => {
@@ -22,8 +22,20 @@ Base.story = configureStory({
   },
 });
 
+export const CustomDest = () => {
+  return <Login dest={encodeURIComponent('/settings/general')} />;
+};
+CustomDest.story = configureStory({
+  setupMocks: sandbox => {
+    return sandbox.stub(SsoApi, 'login').callsFake(_ => {
+      const response = { data: true };
+      return new Promise(resolve => setTimeout(() => resolve(response), 250));
+    });
+  },
+});
+
 export const WithError = () => {
-  return <Login />;
+  return <Login dest={encodeURIComponent('/')} />;
 };
 WithError.story = configureStory({
   setupMocks: sandbox => {

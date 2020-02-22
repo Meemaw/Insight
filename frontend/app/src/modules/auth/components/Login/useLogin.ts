@@ -13,7 +13,7 @@ const LoginSchema = Yup.object().shape({
   rememberMe: Yup.boolean().required(),
 });
 
-const useLogin = () => {
+const useLogin = (dest: string) => {
   const router = useRouter();
   const [formError, setFormError] = useState<string | undefined>();
 
@@ -26,7 +26,7 @@ const useLogin = () => {
     onSubmit: (values, { setSubmitting }) => {
       setFormError(undefined);
       SsoApi.login(values.email, values.password)
-        .then(_ => router.replace('/'))
+        .then(_ => router.replace(decodeURIComponent(dest)))
         .catch(async error => {
           const errorDTO: APIErrorDataResponse = await error.response.json();
           setFormError(errorDTO.error.message);

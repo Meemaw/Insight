@@ -14,7 +14,11 @@ import Link from 'next/link';
 import useLogin from './useLogin';
 import { StyledLogin } from './elements';
 
-const Login = () => {
+type Props = {
+  dest: string;
+};
+
+const Login = ({ dest }: Props) => {
   const {
     handleSubmit,
     handleChange,
@@ -22,7 +26,7 @@ const Login = () => {
     errors,
     isSubmitting,
     formError,
-  } = useLogin();
+  } = useLogin(dest);
 
   return (
     <StyledLogin className={Classes.DARK}>

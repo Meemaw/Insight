@@ -6,7 +6,7 @@ import {
 } from '@testing-library/react';
 import { typeText, clickElement, sandbox, render } from 'test/utils';
 
-import { Base, WithError } from './Login.stories';
+import { Base, CustomDest, WithError } from './Login.stories';
 
 describe('<Login />', () => {
   it('Should be able to successfully login', async () => {
@@ -49,6 +49,28 @@ describe('<Login />', () => {
 
     await wait(() => {
       sandbox.assert.calledWithExactly(replace, '/');
+      sandbox.assert.calledWithExactly(loginStub, email, password);
+    });
+  });
+
+  it('Should redirect to custom dest', async () => {
+    const loginStub = CustomDest.story.setupMocks(sandbox);
+    const { getByPlaceholderText, getByText, replace } = render(<CustomDest />);
+
+    const emailInput = getByPlaceholderText('me@example.com');
+    const passwordInput = getByPlaceholderText('Password');
+
+    const email = 'login@gmail.com';
+    const password = 'abcdefgh';
+
+    typeText(emailInput, email);
+    typeText(passwordInput, password);
+
+    const submitButton = getByText('Sign in');
+    clickElement(submitButton);
+
+    await wait(() => {
+      sandbox.assert.calledWithExactly(replace, '/settings/general');
       sandbox.assert.calledWithExactly(loginStub, email, password);
     });
   });

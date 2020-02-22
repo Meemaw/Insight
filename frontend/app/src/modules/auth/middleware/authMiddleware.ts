@@ -8,10 +8,11 @@ import { UserDTO, DataResponse } from 'api';
 import { isServer } from 'shared/utils/next';
 
 const authMiddleware = async (ctx: NextPageContext) => {
+  const { pathname } = ctx;
   const { SessionId } = nextCookie(ctx);
 
   const redirectToLogin = (headers?: OutgoingHttpHeaders) => {
-    const Location = '/login';
+    const Location = `/login?dest=${encodeURIComponent(pathname)}`;
     if (isServer(ctx)) {
       ctx.res.writeHead(302, { Location, ...headers });
       ctx.res.end();
