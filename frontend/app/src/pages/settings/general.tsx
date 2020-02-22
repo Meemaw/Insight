@@ -4,8 +4,14 @@ import authenticated from 'modules/auth/hoc/authenticated';
 import AppLayout from 'components/common/app/Layout';
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import dynamic from 'next/dynamic';
+import styled from 'styled-components';
 
-import { StyledGeneralSettingsSection } from './elements';
+const StyledGeneralSettingsSection = styled.div`
+  .bp3-tab-panel {
+    width: 100%;
+    padding: 16px;
+  }
+`;
 
 const LazySetupPanel = dynamic(() => import('components/settings/SetupPanel'));
 const LazyTeamPanel = dynamic(() => import('components/settings/TeamPanel'));

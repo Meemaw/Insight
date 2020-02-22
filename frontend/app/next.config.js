@@ -1,8 +1,11 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 
-module.exports = {
+module.exports = withBundleAnalyzer({
   // Required for absolute imports in Next.js
   webpack: (config, _config) => {
     if (config.resolve.plugins) {
@@ -13,4 +16,4 @@ module.exports = {
 
     return config;
   },
-};
+});

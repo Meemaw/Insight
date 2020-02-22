@@ -19,7 +19,10 @@
     "lint": "concurrently \"npm run prettier\" \"npm run eslint\"",
     "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
     "prettier": "prettier -l 'src/**/*'",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.23.1",
@@ -36,6 +39,7 @@
     "yup": "^0.28.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^9.2.2",
     "@storybook/addon-actions": "^5.3.13",
     "@storybook/react": "5.3.13",
     "@testing-library/jest-dom": "^5.1.1",
@@ -49,6 +53,7 @@
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
     "babel-plugin-styled-components": "^1.10.7",
+    "cross-env": "^7.0.0",
     "sinon": "^9.0.0",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "uuid": "^3.4.0"
