@@ -11,7 +11,7 @@ import {
 import { TeamInvite, DataResponse } from 'api';
 import VerticalAligned from 'shared/components/flex/VerticalAligned';
 import { formatDistance } from 'date-fns';
-import { successToast, errorToast } from 'components/common/app/Toaster';
+import { successToast, errorToast } from 'modules/app/helpers/toast';
 
 import { startCase } from '../SendInviteForm/SendInviteForm';
 

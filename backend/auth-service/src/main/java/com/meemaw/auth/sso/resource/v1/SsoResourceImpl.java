@@ -18,6 +18,7 @@ public class SsoResourceImpl implements SsoResource {
   @Inject
   SsoService ssoService;
 
+
   @Override
   public CompletionStage<Response> login(String email, String password) {
     return ssoService.login(email, password)

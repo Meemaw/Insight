@@ -13,4 +13,6 @@ public interface SsoService {
   CompletionStage<Boolean> logout(String sessionId);
 
   CompletionStage<String> login(String email, String password);
+
+  CompletionStage<String> socialLogin(String email);
 }

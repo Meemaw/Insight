@@ -1,10 +1,15 @@
 import React from 'react';
 import authenticated from 'modules/auth/hoc/authenticated';
-import AppLayout from 'components/common/app/Layout';
+import AppLayout from 'modules/app/components/Layout';
+import { BaseRouter } from 'next/dist/next-server/lib/router/router';
 
-const Home = () => {
+type Props = {
+  url: BaseRouter;
+};
+
+const Home = ({ url }: Props) => {
   return (
-    <AppLayout>
+    <AppLayout pathname={url.pathname}>
       <div>Home</div>
     </AppLayout>
   );

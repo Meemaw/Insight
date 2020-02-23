@@ -10,6 +10,7 @@ import {
   Divider,
 } from '@blueprintjs/core';
 import Link from 'next/link';
+import { baseURL as apiBaseUrl } from 'api/base';
 
 import useLogin from './useLogin';
 import { StyledLogin } from './elements';
@@ -34,7 +35,9 @@ const Login = ({ dest }: Props) => {
         <H3 style={{ textAlign: 'center' }}>Insight</H3>
 
         <div className="sso">
-          <Button large>Sign in with Google</Button>
+          <a href={`${apiBaseUrl}/v1/sso/google/signin?dest=${dest}`}>
+            <Button large>Sign in with Google</Button>
+          </a>
         </div>
 
         <Divider style={{ marginBottom: 24 }} />

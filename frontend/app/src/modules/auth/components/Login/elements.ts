@@ -17,6 +17,11 @@ export const StyledLogin = styled(AuthLayout)`
     .sso {
       margin: 32px 0;
 
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
       button {
         background-color: ${Colors.INDIGO1} !important;
       }

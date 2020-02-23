@@ -17,6 +17,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-mailer'
     implementation 'org.mindrot:jbcrypt:0.4'
     implementation 'com.hazelcast:hazelcast:4.0'
+    implementation 'com.google.api-client:google-api-client:1.30.8'
     implementation project(":shared")
 
     testImplementation project(":testing-utils")

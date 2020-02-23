@@ -2,6 +2,7 @@ package com.meemaw.auth.signup.model;
 
 import java.util.UUID;
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Data

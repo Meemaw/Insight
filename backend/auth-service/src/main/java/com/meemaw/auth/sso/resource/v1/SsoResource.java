@@ -46,5 +46,4 @@ public interface SsoResource {
   CompletionStage<Response> me(
       @NotNull(message = "SessionId may not be blank") @CookieParam(SsoSession.COOKIE_NAME) String sessionId);
 
-
 }

@@ -8,7 +8,12 @@ const AuthLayout = styled(Centered)`
   background: ${Colors.DARK_GRAY4};
 
   form {
-    width: 25%;
+    max-width: 600px;
+    width: 100%;
+
+    @media screen and (max-width: 616px) {
+      padding: 16px;
+    }
 
     input,
     button {

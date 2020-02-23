@@ -11,7 +11,7 @@ const LoginPage = ({ dest }: Props) => {
 };
 
 LoginPage.getInitialProps = (ctx: NextPageContext) => {
-  const { dest } = ctx.query;
+  const { dest = encodeURIComponent('/') } = ctx.query;
   return { dest };
 };
 
