@@ -9,6 +9,11 @@ const NAVIGATION_ITEMS = [
     tooltipContent: 'Insights',
     icon: 'predictive-analysis' as IconName,
   },
+  {
+    to: '/segments',
+    tooltipContent: 'Segments',
+    icon: 'pie-chart' as IconName,
+  },
 ];
 
 type NavigationItem = typeof NAVIGATION_ITEMS[number];

@@ -1,9 +1,11 @@
 import React from 'react';
-import { Navbar, NavbarGroup, Alignment, Classes } from '@blueprintjs/core';
+import { NavbarGroup, Classes } from '@blueprintjs/core';
 
 import Account from './Account';
-import GlobalSearch from './GlobalSearch';
 import Navigation from './Navigation';
+import Logo from './Logo';
+import { StyledNavbar } from './elements';
+import GlobalSearch from './GlobalSearch';
 
 type Props = {
   pathname: string;
@@ -11,19 +13,22 @@ type Props = {
 
 const AppNavbar = ({ pathname }: Props) => {
   return (
-    <Navbar className={Classes.DARK}>
-      <NavbarGroup align={Alignment.LEFT}>
+    <StyledNavbar className={Classes.DARK}>
+      <NavbarGroup className="left">
+        <div className="logo-container">
+          <Logo />
+        </div>
         <GlobalSearch />
       </NavbarGroup>
 
-      <NavbarGroup style={{ marginLeft: 32 }}>
+      <NavbarGroup className="center">
         <Navigation pathname={pathname} />
       </NavbarGroup>
 
-      <NavbarGroup align={Alignment.RIGHT}>
+      <NavbarGroup className="right">
         <Account />
       </NavbarGroup>
-    </Navbar>
+    </StyledNavbar>
   );
 };
 

@@ -7,5 +7,5 @@ export default {
 };
 
 export const Base = () => {
-  return <AppNavbar />;
+  return <AppNavbar pathname="/" />;
 };
