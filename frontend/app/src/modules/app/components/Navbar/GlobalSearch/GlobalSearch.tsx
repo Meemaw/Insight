@@ -1,17 +1,31 @@
-import React, { useEffect } from 'react';
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import React, { useEffect, useCallback } from 'react';
 import { InputGroup, Popover, Tag } from '@blueprintjs/core';
 import useFocus from 'shared/hooks/useFocus';
 
 const GlobalSearch = () => {
-  const [callbackRef, inputRef, focusActive] = useFocus<HTMLInputElement>();
-  const width = focusActive ? 420 : 280;
+  const [active, onInputRef, inputRef] = useFocus<HTMLInputElement>();
+  const width = active ? 420 : 280;
+
+  const focus = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const blur = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
+  }, []);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (event.keyCode === 191 && inputRef.current) {
+      if (event.keyCode === 191) {
         event.stopPropagation();
         event.preventDefault();
-        inputRef.current.focus();
+        focus();
       }
     };
 
@@ -22,30 +36,44 @@ const GlobalSearch = () => {
     };
   });
 
+  const content = (
+    <ul style={{ width, margin: 0 }}>
+      {[1, 2, 3, 4, 5].map(item => {
+        return (
+          <li
+            onMouseDown={event => {
+              event.preventDefault();
+            }}
+            onClick={blur}
+            key={item}
+            style={{
+              padding: 16,
+              margin: 0,
+              cursor: 'pointer',
+              listStyle: 'none',
+            }}
+          >
+            item
+          </li>
+        );
+      })}
+    </ul>
+  );
+
   return (
     <Popover
-      isOpen={focusActive}
-      content={
-        <div style={{ width }}>
-          {[1, 2, 3, 4, 5].map(item => {
-            return (
-              <div key={item} style={{ padding: 16, cursor: 'pointer' }}>
-                item
-              </div>
-            );
-          })}
-        </div>
-      }
+      isOpen={active}
+      content={content}
       modifiers={{ arrow: { enabled: false } }}
       usePortal={false}
     >
       <InputGroup
         style={{ width, transition: 'width 0.2s ease' }}
-        inputRef={callbackRef}
+        inputRef={onInputRef}
         placeholder="Search Insights ..."
         leftIcon="search"
         rightElement={
-          <Tag minimal style={{ textAlign: 'center' }}>
+          <Tag minimal style={{ textAlign: 'center' }} onClick={focus}>
             /
           </Tag>
         }
@@ -54,4 +82,4 @@ const GlobalSearch = () => {
   );
 };
 
-export default GlobalSearch;
+export default React.memo(GlobalSearch);

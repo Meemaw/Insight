@@ -7,44 +7,41 @@ import {
 } from 'react';
 
 type UseElementStateOptions = {
-  initialValue?: boolean;
-  truthyEventType: 'focus' | 'mouseover';
-  falsyEventType: 'blur' | 'mouseout';
+  on: 'focus' | 'mouseover';
+  off: 'blur' | 'mouseout';
+  initialState?: boolean;
 };
 
-function useElementState<T extends Element>({
-  truthyEventType,
-  falsyEventType,
-  initialValue = false,
-}: UseElementStateOptions): [
-  (node: T | null) => void,
-  RefObject<T | null>,
-  boolean
-] {
-  const [value, setValue] = useState(initialValue);
-  const ref = useRef<T>(null) as MutableRefObject<T>;
+type ElementState<T> = [boolean, (node: T | null) => void, RefObject<T | null>];
 
-  const handleTruthy = () => setValue(true);
-  const handleFalsy = () => setValue(false);
+function useElementState<T extends Element>({
+  on,
+  off,
+  initialState = false,
+}: UseElementStateOptions): ElementState<T> {
+  const [value, setValue] = useState(initialState);
+  const ref = useRef<T>(null) as MutableRefObject<T>;
+  const setOn = useCallback(() => setValue(true), [setValue]);
+  const setOff = useCallback(() => setValue(false), [setValue]);
 
   const callbackRef = useCallback(
     node => {
       if (ref.current != null) {
-        ref.current.removeEventListener(truthyEventType, handleTruthy);
-        ref.current.removeEventListener(falsyEventType, handleFalsy);
+        ref.current.removeEventListener(on, setOn);
+        ref.current.removeEventListener(off, setOff);
       }
 
       ref.current = node;
 
       if (ref.current != null) {
-        ref.current.addEventListener(truthyEventType, handleTruthy);
-        ref.current.addEventListener(falsyEventType, handleFalsy);
+        ref.current.addEventListener(on, setOn);
+        ref.current.addEventListener(off, setOff);
       }
     },
-    [truthyEventType, falsyEventType]
+    [on, off]
   );
 
-  return [callbackRef, ref, value];
+  return [value, callbackRef, ref];
 }
 
 export default useElementState;

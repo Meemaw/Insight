@@ -2,7 +2,7 @@ import React from 'react';
 import { IconName, Tabs, Tab, Tooltip, Icon } from '@blueprintjs/core';
 import Link from 'next/link';
 
-const NAVIGATION_ITEMS = [
+export const NAVIGATION_ITEMS = [
   { to: '/', tooltipContent: 'Home', icon: 'home' as IconName },
   {
     to: '/insights',

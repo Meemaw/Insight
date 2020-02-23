@@ -6,6 +6,10 @@ export default {
   title: 'App|Navbar',
 };
 
-export const Base = () => {
+export const Home = () => {
   return <AppNavbar pathname="/" />;
+};
+
+export const Insights = () => {
+  return <AppNavbar pathname="/insights" />;
 };
