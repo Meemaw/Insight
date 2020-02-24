@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 public class InviteAcceptTest {
 
+
   @Test
   public void dtoJacksonSerialization() throws JsonProcessingException {
     UUID token = UUID.fromString("bc2a1cc5-62ed-45a2-b7a6-70520dadc33b");

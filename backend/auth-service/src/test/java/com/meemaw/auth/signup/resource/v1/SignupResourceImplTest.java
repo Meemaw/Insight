@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.password.resource.v1.PasswordResource;
 import com.meemaw.auth.password.resource.v1.PasswordResourceImplTest;
@@ -41,6 +42,9 @@ public class SignupResourceImplTest {
 
   @Inject
   MockMailbox mailbox;
+
+  @Inject
+  ObjectMapper objectMapper;
 
   @BeforeEach
   void init() {
@@ -193,7 +197,7 @@ public class SignupResourceImplTest {
     String signupEmail = "test@gmail.com";
     String signupPassword = "superDuperPassword";
 
-    signup(mailbox, signupEmail, signupPassword);
+    signup(mailbox, objectMapper, signupEmail, signupPassword);
 
     // should be able to login with the newly created account
     SsoResourceImplTest.login(signupEmail, signupPassword);
@@ -213,7 +217,7 @@ public class SignupResourceImplTest {
         .then()
         .statusCode(200);
 
-    PasswordResourceImplTest.passwordForgot(signupEmail);
+    PasswordResourceImplTest.passwordForgot(signupEmail, objectMapper);
 
     List<Mail> sent = mailbox.getMessagesSentTo(signupEmail);
     assertEquals(2, sent.size());
@@ -233,10 +237,9 @@ public class SignupResourceImplTest {
     String passwordResetEmail = emailMatcher.group(1);
 
     String password = "superDuperPassword";
-    String resetPasswordPayload = JacksonMapper.get()
-        .writeValueAsString(
-            new PasswordResetRequestDTO(passwordResetEmail, passwordResetOrgId,
-                UUID.fromString(passwordResetToken), password));
+    String resetPasswordPayload = objectMapper.writeValueAsString(
+        new PasswordResetRequestDTO(passwordResetEmail, passwordResetOrgId,
+            UUID.fromString(passwordResetToken), password));
 
     given()
         .when()
@@ -262,7 +265,7 @@ public class SignupResourceImplTest {
     tokenMatcher.matches();
     String token = tokenMatcher.group(1);
 
-    String completeSignupPayload = JacksonMapper.get()
+    String completeSignupPayload = objectMapper
         .writeValueAsString(new SignupRequestCompleteDTO(signupEmail,
             orgId, UUID.fromString(token), "somePasswordHere"));
 
@@ -277,7 +280,8 @@ public class SignupResourceImplTest {
             " {\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Signup request does not exist.\"}}"));
   }
 
-  public static void signup(MockMailbox mailbox, String signupEmail, String signupPassword) {
+  public static void signup(MockMailbox mailbox, ObjectMapper objectMapper, String signupEmail,
+      String signupPassword) {
     given()
         .when()
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -319,7 +323,7 @@ public class SignupResourceImplTest {
 
     String body;
     try {
-      body = JacksonMapper.get().writeValueAsString(signupCompleteRequest);
+      body = objectMapper.writeValueAsString(signupCompleteRequest);
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }

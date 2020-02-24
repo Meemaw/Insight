@@ -4,14 +4,13 @@ import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.auth.signup.resource.v1.SignupResource;
-import com.meemaw.auth.user.datasource.UserDatasource;
-import com.meemaw.auth.sso.model.SsoSession;
-import com.meemaw.auth.user.model.UserDTO;
 import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
-import com.meemaw.auth.sso.resource.v1.SsoResource;
+import com.meemaw.auth.sso.model.SsoSession;
+import com.meemaw.auth.user.datasource.UserDatasource;
+import com.meemaw.auth.user.model.UserDTO;
 import com.meemaw.shared.rest.response.DataResponse;
-import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.Postgres;
 import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;
@@ -33,6 +32,9 @@ public class SsoResourceImplTest {
 
   @Inject
   UserDatasource userDatasource;
+
+  @Inject
+  ObjectMapper objectMapper;
 
   @BeforeEach
   void init() {
@@ -187,7 +189,7 @@ public class SsoResourceImplTest {
     String email = "sso_flow_test@gmail.com";
     String password = "sso_flow_test_password";
 
-    SignupResourceImplTest.signup(mailbox, email, password);
+    SignupResourceImplTest.signup(mailbox, objectMapper, email, password);
     String sessionId = login(email, password);
 
     UserDTO userDTO = userDatasource.findUser(email).toCompletableFuture().join().orElseThrow();
@@ -199,7 +201,7 @@ public class SsoResourceImplTest {
         .get(SsoResource.PATH + "/session")
         .then()
         .statusCode(200)
-        .body(sameJson(JacksonMapper.get().writeValueAsString(DataResponse.data(userDTO))));
+        .body(sameJson(objectMapper.writeValueAsString(DataResponse.data(userDTO))));
 
     // should be able to get session via cookie
     given()
@@ -208,7 +210,7 @@ public class SsoResourceImplTest {
         .get(SsoResource.PATH + "/me")
         .then()
         .statusCode(200)
-        .body(sameJson(JacksonMapper.get().writeValueAsString(DataResponse.data(userDTO))));
+        .body(sameJson(objectMapper.writeValueAsString(DataResponse.data(userDTO))));
 
     // should be able to logout
     given()
@@ -220,8 +222,9 @@ public class SsoResourceImplTest {
         .cookie(SsoSession.COOKIE_NAME, "");
   }
 
-  public static String signupAndLogin(MockMailbox mailbox, String email, String password) {
-    SignupResourceImplTest.signup(mailbox, email, password);
+  public static String signupAndLogin(MockMailbox mailbox, ObjectMapper objectMapper, String email,
+      String password) {
+    SignupResourceImplTest.signup(mailbox, objectMapper, email, password);
     return SsoResourceImplTest.login(email, password);
   }
 

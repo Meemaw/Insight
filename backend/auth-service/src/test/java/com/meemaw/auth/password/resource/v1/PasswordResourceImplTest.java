@@ -5,12 +5,12 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.auth.password.model.dto.PasswordForgotRequestDTO;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResource;
-import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.Postgres;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
@@ -37,11 +37,13 @@ public class PasswordResourceImplTest {
   @Inject
   MockMailbox mailbox;
 
+  @Inject
+  ObjectMapper objectMapper;
+
   @BeforeEach
   void init() {
     mailbox.clear();
   }
-
 
   @Test
   public void forgot_should_fail_when_invalid_contentType() {
@@ -82,8 +84,7 @@ public class PasswordResourceImplTest {
 
   @Test
   public void forgot_should_fail_when_empty_email() throws JsonProcessingException {
-    String payload = JacksonMapper.get()
-        .writeValueAsString(new PasswordForgotRequestDTO(""));
+    String payload = objectMapper.writeValueAsString(new PasswordForgotRequestDTO(""));
 
     given()
         .when()
@@ -98,8 +99,7 @@ public class PasswordResourceImplTest {
 
   @Test
   public void forgot_should_fail_on_invalid_email() throws JsonProcessingException {
-    String payload = JacksonMapper.get()
-        .writeValueAsString(new PasswordForgotRequestDTO("notEmail"));
+    String payload = objectMapper.writeValueAsString(new PasswordForgotRequestDTO("notEmail"));
 
     given()
         .when()
@@ -115,7 +115,7 @@ public class PasswordResourceImplTest {
 
   @Test
   public void forgot_should_fail_on_missing_email() throws JsonProcessingException {
-    String payload = JacksonMapper.get()
+    String payload = objectMapper
         .writeValueAsString(new PasswordForgotRequestDTO("missing@test.com"));
 
     given()
@@ -134,15 +134,16 @@ public class PasswordResourceImplTest {
   public void forgot_should_send_email_on_existing_user() throws JsonProcessingException {
     String email = "test-forgot-password-flow@gmail.com";
     String password = "superHardPassword";
-    SignupResourceImplTest.signup(mailbox, email, password);
-    PasswordResourceImplTest.passwordForgot(email);
+    SignupResourceImplTest.signup(mailbox, objectMapper, email, password);
+    PasswordResourceImplTest.passwordForgot(email, objectMapper);
     // can trigger the forgot flow multiple times!!
-    PasswordResourceImplTest.passwordForgot(email);
+    PasswordResourceImplTest.passwordForgot(email, objectMapper);
   }
 
 
-  public static Response passwordForgot(String email) throws JsonProcessingException {
-    String payload = JacksonMapper.get().writeValueAsString(new PasswordForgotRequestDTO(email));
+  public static Response passwordForgot(String email, ObjectMapper objectMapper)
+      throws JsonProcessingException {
+    String payload = objectMapper.writeValueAsString(new PasswordForgotRequestDTO(email));
 
     Response response = given()
         .when()
@@ -196,9 +197,8 @@ public class PasswordResourceImplTest {
 
   @Test
   public void reset_should_fail_when_invalid_payload() throws JsonProcessingException {
-    String payload = JacksonMapper.get()
-        .writeValueAsString(new PasswordResetRequestDTO("email", "org",
-            UUID.randomUUID(), "pass"));
+    String payload = objectMapper.writeValueAsString(new PasswordResetRequestDTO("email", "org",
+        UUID.randomUUID(), "pass"));
 
     given()
         .when()
@@ -213,7 +213,7 @@ public class PasswordResourceImplTest {
 
   @Test
   public void reset_should_fail_when_missing_payload() throws JsonProcessingException {
-    String payload = JacksonMapper.get()
+    String payload = objectMapper
         .writeValueAsString(new PasswordResetRequestDTO("isEmail@gmail.com", "org",
             UUID.randomUUID(), "passLongEnough"));
 
@@ -257,8 +257,8 @@ public class PasswordResourceImplTest {
   public void reset_flow_should_succeed_after_signup() throws JsonProcessingException {
     String signupEmail = "reset-password-flow@gmail.com";
     String oldPassword = "superHardPassword";
-    SignupResourceImplTest.signup(mailbox, signupEmail, oldPassword);
-    PasswordResourceImplTest.passwordForgot(signupEmail);
+    SignupResourceImplTest.signup(mailbox, objectMapper, signupEmail, oldPassword);
+    PasswordResourceImplTest.passwordForgot(signupEmail, objectMapper);
 
     // login with "oldPassword" should succeed
     given()
@@ -303,9 +303,8 @@ public class PasswordResourceImplTest {
         .body(sameJson("{\"data\":true}"));
 
     String newPassword = "superDuperNewFancyPassword";
-    String resetPasswordPayload = JacksonMapper.get()
-        .writeValueAsString(
-            new PasswordResetRequestDTO(email, orgId, UUID.fromString(token), newPassword));
+    String resetPasswordPayload = objectMapper.writeValueAsString(
+        new PasswordResetRequestDTO(email, orgId, UUID.fromString(token), newPassword));
 
     // successful reset should login the user
     given()

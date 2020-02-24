@@ -1,4 +1,4 @@
-package com.meemaw.auth.sso.resource.v1;
+package com.meemaw.auth.sso.resource.v1.google;
 
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
@@ -35,7 +35,7 @@ public class SsoGoogleResourceImplTest {
   public void google_signin_should_start_flow_by_redirecting_to_google() {
     String expectedLocation =
         "https://accounts.google.com/o/oauth2/auth?client_id=" + GOOGLE_CLIENT_ID
-            + "&redirect_uri=http://localhost:8080/v1/sso/google/oauth2callback&response_type=code&scope=email&state=%252Ftest";
+            + "&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fv1%2Fsso%2Fgoogle%2Foauth2callback&response_type=code&scope=email&state=%2Ftest";
 
     given()
         .config(newConfig().redirect(redirectConfig().followRedirects(false)))

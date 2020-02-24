@@ -1,5 +1,6 @@
-package com.meemaw.auth.sso.resource.v1;
+package com.meemaw.auth.sso.resource.v1.google;
 
+import com.meemaw.auth.sso.resource.v1.SsoResource;
 import java.util.concurrent.CompletionStage;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
@@ -20,6 +21,6 @@ public interface SsoGoogleResource {
   @Path("oauth2callback")
   CompletionStage<Response> oauth2callback(
       @NotBlank(message = "state is required") @QueryParam("state") String state,
-      @NotBlank(message = "code is required") @QueryParam("code") String code);
+      @NotBlank(message = "code is required") @QueryParam("code") String authorizationCode);
 
 }

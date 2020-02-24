@@ -6,13 +6,13 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.auth.user.model.UserRole;
-import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.Postgres;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
@@ -44,6 +44,9 @@ public class InviteResourceImplTest {
   @Inject
   MockMailbox mailbox;
 
+  @Inject
+  ObjectMapper objectMapper;
+
   @BeforeEach
   void init() {
     mailbox.clear();
@@ -55,7 +58,7 @@ public class InviteResourceImplTest {
     if (sessionId == null) {
       String email = "org_invite_test@gmail.com";
       String password = "org_invite_test_password";
-      sessionId = SsoResourceImplTest.signupAndLogin(mailbox, email, password);
+      sessionId = SsoResourceImplTest.signupAndLogin(mailbox, objectMapper, email, password);
     }
 
     return sessionId;
@@ -132,7 +135,7 @@ public class InviteResourceImplTest {
 
   @Test
   public void invite_should_fail_when_invalid_email() throws IOException {
-    String payload = JacksonMapper.get()
+    String payload = objectMapper
         .writeValueAsString(new InviteCreateDTO("notEmail", UserRole.ADMIN));
 
     given()
@@ -149,9 +152,8 @@ public class InviteResourceImplTest {
 
   @Test
   public void invite_flow_should_succeed_on_valid_payload() throws IOException {
-    String payload = JacksonMapper.get()
-        .writeValueAsString(
-            new InviteCreateDTO("test-team-invitation@gmail.com", UserRole.ADMIN));
+    String payload = objectMapper.writeValueAsString(
+        new InviteCreateDTO("test-team-invitation@gmail.com", UserRole.ADMIN));
 
     given()
         .when()
@@ -196,9 +198,7 @@ public class InviteResourceImplTest {
     tokenMatcher.matches();
     String token = tokenMatcher.group(1);
 
-    String inviteAcceptPayload = JacksonMapper.get().writeValueAsString(new InviteAcceptDTO(
-        email,
-        orgId,
+    String inviteAcceptPayload = objectMapper.writeValueAsString(new InviteAcceptDTO(email, orgId,
         UUID.fromString(token),
         "superDuperPassword123"));
 
@@ -226,7 +226,8 @@ public class InviteResourceImplTest {
   @Test
   public void list_invites_should_return_collection() throws IOException {
     String sessionId = SsoResourceImplTest
-        .signupAndLogin(mailbox, "list-invites-fetcher@gmail.com", "list-invites-fetcher");
+        .signupAndLogin(mailbox, objectMapper, "list-invites-fetcher@gmail.com",
+            "list-invites-fetcher");
 
     given()
         .when()
@@ -237,9 +238,8 @@ public class InviteResourceImplTest {
         .body(sameJson("{\"data\":[]}"))
         .body("data.size()", is(0));
 
-    String payload = JacksonMapper.get()
-        .writeValueAsString(
-            new InviteCreateDTO("list-invites-test@gmail.com", UserRole.STANDARD));
+    String payload = objectMapper.writeValueAsString(
+        new InviteCreateDTO("list-invites-test@gmail.com", UserRole.STANDARD));
 
     given()
         .when()
@@ -370,7 +370,7 @@ public class InviteResourceImplTest {
   @Test
   public void send_invite_should_fail_when_invalid_payload() throws JsonProcessingException {
     InviteSendDTO inviteSendDTO = new InviteSendDTO("random", UUID.randomUUID());
-    String payload = JacksonMapper.get().writeValueAsString(inviteSendDTO);
+    String payload = objectMapper.writeValueAsString(inviteSendDTO);
 
     given()
         .when()
@@ -387,7 +387,7 @@ public class InviteResourceImplTest {
   @Test
   public void send_invite_flow_should_succeed_on_existing_invite() throws JsonProcessingException {
     String email = "send-invite-flow@gmail.com";
-    String invitePayload = JacksonMapper.get()
+    String invitePayload = objectMapper
         .writeValueAsString(new InviteCreateDTO(email, UserRole.ADMIN));
 
     // Invite the user
@@ -415,7 +415,7 @@ public class InviteResourceImplTest {
     String token = tokenMatcher.group(1);
 
     // resend the invite email
-    String sendInvitePayload = JacksonMapper.get()
+    String sendInvitePayload = objectMapper
         .writeValueAsString(new InviteSendDTO(email, UUID.fromString(token)));
 
     given()

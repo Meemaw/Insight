@@ -6,7 +6,6 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        google()
     }
 
     compileJava {

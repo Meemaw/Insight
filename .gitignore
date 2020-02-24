@@ -50,3 +50,5 @@ yarn-error.log
 # Next.js
 .next
 
+# There might be secrets;
+application.properties
