@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DataResponse } from 'api';
+
 import PendingInvitesList from './PendingInvitesList';
 
 export default {
