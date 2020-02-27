@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavbarGroup, Classes } from '@blueprintjs/core';
+import { NavbarGroup } from '@blueprintjs/core';
 
 import Account from './Account';
 import Navigation from './Navigation';
@@ -13,7 +13,7 @@ type Props = {
 
 const AppNavbar = ({ pathname }: Props) => {
   return (
-    <StyledNavbar className={Classes.DARK}>
+    <StyledNavbar>
       <NavbarGroup className="left">
         <div className="logo-container">
           <Logo />

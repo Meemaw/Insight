@@ -4,6 +4,11 @@ import React, { useEffect, useCallback } from 'react';
 import { InputGroup, Popover, Tag } from '@blueprintjs/core';
 import useFocus from 'shared/hooks/useFocus';
 
+const KEY_CODE = {
+  ESC: 27,
+  SLASH: 191,
+} as const;
+
 const GlobalSearch = () => {
   const [active, onInputRef, inputRef] = useFocus<HTMLInputElement>();
   const width = active ? 420 : 280;
@@ -21,18 +26,20 @@ const GlobalSearch = () => {
   }, []);
 
   useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.keyCode === 191) {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.keyCode === KEY_CODE.SLASH) {
         event.stopPropagation();
         event.preventDefault();
         focus();
+      } else if (event.keyCode === KEY_CODE.ESC) {
+        blur();
       }
     };
 
-    document.addEventListener('keydown', handler);
+    document.addEventListener('keydown', onKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handler);
+      document.removeEventListener('keydown', onKeyDown);
     };
   });
 

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import authenticated from 'modules/auth/hoc/authenticated';
 import AppLayout from 'modules/app/components/Layout';
-import { Tabs, Tab, Icon } from '@blueprintjs/core';
+import { Tabs, Tab, Icon, Colors } from '@blueprintjs/core';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import { BaseRouter } from 'next/dist/next-server/lib/router/router';
@@ -12,14 +12,25 @@ type Props = {
 };
 
 const StyledGeneralSettingsSection = styled.div`
+  background: ${Colors.DARK_GRAY4};
+  height: 100%;
+
+  .bp3-tab-list {
+    margin-top: 32px;
+  }
+
   .bp3-tab-panel {
     width: 100%;
-    padding: 16px;
+    padding: 32px !important;
   }
 `;
 
-const LazySetupPanel = dynamic(() => import('components/settings/SetupPanel'));
-const LazyTeamPanel = dynamic(() => import('components/settings/TeamPanel'));
+const LazySetupPanel = dynamic(() =>
+  import('modules/settings/components/SetupPanel')
+);
+const LazyTeamPanel = dynamic(() =>
+  import('modules/settings/components/TeamPanel')
+);
 
 const GeneralSettings = ({ url }: Props) => {
   const [selectedTabId, setSelectedTabId] = useState<React.ReactText>(
@@ -44,7 +55,7 @@ const GeneralSettings = ({ url }: Props) => {
             title={
               <>
                 <Icon icon="build" />
-                Setup Insight
+                <span>Setup Insight</span>
               </>
             }
             panel={<LazySetupPanel />}
@@ -52,10 +63,10 @@ const GeneralSettings = ({ url }: Props) => {
           <Tab
             id="/settings/tracking"
             title={
-              <>
+              <div style={{ padding: 12 }}>
                 <Icon icon="record" />
-                Tracking
-              </>
+                <span style={{ marginLeft: 12 }}>Tracking</span>
+              </div>
             }
             panel={<div>Tracking</div>}
           />
@@ -64,7 +75,7 @@ const GeneralSettings = ({ url }: Props) => {
             title={
               <>
                 <Icon icon="people" />
-                Team
+                <span>Team</span>
               </>
             }
             panel={<LazyTeamPanel />}

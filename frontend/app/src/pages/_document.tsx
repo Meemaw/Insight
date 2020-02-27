@@ -63,7 +63,7 @@ class InsightDocument extends Document {
             `}
           </style>
           <link
-            href="https://unpkg.com/@blueprintjs/core@^3.23.1/lib/css/blueprint.css"
+            href="https://unpkg.com/@blueprintjs/core@3.24.0/lib/css/blueprint.css"
             rel="stylesheet"
           />
           <script

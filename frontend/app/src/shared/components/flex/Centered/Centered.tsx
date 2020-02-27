@@ -1,9 +1,7 @@
 import styled from 'styled-components';
+import VerticalAligned from 'shared/components/flex/VerticalAligned';
 
-const Centered = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+const Centered = styled(VerticalAligned)`
   align-items: center;
   height: 100%;
 `;

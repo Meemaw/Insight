@@ -17,3 +17,30 @@ export const clickElement = (el: HTMLElement) => {
 export const blurElement = (el: HTMLElement) => {
   fireEvent.blur(el);
 };
+
+type FireKeyDownEventOptions = {
+  el: HTMLElement;
+  key: string;
+  code: number;
+  ctrlKey?: boolean;
+};
+
+const fireKeyDownEvent = ({
+  el,
+  key,
+  code,
+  ctrlKey = false,
+}: FireKeyDownEventOptions) => {
+  return fireEvent.keyDown(el, {
+    key,
+    code,
+    keyCode: code,
+    charCode: code,
+    which: code,
+    ctrlKey,
+  });
+};
+
+export const pressEscape = (el: HTMLElement) => {
+  return fireKeyDownEvent({ el, key: 'Escape', code: 27 });
+};
