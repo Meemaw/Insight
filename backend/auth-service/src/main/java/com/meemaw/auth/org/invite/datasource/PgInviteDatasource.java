@@ -90,7 +90,8 @@ public class PgInviteDatasource implements InviteDatasource {
           UUID token = row.getUUID("token");
           OffsetDateTime createdAt = row.getOffsetDateTime("created_at");
           return new InviteDTO(token, email, org, role, creator, createdAt);
-        }).exceptionally(throwable -> {
+        })
+        .exceptionally(throwable -> {
           Throwable cause = throwable.getCause();
           if (cause instanceof PgException) {
             PgException pgException = (PgException) cause;

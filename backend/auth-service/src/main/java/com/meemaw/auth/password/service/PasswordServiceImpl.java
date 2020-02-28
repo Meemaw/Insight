@@ -82,22 +82,6 @@ public class PasswordServiceImpl implements PasswordService {
   }
 
 
-  private CompletionStage<Void> sendPasswordResetEmail(PasswordResetRequest passwordResetRequest) {
-    String email = passwordResetRequest.getEmail();
-    UUID token = passwordResetRequest.getToken();
-    String org = passwordResetRequest.getOrg();
-
-    String subject = "Reset your Insight password";
-
-    return passwordResetTemplate
-        .data("email", email)
-        .data("orgId", org)
-        .data("token", token)
-        .renderAsync()
-        .thenCompose(
-            html -> mailer.send(Mail.withHtml(email, subject, html).setFrom(FROM_SUPPORT)));
-  }
-
   @Override
   public CompletionStage<Boolean> forgot(String email) {
     return userDatasource.findUser(email)
@@ -128,6 +112,22 @@ public class PasswordServiceImpl implements PasswordService {
         .thenApply(nothing -> transaction.commit())
         .thenApply(nothing -> true);
   }
+
+  private CompletionStage<Void> sendPasswordResetEmail(PasswordResetRequest passwordResetRequest) {
+    String email = passwordResetRequest.getEmail();
+    UUID token = passwordResetRequest.getToken();
+    String org = passwordResetRequest.getOrg();
+    String subject = "Reset your Insight password";
+
+    return passwordResetTemplate
+        .data("email", email)
+        .data("orgId", org)
+        .data("token", token)
+        .renderAsync()
+        .thenCompose(
+            html -> mailer.send(Mail.withHtml(email, subject, html).setFrom(FROM_SUPPORT)));
+  }
+
 
   @Override
   public CompletionStage<Boolean> reset(PasswordResetRequestDTO passwordResetRequestDTO) {

@@ -1,11 +1,9 @@
 package com.meemaw.auth.signup.model;
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import java.time.LocalDateTime;

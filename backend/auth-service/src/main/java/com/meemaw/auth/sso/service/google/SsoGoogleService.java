@@ -6,7 +6,10 @@ import java.util.concurrent.CompletionStage;
 
 public interface SsoGoogleService {
 
-  URI buildAuthorizationURI(String dest, String redirectURI);
+  URI buildAuthorizationURI(String state, String redirectURI);
 
-  CompletionStage<SsoSocialLogin> oauth2callback(String dest, String code, String redirectURI);
+  String secureState(String destination);
+
+  CompletionStage<SsoSocialLogin> oauth2callback(String state, String sessionState, String code,
+      String redirectURI);
 }
