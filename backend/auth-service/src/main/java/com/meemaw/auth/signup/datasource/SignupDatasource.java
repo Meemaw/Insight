@@ -10,14 +10,11 @@ import java.util.concurrent.CompletionStage;
 
 public interface SignupDatasource {
 
-  CompletionStage<SignupRequestDTO> create(Transaction transaction,
-      UserDTO userDTO);
+  CompletionStage<SignupRequestDTO> create(Transaction transaction, UserDTO userDTO);
 
   CompletionStage<Boolean> exists(String email, String org, UUID token);
 
-  CompletionStage<Optional<SignupRequestDTO>> find(Transaction transaction, String email,
-      String org,
-      UUID token);
+  CompletionStage<Optional<SignupRequestDTO>> find(String email, String org, UUID token);
 
   CompletionStage<Boolean> delete(Transaction transaction, String email, String orgId, UUID userId);
 

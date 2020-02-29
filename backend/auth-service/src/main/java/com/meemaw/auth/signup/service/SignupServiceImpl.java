@@ -73,7 +73,6 @@ public class SignupServiceImpl implements SignupService {
               log.info("signup complete email={} userId={} org={}", email,
                   signupRequest.getUserId(),
                   signupRequest.getOrg());
-              ;
               return signupRequest;
             })
             .exceptionally(throwable -> {
@@ -101,41 +100,44 @@ public class SignupServiceImpl implements SignupService {
     String org = completeSignup.getOrg();
     UUID token = completeSignup.getToken();
 
-    return pgPool.begin().thenCompose(transaction -> {
-      log.info("signupComplete starting transaction email={} token={}", email, token);
+    return findValidSignupRequest(email, org, token)
+        .thenCompose(validSignupRequest -> pgPool.begin().thenCompose(transaction -> {
+          UUID userId = validSignupRequest.getUserId();
+          log.info("Deleting existing signup requests email={} org={} userId={}", email, org,
+              userId);
 
-      return signupDatasource.find(transaction, email, org, token)
-          .thenApply(maybeSignup -> {
-            SignupRequestDTO signup = maybeSignup.orElseThrow(() -> {
-              log.info("Signup request does not exist email={} org={} token={}", email, org, token);
-              throw Boom.notFound().message("Signup request does not exist.").exception();
-            });
+          return signupDatasource.delete(transaction, email, org, userId)
+              .thenApply(isDeleted -> {
+                if (!isDeleted) {
+                  log.info("Failed to delete signup requests email={} org={}", email, org);
+                  throw new DatabaseException();
+                }
+                return validSignupRequest;
+              })
+              .thenCompose(signup -> {
+                String password = completeSignup.getPassword();
+                return passwordService.create(transaction, userId, email, org, password);
+              })
+              .thenCompose(created -> transaction.commit().thenApply(x -> created));
+        }));
+  }
 
-            if (signup.hasExpired()) {
-              log.info("Signup request expired email={} org={} token={}", email, org, token);
-              throw Boom.badRequest().message("Signup request expired").exception();
-            }
+  private CompletionStage<SignupRequestDTO> findValidSignupRequest(String email, String org,
+      UUID token) {
+    return signupDatasource.find(email, org, token)
+        .thenApply(maybeSignup -> {
+          SignupRequestDTO signup = maybeSignup.orElseThrow(() -> {
+            log.info("Signup request does not exist email={} org={} token={}", email, org, token);
+            throw Boom.notFound().message("Signup request does not exist.").exception();
+          });
 
-            return signup;
-          })
-          .thenCompose(signup -> {
-            log.info("Deleting existing signup requests email={} org={}", email, org);
-            return signupDatasource.delete(transaction, email, org, signup.getUserId())
-                .thenApply(isDeleted -> {
-                  if (!isDeleted) {
-                    log.info("Failed to delete signup requests email={} org={}", email, org);
-                    throw new DatabaseException();
-                  }
-                  return signup;
-                });
-          })
-          .thenCompose(signup -> {
-            UUID userId = signup.getUserId();
-            String password = completeSignup.getPassword();
-            return passwordService.create(transaction, userId, email, org, password);
-          })
-          .thenCompose(created -> transaction.commit().thenApply(x -> created));
-    });
+          if (signup.hasExpired()) {
+            log.info("Signup request expired email={} org={} token={}", email, org, token);
+            throw Boom.badRequest().message("Signup request expired").exception();
+          }
+
+          return signup;
+        });
   }
 
   @Override

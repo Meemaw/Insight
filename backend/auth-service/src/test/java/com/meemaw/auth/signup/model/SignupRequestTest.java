@@ -32,6 +32,6 @@ public class SignupRequestTest {
 
     String payload = JacksonMapper.get().writeValueAsString(signupRequest);
     assertThat(payload, sameJson(
-        "{\"email\":\"test@gmail.com\",\"org\":\"ORG\",\"token\":\"bc2a1cc5-62ed-45a2-b7a6-70520dadc33b\",\"userId\":\"cc2a1cc5-62ed-45a2-b7a6-70520dadc33b\",\"createdAt\":{\"offset\":{\"totalSeconds\":23400,\"id\":\"+06:30\",\"rules\":{\"fixedOffset\":true,\"transitions\":[],\"transitionRules\":[]}},\"dayOfWeek\":\"FRIDAY\",\"dayOfYear\":132,\"month\":\"MAY\",\"nano\":0,\"year\":2017,\"monthValue\":5,\"dayOfMonth\":12,\"hour\":5,\"minute\":45,\"second\":0}}"));
+        "{\"email\":\"test@gmail.com\",\"org\":\"ORG\",\"token\":\"bc2a1cc5-62ed-45a2-b7a6-70520dadc33b\",\"userId\":\"cc2a1cc5-62ed-45a2-b7a6-70520dadc33b\",\"createdAt\":\"2017-05-12T05:45:00+06:30\",\"daysValidity\":1}\n"));
   }
 }

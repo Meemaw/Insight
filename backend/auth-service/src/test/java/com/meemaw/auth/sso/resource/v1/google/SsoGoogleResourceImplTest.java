@@ -39,7 +39,7 @@ public class SsoGoogleResourceImplTest {
   public void google_signin_should_start_flow_by_redirecting_to_google() {
     String expectedLocationBase =
         "https://accounts.google.com/o/oauth2/auth?client_id=" + GOOGLE_CLIENT_ID
-            + "&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fv1%2Fsso%2Fgoogle%2Foauth2callback&response_type=code&scope=openid+email+profile&state=";
+            + "&redirect_uri=http%3A%2F%2Flocalhost%3A8081%2Fv1%2Fsso%2Fgoogle%2Foauth2callback&response_type=code&scope=openid+email+profile&state=";
 
     Response response = given()
         .config(newConfig().redirect(redirectConfig().followRedirects(false)))

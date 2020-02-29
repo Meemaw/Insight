@@ -1,4 +1,4 @@
-FROM gradle:6.2.0-jdk13 as build
+FROM gradle:6.2.1-jdk13 as build
 
 COPY . /src
 WORKDIR /src

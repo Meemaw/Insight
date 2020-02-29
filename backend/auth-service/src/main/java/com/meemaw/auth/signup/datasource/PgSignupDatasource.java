@@ -47,9 +47,7 @@ public class PgSignupDatasource implements SignupDatasource {
   }
 
   public CompletionStage<Boolean> exists(String email, String org, UUID token) {
-    return pgPool.begin()
-        .thenCompose(
-            transaction -> find(transaction, email, org, token).thenApply(Optional::isPresent))
+    return find(email, org, token).thenApply(Optional::isPresent)
         .exceptionally(throwable -> {
           log.error("Failed to verify signup exists email={} org={} token={}", email, org, token,
               throwable);
@@ -59,11 +57,9 @@ public class PgSignupDatasource implements SignupDatasource {
 
   private static final String FIND_SIGNUP_RAW_SQL = "SELECT * FROM auth.signup WHERE user_email = $1 AND org = $2 AND token = $3";
 
-  public CompletionStage<Optional<SignupRequestDTO>> find(Transaction transaction, String email,
-      String org,
-      UUID token) {
+  public CompletionStage<Optional<SignupRequestDTO>> find(String email, String org, UUID token) {
     Tuple values = Tuple.of(email, org, token);
-    return transaction.preparedQuery(FIND_SIGNUP_RAW_SQL, values)
+    return pgPool.preparedQuery(FIND_SIGNUP_RAW_SQL, values)
         .thenApply(pgRowSet -> {
           if (!pgRowSet.iterator().hasNext()) {
             return Optional.empty();

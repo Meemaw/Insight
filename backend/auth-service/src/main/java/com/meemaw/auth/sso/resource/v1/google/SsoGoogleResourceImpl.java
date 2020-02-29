@@ -2,15 +2,10 @@ package com.meemaw.auth.sso.resource.v1.google;
 
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.service.google.SsoGoogleService;
-import com.meemaw.shared.rest.response.Boom;
-import java.math.BigInteger;
 import java.net.URI;
-import java.security.SecureRandom;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -28,9 +23,7 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
 
 
   private String getRedirectUri() {
-    // TODO: fix this; info.getBaseUri() will fail for tests
-    // TODO: Invalid parameter value for redirect_uri: Raw IP addresses not allowed
-    return "http://localhost:8080/" + SsoGoogleResource.PATH + "/oauth2callback";
+    return info.getBaseUri() + SsoGoogleResource.PATH + "/oauth2callback";
   }
 
   @Override
