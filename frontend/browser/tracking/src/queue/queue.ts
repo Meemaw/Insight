@@ -16,6 +16,10 @@ class EventQueue {
     this.enqueueAt(this._context.now(), kind, args);
   };
 
+  public events = (): BrowserEvent[] => {
+    return this._rawQueue;
+  };
+
   private enqueueAt = (
     when: number,
     kind: EventType,

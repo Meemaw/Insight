@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id 'jacoco'
+    id 'io.freefair.lombok'
 }
 
 dependencies {
