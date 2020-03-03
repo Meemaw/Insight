@@ -35,16 +35,16 @@ public class PgInviteDatasource implements InviteDatasource {
 
   @Override
   public CompletionStage<Optional<InviteDTO>> find(String email, String org, UUID token) {
-    return pgPool.begin().thenCompose(t -> find(t, email, org, token));
-  }
-
-  @Override
-  public CompletionStage<Optional<InviteDTO>> find(Transaction transaction, String email,
-      String org, UUID token) {
-    return transaction.preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(email, org, token))
+    return pgPool.preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(email, org, token))
         .thenApply(this::inviteFromRowSet);
   }
 
+  @Override
+  public CompletionStage<Optional<InviteDTO>> findTransactional(Transaction transaction,
+      String email, String org, UUID token) {
+    return transaction.preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(email, org, token))
+        .thenApply(this::inviteFromRowSet);
+  }
 
   private static final String FIND_ALL_INVITES_RAW_SQL = "SELECT * FROM auth.invite WHERE org = $1";
 

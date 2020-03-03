@@ -12,7 +12,8 @@ public interface InviteDatasource {
 
   CompletionStage<Optional<InviteDTO>> find(String email, String org, UUID token);
 
-  CompletionStage<Optional<InviteDTO>> find(Transaction transaction, String email, String org,
+  CompletionStage<Optional<InviteDTO>> findTransactional(Transaction transaction, String email,
+      String org,
       UUID token);
 
   CompletionStage<List<InviteDTO>> findAll(String org);

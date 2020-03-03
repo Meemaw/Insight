@@ -12,4 +12,5 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Retention(RUNTIME)
 @ExtendWith(PostgresExtension.class)
 public @interface Postgres {
+
 }
