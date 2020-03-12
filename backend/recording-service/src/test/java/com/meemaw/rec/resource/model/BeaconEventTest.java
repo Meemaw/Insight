@@ -1,6 +1,6 @@
 package com.meemaw.rec.resource.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meemaw.rec.model.beacon.event.AbstractBeaconEvent;

@@ -3,7 +3,7 @@ package com.meemaw.auth.org.invite.resource.v1;
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -128,9 +128,9 @@ public class InviteResourceImplTest {
         .body(payload)
         .post(InviteResource.PATH)
         .then()
-        .statusCode(400)
+        .statusCode(422)
         .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Cannot deserialize value of type `com.meemaw.auth.user.model.UserRole` from String \\\"HA\\\": not one of the values accepted for Enum class: [STANDARD, ADMIN]\"}}"));
+            "{\"error\":{\"statusCode\":422,\"reason\":\"Unprocessable Entity\",\"message\":\"Cannot deserialize value of type `com.meemaw.auth.user.model.UserRole` from String \\\"HA\\\": not one of the values accepted for Enum class: [STANDARD, ADMIN]\"}}"));
   }
 
   @Test

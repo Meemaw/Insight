@@ -1,7 +1,7 @@
 package com.meemaw.auth.org.invite.model;
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

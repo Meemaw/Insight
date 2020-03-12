@@ -17,7 +17,7 @@ const useInvites = () => {
         return resp;
       });
     },
-    [invites, InviteApi.delete]
+    [invites]
   );
 
   const createInvite = useCallback(
@@ -27,7 +27,7 @@ const useInvites = () => {
         return resp;
       });
     },
-    [invites, InviteApi.create]
+    [invites]
   );
 
   return { invites, deleteInvite, createInvite };

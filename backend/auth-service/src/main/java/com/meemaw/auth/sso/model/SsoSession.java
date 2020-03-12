@@ -1,7 +1,7 @@
 package com.meemaw.auth.sso.model;
 
-import com.meemaw.shared.string.RandomString;
 import javax.ws.rs.core.NewCookie;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class SsoSession {
 
@@ -36,7 +36,7 @@ public class SsoSession {
   }
 
   public static String newIdentifier() {
-    return RandomString.alphanumeric(50);
+    return RandomStringUtils.randomAlphanumeric(50);
   }
 
 }

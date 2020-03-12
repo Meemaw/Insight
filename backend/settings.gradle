@@ -13,7 +13,7 @@ pluginManagement {
 
 rootProject.name = 'backend'
 
-include ':shared'
+include ':shared-rest-service'
+include ':shared-testing-utils'
 include ':auth-service'
 include ':recording-service'
-include ':testing-utils'

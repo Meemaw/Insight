@@ -9,7 +9,14 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:testing-library/react',
   ],
-  plugins: ['prettier', 'jest', 'import', 'lodash', 'testing-library'],
+  plugins: [
+    'prettier',
+    'jest',
+    'import',
+    'lodash',
+    'testing-library',
+    'react-hooks',
+  ],
   env: {
     browser: true,
     jest: true,
@@ -43,6 +50,9 @@ module.exports = {
     'react/jsx-wrap-multilines': ['off'],
 
     'jsx-a11y/anchor-is-valid': ['off'],
+
+    'react-hooks/rules-of-hooks': ['error'],
+    'react-hooks/exhaustive-deps': ['warn'],
 
     '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-unused-vars': [

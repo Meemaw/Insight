@@ -1,6 +1,6 @@
 package com.meemaw.auth.org.invite.model.dto;
 
-import com.meemaw.shared.validators.Password;
+import com.meemaw.shared.validation.Password;
 import java.util.UUID;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

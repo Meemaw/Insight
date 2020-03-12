@@ -21,8 +21,8 @@ function useElementState<T extends Element>({
 }: UseElementStateOptions): ElementState<T> {
   const [value, setValue] = useState(initialState);
   const ref = useRef<T>(null) as MutableRefObject<T>;
-  const setOn = useCallback(() => setValue(true), [setValue]);
-  const setOff = useCallback(() => setValue(false), [setValue]);
+  const setOn = useCallback(() => setValue(true), []);
+  const setOff = useCallback(() => setValue(false), []);
 
   const callbackRef = useCallback(
     node => {
@@ -38,7 +38,7 @@ function useElementState<T extends Element>({
         ref.current.addEventListener(off, setOff);
       }
     },
-    [on, off]
+    [on, off, setOn, setOff, ref]
   );
 
   return [value, callbackRef, ref];

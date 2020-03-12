@@ -17,13 +17,13 @@ const GlobalSearch = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [inputRef]);
 
   const blur = useCallback(() => {
     if (inputRef.current) {
       inputRef.current.blur();
     }
-  }, []);
+  }, [inputRef]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

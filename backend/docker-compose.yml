@@ -4,7 +4,7 @@ services:
   auth-service:
     build:
       context: .
-      dockerfile: auth-service/src/main/docker/Dockerfile.jvm
+      dockerfile: auth-service/docker/Dockerfile.jvm
     ports:
       - '${AUTH_SERVICE_PORT:-8080}:8080'
     depends_on:
@@ -12,7 +12,7 @@ services:
   recording-service:
     build:
       context: .
-      dockerfile: recording-service/src/main/docker/Dockerfile.jvm
+      dockerfile: recording-service/docker/Dockerfile.jvm
     ports:
       - '${RECORDING_SERVICE_PORT:-8081}:8080'
     depends_on:

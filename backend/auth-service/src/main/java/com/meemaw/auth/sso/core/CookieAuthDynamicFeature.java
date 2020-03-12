@@ -17,8 +17,10 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+import lombok.extern.slf4j.Slf4j;
 
 @Provider
+@Slf4j
 public class CookieAuthDynamicFeature implements DynamicFeature {
 
   @Inject
@@ -48,6 +50,7 @@ public class CookieAuthDynamicFeature implements DynamicFeature {
       Cookie ssoCookie = cookies.get(SsoSession.COOKIE_NAME);
 
       if (ssoCookie == null) {
+        log.info("Missing SessionId");
         throw Boom.status(Status.UNAUTHORIZED).exception();
       }
 

@@ -15,7 +15,7 @@ const useMocks = <T>(setupMocks: SetupMocks<T>) => {
     return () => {
       sandbox.restore();
     };
-  }, []);
+  }, [sandbox]);
 };
 
 export default useMocks;

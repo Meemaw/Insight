@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: auth
+commonLabels:
+  team: auth
+  app: auth-service
+resources:
+  - service.yaml
+  - deployment.yaml
+  - hpa.yaml
+

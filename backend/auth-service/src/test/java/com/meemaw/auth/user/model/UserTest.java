@@ -1,12 +1,10 @@
 package com.meemaw.auth.user.model;
 
 import static com.meemaw.test.matchers.SameJSON.sameJson;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.meemaw.auth.user.model.UserDTO;
-import com.meemaw.auth.user.model.UserRole;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;

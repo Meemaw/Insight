@@ -6,7 +6,6 @@ import com.meemaw.auth.user.model.UserRole;
 import com.meemaw.shared.pg.PgError;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.shared.rest.response.Boom;
-import com.meemaw.shared.string.RandomString;
 import io.vertx.axle.pgclient.PgPool;
 import io.vertx.axle.sqlclient.Row;
 import io.vertx.axle.sqlclient.Transaction;
@@ -19,6 +18,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 
 @ApplicationScoped
 @Slf4j
@@ -82,7 +82,7 @@ public class PgUserDatasource implements UserDatasource {
 
   public CompletionStage<SignupRequest> createOrganization(Transaction transaction,
       SignupRequest signupRequest) {
-    String org = RandomString.alphanumeric(6);
+    String org = RandomStringUtils.randomAlphanumeric(6);
     Tuple values = Tuple.of(org);
 
     return transaction.preparedQuery(INSERT_ORG_RAW_SQL, values)
