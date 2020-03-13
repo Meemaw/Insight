@@ -8,5 +8,5 @@ commonLabels:
 resources:
   - service.yaml
   - deployment.yaml
-  - hpa.yaml
+  - horizontal-pod-autoscaler.yaml
 
