@@ -1,36 +1,9 @@
----
-# Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: recording-service
-  namespace: recording
-  labels:
-    team: recording
-spec:
-  ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: 8080
-  selector:
-    app: recording-service
-  type: NodePort
-# Deployment
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: recording-service
-  namespace: recording
-  labels:
-    app: recording-service
-    team: recording
 spec:
   replicas: 3
-  selector:
-    matchLabels:
-      app: recording-service
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -38,15 +11,13 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      labels:
-        app: recording-service
-        team: recording
+      annotations:
+        prometheus.io/scrape: 'true'
     spec:
       terminationGracePeriodSeconds: 30
       containers:
         - image: eu.gcr.io/insight/recording-service
           name: recording-service
-          imagePullPolicy: Never
           ports:
             - containerPort: 8080
               name: http
@@ -73,25 +44,3 @@ spec:
             timeoutSeconds: 1
             successThreshold: 1
             failureThreshold: 10
-# HPA
----
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: recording-service
-  namespace: recording
-  labels:
-    app: recording-service
-    team: recording
-spec:
-  maxReplicas: 10
-  minReplicas: 2
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: recording-service
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        targetAverageUtilization: 50
