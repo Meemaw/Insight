@@ -1,12 +1,14 @@
 {
   "name": "@insight/homepage",
+  "private": true,
   "version": "0.0.0-development",
   "description": "Insight homepage",
   "license": "MIT",
   "author": "Meemaw <ematej.snuderl@gmail.com>",
+  "homepage": "https://github.com/Meemaw/insight#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Meemaw/insight"
+    "url": "git+https://github.com/Meemaw/insight.git"
   },
   "bugs": {
     "url": "https://github.com/Meemaw/insight/issues"
