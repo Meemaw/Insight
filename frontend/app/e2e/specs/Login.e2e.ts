@@ -1,23 +1,34 @@
-import {
-  getByPlaceholderText,
-  getByText,
-  queryByText,
-} from '@testing-library/testcafe';
-
 import config from '../config';
+import { LoginPage } from '../__pages__';
+import { getLocation } from '../utils';
 
 fixture('<LoginPage />').page(`${config.baseURL}/login`);
 
-test('Displays error message on invalid credentials', async t => {
-  const emailInput = getByPlaceholderText('me@example.com');
-  const passwordInput = getByPlaceholderText('Password');
-  const submitButton = getByText('Sign in');
-
+test('Login page should validate its inputs', async t => {
   await t
-    .typeText(emailInput, 'test-email@gmail.com')
-    .typeText(passwordInput, 'test-password')
-    .click(submitButton)
-    .wait(100000)
-    .expect(queryByText('Invalid email or password').visible)
-    .ok('Should display error message');
+    .typeText(LoginPage.emailInput, 'start')
+    .expect(LoginPage.helperText('Please enter a valid email address.').visible)
+    .ok('Should validate email address: has to be valid')
+    .expect(LoginPage.helperText('Required.').visible)
+    .ok('Should validate password: it is required')
+    .typeText(LoginPage.passwordInput, 'short')
+    .expect(
+      LoginPage.helperText('Password should be at least 8 characters long.')
+        .visible
+    )
+    .ok('Should validate password: it has to be at least 8 characters long');
+
+  await LoginPage.login('random@gmail.com', 'randomPassword', t)
+    .expect(LoginPage.formErrorText('Invalid email or password').visible)
+    .ok('Should display error message on invalid credentials');
+});
+
+test('Should be able to navigate to password reset page', async t => {
+  await t
+    .click(LoginPage.forgotLink)
+    .expect(getLocation())
+    .eql(
+      `${config.baseURL}/password-forgot`,
+      'Should navigate to /password-forgot'
+    );
 });

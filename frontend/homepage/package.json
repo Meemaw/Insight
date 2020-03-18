@@ -29,18 +29,17 @@
   },
   "dependencies": {
     "baseui": "^9.64.1",
-    "next": "^9.3.0",
+    "next": "^9.3.1",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "styletron-engine-atomic": "^1.4.6",
     "styletron-react": "^5.2.7"
   },
   "devDependencies": {
-    "@insight/testing-utils": "0.0.0-development",
-    "@next/bundle-analyzer": "^9.3.0",
-    "@storybook/addon-actions": "^5.3.14",
-    "@storybook/addon-knobs": "^5.3.14",
-    "@storybook/react": "5.3.14",
+    "@next/bundle-analyzer": "^9.3.1",
+    "@storybook/addon-actions": "^5.3.17",
+    "@storybook/addon-knobs": "^5.3.17",
+    "@storybook/react": "5.3.17",
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^9.5.0",
     "@testing-library/testcafe": "^4.0.0",

@@ -49,6 +49,7 @@ module.exports = {
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
     'react/jsx-wrap-multilines': ['off'],
 
+    'lines-between-class-members': ['off'],
     'jsx-a11y/anchor-is-valid': ['off'],
 
     'react-hooks/rules-of-hooks': ['error'],
