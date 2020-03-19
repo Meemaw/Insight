@@ -7,7 +7,7 @@ RUN ./gradlew auth-service:quarkusBuild --uber-jar
 
 FROM adoptopenjdk:13-jre-hotspot
 
-COPY --from=build /backend/auth-service/build/auth-service-1.0-SNAPSHOT-runner.jar /usr/app/service-runner.jar
+COPY --from=build /backend/auth-service/build/auth-service-1.0-runner.jar /usr/app/service-runner.jar
 
 WORKDIR /usr/app/
 

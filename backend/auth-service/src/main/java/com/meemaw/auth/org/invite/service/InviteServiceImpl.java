@@ -12,7 +12,7 @@ import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.auth.user.model.UserRole;
 import com.meemaw.shared.rest.response.Boom;
 import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.ReactiveMailer;
+import io.quarkus.mailer.reactive.ReactiveMailer;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 import io.vertx.axle.pgclient.PgPool;
@@ -162,6 +162,7 @@ public class InviteServiceImpl implements InviteService {
         .data("orgId", canInvite.getOrg())
         .renderAsync()
         .thenCompose(
-            html -> mailer.send(Mail.withHtml(email, subject, html).setFrom(FROM_SUPPORT)));
+            html -> mailer.send(Mail.withHtml(email, subject, html).setFrom(FROM_SUPPORT))
+                .subscribeAsCompletionStage());
   }
 }

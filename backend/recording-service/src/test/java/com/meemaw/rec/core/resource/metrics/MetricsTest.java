@@ -35,9 +35,9 @@ public class MetricsTest {
         .get("/metrics")
         .then()
         .statusCode(200)
-        .body(containsString("application_requests_total 1.0"))
-        .body(containsString("application_request_errors_total{status=\"404\"} 1.0"))
-        .body(containsString("application_request_client_errors_total{status=\"404\"} 1.0"));
+        .body(containsString("application_requests_total"))
+        .body(containsString("application_request_errors_total{status=\"404\"}"))
+        .body(containsString("application_request_client_errors_total{status=\"404\"}"));
   }
 
 }

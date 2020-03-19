@@ -1,34 +1,14 @@
 plugins {
-    id 'java'
     id 'io.quarkus'
-    id 'jacoco'
-    id 'io.freefair.lombok'
 }
 
 dependencies {
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-logging-json'
-    implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-smallrye-health'
-    implementation 'io.quarkus:quarkus-smallrye-metrics'
     implementation project(":shared-rest-service")
 
     testImplementation project(":shared-testing-utils")
-}
-
-
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled false
-    }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport)
 }

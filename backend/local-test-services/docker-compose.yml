@@ -3,7 +3,7 @@ version: '3.7'
 services:
   auth-service:
     build:
-      context: .
+      context: ..
       dockerfile: auth-service/docker/Dockerfile.jvm
     ports:
       - '${AUTH_SERVICE_PORT:-8080}:8080'
@@ -11,7 +11,7 @@ services:
       - db
   recording-service:
     build:
-      context: .
+      context: ..
       dockerfile: recording-service/docker/Dockerfile.jvm
     ports:
       - '${RECORDING_SERVICE_PORT:-8081}:8080'
@@ -26,3 +26,40 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD:-postgres}
       - DATABASE_NAME=${DATABASE_NAME:-postgres}
       - DATABASE_HOST=${DATABASE_HOST:-localhost}
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+    networks:
+      - elk
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.1
+    volumes:
+      - source: $HOME/pipelines
+        target: /usr/share/logstash/pipeline
+        type: bind
+    ports:
+      - "12201:12201/udp"
+      - "5000:5000"
+      - "9600:9600"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.1
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+networks:
+  elk:
+    driver: bridge

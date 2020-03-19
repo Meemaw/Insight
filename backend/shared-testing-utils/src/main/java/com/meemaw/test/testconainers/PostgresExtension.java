@@ -1,15 +1,16 @@
 package com.meemaw.test.testconainers;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.testcontainers.junit.jupiter.Container;
 
 
+@Slf4j
 public class PostgresExtension implements BeforeAllCallback {
 
   @Container
@@ -22,9 +23,7 @@ public class PostgresExtension implements BeforeAllCallback {
     }
 
     String projectPath = System.getProperty("user.dir");
-    String projectName = new File(projectPath).getName();
-    String migrationsProjectName = String.format("%s-migrations", projectName);
-    Path migrationsSqlPath = Paths.get(projectPath, "..", migrationsProjectName, "sql");
+    Path migrationsSqlPath = Paths.get(projectPath, "migrations", "sql");
     System.out.println("Applying migrations from: " + migrationsSqlPath.toAbsolutePath());
 
     Files.walk(migrationsSqlPath).filter(path -> !Files.isDirectory(path)).forEach(path -> {

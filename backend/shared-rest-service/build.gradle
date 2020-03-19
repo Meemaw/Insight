@@ -1,28 +1,14 @@
 plugins {
     id 'java-library'
     id 'io.quarkus'
-    id 'jacoco'
-    id 'io.freefair.lombok'
 }
 
 dependencies {
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-resteasy'
-    implementation 'io.quarkus:quarkus-resteasy-jackson'
-    implementation 'io.smallrye:smallrye-metrics:2.4.1'
+    api enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    api 'io.quarkus:quarkus-resteasy'
+    api 'io.quarkus:quarkus-resteasy-jackson'
+    api 'io.quarkus:quarkus-smallrye-metrics'
     api 'org.apache.commons:commons-text:1.8'
 
     testImplementation 'io.quarkus:quarkus-junit5'
-}
-
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled false
-    }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport)
 }

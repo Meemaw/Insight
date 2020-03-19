@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'jacoco'
+    id 'io.freefair.lombok'
 }
 
 allprojects {
@@ -8,15 +10,32 @@ allprojects {
         mavenCentral()
     }
 
-    compileJava {
-        options.compilerArgs << '-parameters'
-    }
+    group 'org.meemaw'
+    version '1.0'
+}
 
+subprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_13
         targetCompatibility = JavaVersion.VERSION_13
     }
 
-    group 'org.meemaw'
-    version '1.0-SNAPSHOT'
+    compileJava {
+        options.compilerArgs << '-parameters'
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'io.freefair.lombok'
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+
+    test {
+        finalizedBy(tasks.jacocoTestReport)
+    }
 }

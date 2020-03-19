@@ -12,7 +12,7 @@ import com.meemaw.shared.rest.exception.BoomException;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.shared.rest.response.Boom;
 import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.ReactiveMailer;
+import io.quarkus.mailer.reactive.ReactiveMailer;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 import io.vertx.axle.pgclient.PgPool;
@@ -125,7 +125,8 @@ public class PasswordServiceImpl implements PasswordService {
         .data("token", token)
         .renderAsync()
         .thenCompose(
-            html -> mailer.send(Mail.withHtml(email, subject, html).setFrom(FROM_SUPPORT)));
+            html -> mailer.send(Mail.withHtml(email, subject, html).setFrom(FROM_SUPPORT))
+                .subscribeAsCompletionStage());
   }
 
 
