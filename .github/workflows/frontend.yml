@@ -49,9 +49,8 @@ jobs:
     env:
       APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
     services:
-      db:
+      postgres:
         image: postgres:11
-        ports: 5432:5432
         env:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
@@ -62,7 +61,7 @@ jobs:
       - name: database migrations
         run: |
           docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
-          docker run auth-service-migrations
+          docker run -e DATABASE_HOST=postgres uth-service-migrations
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
