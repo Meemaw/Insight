@@ -76,7 +76,10 @@ jobs:
           yarn workspace @insight/app start 2>&1 | tee artifacts/testcafe/serve.log &
           node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
       - name: frontend/app | test:e2e
-        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
+        run: |
+          mkdir -p artifacts/testcafe/screenshots
+          mkdir -p artifacts/testcafe/videos
+          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
