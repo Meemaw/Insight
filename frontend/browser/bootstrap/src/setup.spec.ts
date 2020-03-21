@@ -18,7 +18,8 @@ declare global {
 describe('bootstrap', () => {
   it('injects variables and loads tracking script into the page', async () => {
     const browser = await playwright.chromium.launch();
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
     const pagePath = path.join(process.cwd(), 'templates', 'index.html');
 
     await page.goto(`file:${pagePath}`);
