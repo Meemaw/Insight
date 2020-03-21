@@ -1,4 +1,10 @@
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - 'infrastructure/**'
+      - '.vscode/**'
+      - '.gitignore'
+      - 'README.md'
 
 jobs:
   validation:

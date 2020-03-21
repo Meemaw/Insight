@@ -1,16 +1,10 @@
 on:
   push:
-    paths:
-      - '.github/workflows/frontend.yml'
-      - '.eslintignore'
-      - 'eslintrc.js'
-      - '.prettierrc'
-      - 'jest.config.js'
-      - 'lerna.json'
-      - 'package.json'
-      - 'tsconfig.json'
-      - 'yarn.lock'
-      - 'frontend/**'
+    paths-ignore:
+      - 'infrastructure/**'
+      - '.vscode/**'
+      - '.gitignore'
+      - 'README.md'
 
 jobs:
   lint_test_build:
@@ -71,6 +65,8 @@ jobs:
       - name: run auth-service
         run: |
           java -jar backend/auth-service/build/auth-service-1.0-runner.jar
+        env:
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
