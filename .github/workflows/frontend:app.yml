@@ -14,8 +14,8 @@ env:
   CI: true
 
 jobs:
-  test_build:
-    name: Test & Build
+  unit_tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -42,7 +42,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: frontend:app
 
-  e2e:
+  e2e_tests:
     name: E2E tests
     runs-on: ubuntu-latest
     env:
