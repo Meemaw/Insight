@@ -7,6 +7,6 @@ DATABASE_NAME=${DATABASE_NAME:="postgres"}
 
 JDBC_URL="jdbc:postgresql://${DATABASE_HOST}/${DATABASE_NAME}"
 
-echo "Starting flyway ${JDBC_URL}" 
+echo "Flyway connecting to ${JDBC_URL} via user ${DATABASE_USER}" 
 
 /flyway/flyway -url=${JDBC_URL} -user=${DATABASE_USER} -password=${DATABASE_PASSWORD} -schemas=auth -locations=filesystem:sql -connectRetries=60 $@

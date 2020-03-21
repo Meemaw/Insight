@@ -51,6 +51,8 @@ jobs:
     services:
       postgres:
         image: postgres:11
+        ports:
+          - 5432:5432
         env:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
@@ -61,7 +63,7 @@ jobs:
       - name: database migrations
         run: |
           docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
-          docker run -e DATABASE_HOST=postgres auth-service-migrations
+          docker run -e DATABASE_HOST=localhost:5432 auth-service-migrations
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
