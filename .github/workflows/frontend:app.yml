@@ -9,78 +9,78 @@ on:
       - 'tsconfig.json'
       - 'yarn.lock'
 
-  env:
-    CI: true
+env:
+  CI: true
 
-  jobs:
-    test_build:
-      name: Test & Build
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@master
-        - uses: actions/setup-node@v1
-          with:
-            node-version: '12.x'
-        - name: Get yarn cache
-          id: yarn-cache
-          run: echo "::set-output name=dir::$(yarn cache dir)"
-        - uses: actions/cache@v1
-          with:
-            path: ${{ steps.yarn-cache.outputs.dir }}
-            key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-yarn-
-        - name: intall and unit test
-          run: |
-            yarn install
-            yarn workspace @insight/app test --coverage
-          env:
-            CI: true
-        - uses: codecov/codecov-action@v1
-          with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-            flags: frontend:app
+jobs:
+  test_build:
+    name: Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: intall and unit test
+        run: |
+          yarn install
+          yarn workspace @insight/app test --coverage
+        env:
+          CI: true
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: frontend:app
 
-    e2e:
-      name: E2E tests
-      runs-on: ubuntu-latest
-      env:
-        ARTIFACTS_PATH: frontend/app/artifacts/
-      steps:
-        - uses: actions/checkout@master
-        - name: backend | docker-compose up
-          run: |
-            mkdir -p $ARTIFACTS_PATH
-            docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $ARTIFACTS_PATH/docker.log &
-          env:
-            GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-        - uses: actions/setup-node@v1
-          with:
-            node-version: '12.x'
-        - name: Get yarn cache
-          id: yarn-cache
-          run: echo "::set-output name=dir::$(yarn cache dir)"
-        - uses: actions/cache@v1
-          with:
-            path: ${{ steps.yarn-cache.outputs.dir }}
-            key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-yarn-
-        - name: frontend/app | install
-          run: yarn add -W --dev @ffmpeg-installer/ffmpeg
-        - name: frontend/app | build
-          run: yarn workspace @insight/app build
-        - name: frontend/app | start
-          run: |
-            yarn workspace @insight/app start 2>&1 | tee $ARTIFACTS_PATH/serve.log &
-            node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
-        - name: frontend/app | test:e2e
-          run: |
-            mkdir -p $ARTIFACTS_PATH/screenshots
-            mkdir -p $ARTIFACTS_PATH/videos
-            xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
-        - uses: actions/upload-artifact@v1
-          if: failure()
-          with:
-            name: artifacts
-            path: frontend/app/artifacts
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    env:
+      ARTIFACTS_PATH: frontend/app/artifacts/
+    steps:
+      - uses: actions/checkout@master
+      - name: backend | docker-compose up
+        run: |
+          mkdir -p $ARTIFACTS_PATH
+          docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $ARTIFACTS_PATH/docker.log &
+        env:
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: frontend/app | install
+        run: yarn add -W --dev @ffmpeg-installer/ffmpeg
+      - name: frontend/app | build
+        run: yarn workspace @insight/app build
+      - name: frontend/app | start
+        run: |
+          yarn workspace @insight/app start 2>&1 | tee $ARTIFACTS_PATH/serve.log &
+          node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
+      - name: frontend/app | test:e2e
+        run: |
+          mkdir -p $ARTIFACTS_PATH/screenshots
+          mkdir -p $ARTIFACTS_PATH/videos
+          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: artifacts
+          path: frontend/app/artifacts
