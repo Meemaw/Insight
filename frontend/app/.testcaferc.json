@@ -3,13 +3,13 @@
   "skipJsErrors": true,
   "screenshots": {
     "takeOnFails": true,
-    "pathPattern": "${USERAGENT}/${FIXTURE}-${TEST}-${QUARANTINE_ATTEMPT}.png",
+    "pathPattern": "${USERAGENT}/${FIXTURE}/${TEST}-${QUARANTINE_ATTEMPT}.png",
     "path": "artifacts/testcafe/screenshots/"
   },
   "videoPath": "artifacts/testcafe/videos/",
   "videoOptions": {
     "failedOnly": true,
-    "pathPattern": "${USERAGENT}/${FIXTURE}-${TEST}-${QUARANTINE_ATTEMPT}.mp4"
+    "pathPattern": "${USERAGENT}/${FIXTURE}/${TEST}-${QUARANTINE_ATTEMPT}.mp4"
   },
   "clientScripts": [
     "../../node_modules/@testing-library/dom/dist/@testing-library/dom.umd.js"
