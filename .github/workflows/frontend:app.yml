@@ -1,6 +1,7 @@
 on:
   push:
     paths:
+      - '.github/workflows/frontend:app.yml'
       - 'backend/**'
       - 'frontend/app/**'
       - 'jest.config.js'

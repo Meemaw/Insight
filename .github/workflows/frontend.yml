@@ -1,6 +1,7 @@
 on:
   push:
     paths:
+      - '.github/workflows/frontend.yml'
       - 'frontend/**'
       - 'lerna.json'
       - 'package.json'
