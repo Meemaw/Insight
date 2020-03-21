@@ -8,6 +8,9 @@ metadata:
     team: auth
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: auth-service
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -17,6 +20,9 @@ spec:
     metadata:
       annotations:
         prometheus.io/scrape: 'true'
+      labels:
+        app: auth-service
+        team: auth
     spec:
       terminationGracePeriodSeconds: 30
       containers:
@@ -26,12 +32,12 @@ spec:
             - name: GOOGLE_OAUTH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: google_oauth
+                  name: google-oauth
                   key: client_id
             - name: GOOGLE_OAUTH_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: google_oauth
+                  name: google-oauth
                   key: client_secret
           ports:
             - containerPort: 8080
