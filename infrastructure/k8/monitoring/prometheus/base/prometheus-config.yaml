@@ -1,0 +1,115 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: prometheus
+  labels:
+    team: infrastructure
+data:
+  prometheus.yaml: |-
+    global:
+      scrape_interval: 15s
+      scrape_timeout: 15s
+      evaluation_interval: 1m
+
+    rule_files:
+    - "/etc/prometheus/rules/*.yaml"
+
+    scrape_configs:
+    - job_name: 'prometheus'
+      static_configs:
+      - targets:
+        - 'localhost:9090'
+
+    - job_name: 'pushgateway'
+      kubernetes_sd_configs:
+      - role: pod
+      # We want to keep the job label as pushgateway, and let prometheus add the exported_job for pushgateway jobs.
+      honor_labels: false
+      relabel_configs:
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_container_name]
+        regex: prometheus-pushgateway
+
+    - job_name: "kubernetes-pods"
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        regex: true
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_container_port_name, __meta_kubernetes_pod_container_name]
+        regex: (.*metrics.*;.*|^http;elasticsearch$)
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+        action: replace
+        target_label: __scheme__
+        regex: (https?)
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        target_label: __metrics_path__
+        regex: (.+)
+      - action: replace
+        source_labels: [__address__, __meta_kubernetes_pod_container_port_number]
+        regex: (.+):(?:\d+);(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(app|team|app_kubernetes_io_version|cluster|service)$
+        replacement: $1
+      - action: replace
+        source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_container_name]
+        target_label: container
+      
+    - job_name: 'kubernetes-kubelet'
+      kubernetes_sd_configs:
+      - role: node
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      scheme: https
+      relabel_configs:
+      - action: replace
+        target_label: __address__
+        replacement: kubernetes.default.svc:443
+      - action: replace
+        source_labels: [__meta_kubernetes_node_name]
+        regex: (.+)
+        target_label: __metrics_path__
+        replacement: /api/v1/nodes/$1/proxy/metrics
+      metric_relabel_configs:
+      - action: keep
+        source_labels: [__name__]
+        regex: '(kubernetes_build_info|kubelet_volume_stats_used_bytes|kubelet_volume_stats_capacity_bytes)'
+        
+    - job_name: 'kubernetes-cadvisor'
+      kubernetes_sd_configs:
+      - role: node
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      scheme: https
+      relabel_configs:
+      - target_label: __address__
+        replacement: kubernetes.default.svc:443
+        action: replace
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: __metrics_path__
+        replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+        action: replace
+      metric_relabel_configs:
+      - action: keep
+        source_labels: [__name__]
+        regex: ^container_((spec_cpu_(quota|period)$)|(memory_(working_set_bytes|usage_bytes)$|network_(transmit_bytes_total|receive_bytes_total)$|last_seen$|fs_(writes_total|reads_total|io_time_seconds_total)$|file_descriptors$|cpu_(usage_seconds_total|cfs_periods_total|cfs_throttled_(periods|seconds)_total)$))
+      - action: drop
+        source_labels: [pod, container, namespace]
+        regex: ;;
+      - action: labeldrop
+        regex: '(image|id|pod_name)'
