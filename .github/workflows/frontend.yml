@@ -61,7 +61,7 @@ jobs:
       - name: database migrations
         run: |
           docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
-          docker run -e DATABASE_HOST=postgres uth-service-migrations
+          docker run -e DATABASE_HOST=postgres auth-service-migrations
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
