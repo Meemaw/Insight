@@ -52,7 +52,8 @@ jobs:
       - uses: actions/checkout@master
       - name: backend | docker-compose up
         run: |
-          docker-compose -f backend/local-test-services/docker-compose.yml up -d auth-service
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
+          docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/docker.log &
         env:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       - uses: actions/setup-node@v1
@@ -68,9 +69,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: frontend/app | install
-        run: |
-          yarn add -W --dev @ffmpeg-installer/ffmpeg
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
+        run: yarn add -W --dev @ffmpeg-installer/ffmpeg
       - name: frontend/app | build
         run: yarn workspace @insight/app build
       - name: frontend/app | start
