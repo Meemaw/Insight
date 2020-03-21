@@ -56,7 +56,6 @@ jobs:
           docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/docker.log &
         env:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          POSTGRES_HOST: db
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
