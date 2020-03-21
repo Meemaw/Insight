@@ -6,6 +6,9 @@ on:
       - '.gitignore'
       - 'README.md'
 
+env:
+  CI: true
+
 jobs:
   lint_test_build:
     name: Lint, Test & Build
@@ -24,6 +27,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgbm-dev xvfb
       - name: intall, lint and unit test
         run: |
           yarn install
