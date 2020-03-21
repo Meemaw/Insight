@@ -43,8 +43,8 @@ jobs:
           name: s
           path: frontend/browser/tracking/dist
 
-  integration_tests:
-    name: Integration tests
+  e2e:
+    name: E2E tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -64,7 +64,7 @@ jobs:
           wrapper-directory: backend
       - name: run auth-service
         run: |
-          java -jar backend/auth-service/build/auth-service-1.0-runner.jar
+          java -jar backend/auth-service/build/auth-service-1.0-runner.jar &
         env:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       - uses: actions/setup-node@v1
@@ -87,7 +87,7 @@ jobs:
   deploy:
     name: Deploy scripts to CDN
     runs-on: ubuntu-latest
-    needs: [lint_test_build, integration_tests]
+    needs: [lint_test_build, e2e]
     steps:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
