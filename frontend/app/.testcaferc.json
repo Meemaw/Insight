@@ -1,5 +1,16 @@
 {
+  "quarantineMode": true,
   "skipJsErrors": true,
+  "screenshots": {
+    "takeOnFails": true,
+    "pathPattern": "${DATE}_${TIME}/test-${TEST_INDEX}/${USERAGENT}/${FILE_INDEX}.png",
+    "path": "artifacts/testcafe/screenshots/"
+  },
+  "videoPath": "artifacts/testcafe/videos/",
+  "videoOptions": {
+    "failedOnly": true,
+    "pathPattern": "${DATE}_${TIME}/test-${TEST_INDEX}/${USERAGENT}/${FILE_INDEX}.mp4"
+  },
   "clientScripts": [
     "../../node_modules/@testing-library/dom/dist/@testing-library/dom.umd.js"
   ]

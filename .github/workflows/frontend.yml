@@ -76,7 +76,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: testface-screenshots
+          name: testface-artifacts
           path: artifacts/testcafe
 
   deploy:
