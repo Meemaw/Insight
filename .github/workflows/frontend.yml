@@ -68,23 +68,23 @@ jobs:
       - name: frontend/app | install
         run: |
           yarn add -W --dev @ffmpeg-installer/ffmpeg
-          mkdir -p artifacts/testcafe
+          mkdir -p frontend/app/artifacts/testcafe
       - name: frontend/app | build
         run: yarn workspace @insight/app build
       - name: frontend/app | start
         run: |
-          yarn workspace @insight/app start 2>&1 | tee artifacts/testcafe/serve.log &
+          yarn workspace @insight/app start 2>&1 | tee frontend/app/artifacts/testcafe/serve.log &
           node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
       - name: frontend/app | test:e2e
         run: |
-          mkdir -p artifacts/testcafe/screenshots
-          mkdir -p artifacts/testcafe/videos
+          mkdir -p frontend/app/artifacts/testcafe/screenshots
+          mkdir -p frontend/app/artifacts/testcafe/videos
           xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: testface-artifacts
-          path: artifacts/testcafe
+          name: app-testface-artifacts
+          path: frontend/app/artifacts/testcafe
 
   deploy:
     name: Deploy scripts to CDN
