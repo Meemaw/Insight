@@ -55,13 +55,16 @@ jobs:
           - 5432:5432
         env:
           DATABASE_PASSWORD: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@master
       - name: database migrations
         run: |
           docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
-          docker run -e DATABASE_HOST=localhost:5432 auth-service-migrations
+          docker run auth-service-migrations
+        env:
+          DATABASE_HOST: localhost:${{ job.services.postgres.ports[5432] }}
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
