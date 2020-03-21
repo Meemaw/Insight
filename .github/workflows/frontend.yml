@@ -3,12 +3,14 @@ on:
     paths:
       - '.github/workflows/frontend.yml'
       - 'frontend/**'
-      - 'lerna.json'
-      - 'package.json'
-      - 'tsconfig.json'
-      - 'yarn.lock'
       - '.eslintignore'
       - '.eslintrc.js'
+      - 'jest.config.js'
+      - 'lerna.json'
+      - 'package.json'
+      - '.prettierrc'
+      - 'tsconfig.json'
+      - 'yarn.lock'
 
 env:
   CI: true

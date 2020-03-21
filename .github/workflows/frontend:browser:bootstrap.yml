@@ -1,7 +1,7 @@
 on:
   push:
     paths:
-      - '.github/workflows/frontend:browser:bootstrap.yml'
+      - '.github/workflows/frontend:browser:boostrap.yml'
       - 'frontend/browser/bootstrap/**'
       - 'jest.config.js'
       - 'lerna.json'
