@@ -12,7 +12,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.core.UriInfo;
@@ -30,7 +29,6 @@ public class RequestLoggingFilter implements ContainerRequestFilter, ContainerRe
   private static final String LOG_START_TIME_PROPERTY = "start-time";
   private static final long REQUEST_LATENCY_LOG_LIMIT_MS = 50;
 
-
   @Inject
   MetricsService metricsService;
 
@@ -40,9 +38,12 @@ public class RequestLoggingFilter implements ContainerRequestFilter, ContainerRe
   @Context
   HttpServerRequest request;
 
-  @Context
-  ResourceInfo resourceInfo;
-
+  /**
+   * @return unique requestId
+   */
+  private String requestId() {
+    return UUID.randomUUID().toString();
+  }
 
   /**
    * Request handler
@@ -52,7 +53,7 @@ public class RequestLoggingFilter implements ContainerRequestFilter, ContainerRe
   @Override
   public void filter(ContainerRequestContext ctx) {
     ctx.setProperty(LOG_START_TIME_PROPERTY, System.currentTimeMillis());
-    MDC.put(REQUEST_ID_HEADER, UUID.randomUUID().toString());
+    MDC.put(REQUEST_ID_HEADER, requestId());
   }
 
   /**
@@ -90,11 +91,9 @@ public class RequestLoggingFilter implements ContainerRequestFilter, ContainerRe
     }
 
     long timeElapsed = System.currentTimeMillis() - startTime;
-
     if (timeElapsed > REQUEST_LATENCY_LOG_LIMIT_MS) {
-      log.info("Response latency {}ms", timeElapsed);
+      log.info("Request processing latency: {}ms", timeElapsed);
     }
-
     metricsService.requestDuration(path, method, status).update(timeElapsed);
   }
 
