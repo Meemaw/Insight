@@ -48,47 +48,37 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
+    services:
+      db:
+        image: postgres:11
+        ports: 5432:5432
+        env:
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_NAME: postgres
+
     steps:
       - uses: actions/checkout@master
-      - name: backend | docker-compose up
-        run: |
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
-          docker-compose -f backend/local-test-services/docker-compose.yml up -d auth-service
-          sleep 10
-        env:
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      - name: check migration logs
-        run: docker-compose -f backend/local-test-services/docker-compose.yml logs auth-service-migrations
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v1
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: frontend/app | install
-        run: yarn add -W --dev @ffmpeg-installer/ffmpeg
-      - name: frontend/app | build
-        run: yarn workspace @insight/app build
-      - name: frontend/app | start
-        run: |
-          yarn workspace @insight/app start 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/serve.log &
-          node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
-      - name: frontend/app | test:e2e
-        run: |
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/screenshots
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/videos
-          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
-      - uses: actions/upload-artifact@v1
-        if: failure()
+            ${{ runner.os }}-gradle-
+      - uses: actions/setup-java@v1
         with:
-          name: app-testface-artifacts
-          path: frontend/app/artifacts/testcafe
+          java-version: 13
+      - uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: auth-service:quarkusBuild --uber-jar
+          build-root-directory: backend
+          wrapper-directory: backend
+      - name: Run auth-service
+        run: |
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
+          java -jar backend/auth-service/build/auth-service-1.0-runner.jar 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/auth-service.log &
+        env:
+          - GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
   deploy:
     name: Deploy scripts to CDN
