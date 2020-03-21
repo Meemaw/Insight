@@ -65,12 +65,16 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: frontend/app | lerna bootstrap & build & start & test:e2e
+      - name: frontend/app | lerna bootstrap & build & start
         run: |
           npx lerna bootstrap
           yarn workspace @insight/app build
-          yarn workspace @insight/app start &
-          yarn workspace @insight/app test:e2e
+          yarn workspace @insight/app start 2>&1 > /dev/null &
+          node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
+      - uses: DevExpress/testcafe-action@latest
+        working-directory: frontend/app
+        with:
+          args: 'chrome:headless e2e/specs'
 
   deploy:
     name: Deploy scripts to CDN
