@@ -64,7 +64,7 @@ jobs:
       - name: database migrations
         run: |
           docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
-          docker run auth-service-migrations
+          docker run -e DATABASE_HOST=$DATABASE_HOST auth-service-migrations
         env:
           DATABASE_HOST: localhost:${{ job.services.postgres.ports[5432] }}
       - uses: actions/cache@v1
