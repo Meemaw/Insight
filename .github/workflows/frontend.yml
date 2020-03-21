@@ -65,14 +65,18 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: frontend/app | install & build & start & test:e2e
+      - name: frontend/app | install
         run: |
           yarn add -W --dev @ffmpeg-installer/ffmpeg
-          yarn workspace @insight/app build
           mkdir -p artifacts/testcafe
+      - name: frontend/app | build
+        run: yarn workspace @insight/app build
+      - name: frontend/app | start
+        run: |
           yarn workspace @insight/app start 2>&1 | tee artifacts/testcafe/serve.log &
           node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
-          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
+      - name: frontend/app | test:e2e
+        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
