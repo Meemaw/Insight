@@ -15,7 +15,6 @@ env:
 
 jobs:
   unit_tests:
-    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -43,7 +42,6 @@ jobs:
           flags: frontend:app
 
   e2e_tests:
-    name: E2E tests
     runs-on: ubuntu-latest
     env:
       ARTIFACTS_PATH: frontend/app/artifacts/

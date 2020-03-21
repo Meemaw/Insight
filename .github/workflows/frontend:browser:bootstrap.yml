@@ -14,7 +14,6 @@ env:
 
 jobs:
   unit_tests_build:
-    name: Unit tests & uild
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -51,7 +50,6 @@ jobs:
           path: frontend/browser/bootstrap/dist
 
   deploy:
-    name: Deploy script to CDN
     runs-on: ubuntu-latest
     needs: [unit_tests_build]
     steps:

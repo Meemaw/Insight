@@ -1,14 +1,10 @@
 on:
   push:
-    paths-ignore:
-      - 'infrastructure/**'
-      - '.vscode/**'
-      - '.gitignore'
-      - 'README.md'
+    paths:
+      - 'backend/**'
 
 jobs:
   validation:
-    name: 'Validation'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
