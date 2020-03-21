@@ -65,10 +65,11 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: frontend/app | lerna bootstrap & build & test:e2e
+      - name: frontend/app | lerna bootstrap & build & start & test:e2e
         run: |
           npx lerna bootstrap
           yarn workspace @insight/app build
+          yarn workspace @insight/app start &
           yarn workspace @insight/app test:e2e
 
   deploy:
