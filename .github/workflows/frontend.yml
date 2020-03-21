@@ -54,6 +54,7 @@ jobs:
         run: |
           mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
           docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/docker.log &
+          sleep 10 & docker-compose -f backend/local-test-services/docker-compose.yml logs auth-service-migrations
         env:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       - uses: actions/setup-node@v1
