@@ -24,9 +24,9 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: lerna bootstrap, lint and unit test
+      - name: intall, lint and unit test
         run: |
-          npx lerna bootstrap
+          yarn install
           yarn lint
           yarn test:coverage
         env:
@@ -65,11 +65,11 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: frontend/app | lerna bootstrap & build & start
+      - name: frontend/app | install & build & start & test:e2e
         run: |
-          npx lerna bootstrap
+          yarn install
           yarn workspace @insight/app build
-          yarn workspace @insight/app start 2>&1 > /dev/null &
+          yarn workspace @insight/app start &
           node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
           yarn workspace @insight/app test:e2e
 
