@@ -42,11 +42,11 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
   private static final String TOKEN_INFO_SERVER_URL = "https://oauth2.googleapis.com/tokeninfo";
 
 
-  @ConfigProperty(name = "google.client.id")
-  String GOOGLE_CLIENT_ID;
+  @ConfigProperty(name = "google.oauth.client.id")
+  String GOOGLE_OAUTH_CLIENT_ID;
 
-  @ConfigProperty(name = "google.client.secret")
-  String GOOGLE_CLIENT_SECRET;
+  @ConfigProperty(name = "google.oauth.client.secret")
+  String GOOGLE_OAUTH_CLIENT_SECRET;
 
   @Inject
   ObjectMapper objectMapper;
@@ -67,7 +67,7 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
   @Override
   public URI buildAuthorizationURI(String state, String redirectURI) {
     return UriBuilder.fromUri(AUTHORIZATION_SERVER_URL)
-        .queryParam("client_id", GOOGLE_CLIENT_ID)
+        .queryParam("client_id", GOOGLE_OAUTH_CLIENT_ID)
         .queryParam("redirect_uri", redirectURI)
         .queryParam("response_type", "code")
         .queryParam("scope", SCOPES)
@@ -120,8 +120,8 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
     return webClient.postAbs(TOKEN_SERVER_URL)
         .addQueryParam("grant_type", "authorization_code")
         .addQueryParam("code", code)
-        .addQueryParam("client_id", GOOGLE_CLIENT_ID)
-        .addQueryParam("client_secret", GOOGLE_CLIENT_SECRET)
+        .addQueryParam("client_id", GOOGLE_OAUTH_CLIENT_ID)
+        .addQueryParam("client_secret", GOOGLE_OAUTH_CLIENT_SECRET)
         .addQueryParam("redirect_uri", redirectURI)
         .putHeader("Content-Length", "0")
         .send()

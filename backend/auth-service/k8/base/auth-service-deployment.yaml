@@ -1,7 +1,11 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth-service
+  namespace: auth
+  labels:
+    team: auth
 spec:
   replicas: 3
   strategy:
@@ -18,6 +22,17 @@ spec:
       containers:
         - image: eu.gcr.io/insight/auth-service
           name: auth-service
+          env:
+            - name: GOOGLE_OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google_oauth
+                  key: client_id
+            - name: GOOGLE_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google_oauth
+                  key: client_secret
           ports:
             - containerPort: 8080
               name: http

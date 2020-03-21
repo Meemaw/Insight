@@ -1,7 +1,11 @@
+---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: auth-service
+  namespace: auth
+  labels:
+    team: auth
 spec:
   maxReplicas: 10
   minReplicas: 2
