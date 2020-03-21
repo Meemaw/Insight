@@ -67,7 +67,7 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: frontend/app | install & build & start & test:e2e
         run: |
-          yarn install
+          yarn add -W --dev @ffmpeg-installer/ffmpeg
           yarn workspace @insight/app build
           mkdir -p artifacts/testcafe
           yarn workspace @insight/app start 2>&1 | tee artifacts/testcafe/serve.log &
