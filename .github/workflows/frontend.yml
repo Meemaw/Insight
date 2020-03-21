@@ -46,6 +46,8 @@ jobs:
   e2e:
     name: E2E tests
     runs-on: ubuntu-latest
+    env:
+      APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
     steps:
       - uses: actions/checkout@master
       - name: backend | docker-compose up
@@ -68,23 +70,23 @@ jobs:
       - name: frontend/app | install
         run: |
           yarn add -W --dev @ffmpeg-installer/ffmpeg
-          mkdir -p frontend/app/artifacts/testcafe
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
       - name: frontend/app | build
         run: yarn workspace @insight/app build
       - name: frontend/app | start
         run: |
-          yarn workspace @insight/app start 2>&1 | tee frontend/app/artifacts/testcafe/serve.log &
+          yarn workspace @insight/app start 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/serve.log &
           node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
       - name: frontend/app | test:e2e
         run: |
-          mkdir -p frontend/app/artifacts/testcafe/screenshots
-          mkdir -p frontend/app/artifacts/testcafe/videos
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/screenshots
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/videos
           xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: app-testface-artifacts
-          path: frontend/app/artifacts/testcafe
+          path: $APP_TESTCAFE_ARTIFACTS_PATH
 
   deploy:
     name: Deploy scripts to CDN
