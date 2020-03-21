@@ -86,7 +86,7 @@ jobs:
         if: failure()
         with:
           name: app-testface-artifacts
-          path: '$APP_TESTCAFE_ARTIFACTS_PATH'
+          path: frontend/app/artifacts/testcafe
 
   deploy:
     name: Deploy scripts to CDN
