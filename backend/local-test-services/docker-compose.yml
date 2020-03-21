@@ -8,12 +8,10 @@ services:
     ports:
       - '${AUTH_SERVICE_PORT:-8080}:8080'
     environment:
-      - DATABASE_HOST=db
+      - POSTGRES_HOST=db
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     depends_on:
       - auth-service-migrations
-    networks:
-      - auth
   auth-service-migrations:
     build:
       context: ../auth-service/migrations
@@ -21,12 +19,10 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_HOST=db
-      - DATABASE_USER=${DATABASE_USER:-postgres}
-      - DATABASE_NAME=${DATABASE_NAME:-postgres}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-postgres}
-    networks:
-      - auth
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
   recording-service:
     build:
       context: ..
@@ -40,12 +36,9 @@ services:
     ports:
       - '${POSTGRES_PORT:-5400}:5432'
     environment:
-      - DATABASE_USER=${DATABASE_USER:-postgres}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-postgres}
-      - DATABASE_NAME=${DATABASE_NAME:-postgres}
-      - DATABASE_HOST=${DATABASE_HOST:-localhost}
-    networks:
-      - auth
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
@@ -81,7 +74,5 @@ services:
       - elasticsearch
 
 networks:
-  auth:
-    driver: bridge
   elk:
     driver: bridge

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-DATABASE_HOST=${DATABASE_HOST:="localhost"}
-DATABASE_PASSWORD=${DATABASE_PASSWORD:="postgres"}
-DATABASE_USER=${DATABASE_USER:="postgres"}
-DATABASE_NAME=${DATABASE_NAME:="postgres"}
+POSTGRES_HOST=${POSTGRES_HOST:="localhost"}
+POSTGRES_DB=${POSTGRES_DB:="postgres"}
+POSTGRES_USER=${POSTGRES_USER:="postgres"}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD:="postgres"}
 
-JDBC_URL="jdbc:postgresql://${DATABASE_HOST}/${DATABASE_NAME}"
+JDBC_URL="jdbc:postgresql://${POSTGRES_HOST}/${POSTGRES_DB}"
 
 echo "Flyway connecting to ${JDBC_URL} via user ${DATABASE_USER}" 
 
-/flyway/flyway -url=${JDBC_URL} -user=${DATABASE_USER} -password=${DATABASE_PASSWORD} -schemas=auth -locations=filesystem:sql -connectRetries=60 $@
+/flyway/flyway -url=${JDBC_URL} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -schemas=auth -locations=filesystem:sql -connectRetries=60 $@

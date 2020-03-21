@@ -46,47 +46,47 @@ jobs:
   e2e:
     name: E2E tests
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:11
-        ports:
-          - 5432/tcp
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     env:
       APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
-
     steps:
       - uses: actions/checkout@master
-      - name: database migrations
-        run: |
-          docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
-          docker run -e DATABASE_HOST=$DATABASE_HOST auth-service-migrations
-        env:
-          DATABASE_HOST: $(ip route show | awk '/default/ {print $3}'):${{ job.services.postgres.ports[5432] }}
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/setup-java@v1
-        with:
-          java-version: 13
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: auth-service:quarkusBuild --uber-jar
-          build-root-directory: backend
-          wrapper-directory: backend
-      - name: Run auth-service
+      - name: backend | docker-compose up
         run: |
           mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
-          java -jar backend/auth-service/build/auth-service-1.0-runner.jar 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/auth-service.log &
+          docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/docker.log &
         env:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          POSTGRES_HOST: db
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: frontend/app | install
+        run: yarn add -W --dev @ffmpeg-installer/ffmpeg
+      - name: frontend/app | build
+        run: yarn workspace @insight/app build
+      - name: frontend/app | start
+        run: |
+          yarn workspace @insight/app start 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/serve.log &
+          node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
+      - name: frontend/app | test:e2e
+        run: |
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/screenshots
+          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/videos
+          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: app-testface-artifacts
+          path: frontend/app/artifacts/testcafe
 
   deploy:
     name: Deploy scripts to CDN
