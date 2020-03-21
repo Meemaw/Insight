@@ -59,6 +59,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+      - name: database migrations
+        run: |
+          docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
+          docker run auth-service-migrations
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
@@ -78,7 +82,7 @@ jobs:
           mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
           java -jar backend/auth-service/build/auth-service-1.0-runner.jar 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/auth-service.log &
         env:
-          - GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
   deploy:
     name: Deploy scripts to CDN
