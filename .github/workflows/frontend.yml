@@ -1,17 +1,20 @@
 on:
   push:
-    paths-ignore:
-      - 'infrastructure/**'
-      - '.vscode/**'
-      - '.gitignore'
-      - 'README.md'
+    paths:
+      - 'frontend/**'
+      - 'lerna.json'
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'yarn.lock'
+      - '.eslintignore'
+      - '.eslintrc.js'
 
 env:
   CI: true
 
 jobs:
-  lint_test_build:
-    name: Lint, Test & Build
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -27,92 +30,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: install required packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install libgbm-dev xvfb
-      - name: intall, lint and unit test
+      - name: intall, lint
         run: |
           yarn install
           yarn lint
-          xvfb-run --auto-servernum yarn test:coverage
-        env:
-          CI: true
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: browser
-      - name: build
-        run: |
-          yarn build
-      - uses: actions/upload-artifact@v1
-        with:
-          name: s
-          path: frontend/browser/tracking/dist
-
-  e2e:
-    name: E2E tests
-    runs-on: ubuntu-latest
-    env:
-      APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
-    steps:
-      - uses: actions/checkout@master
-      - name: backend | docker-compose up
-        run: |
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH
-          docker-compose -f backend/local-test-services/docker-compose.yml up auth-service 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/docker.log &
-        env:
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v1
-        with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: frontend/app | install
-        run: yarn add -W --dev @ffmpeg-installer/ffmpeg
-      - name: frontend/app | build
-        run: yarn workspace @insight/app build
-      - name: frontend/app | start
-        run: |
-          yarn workspace @insight/app start 2>&1 | tee $APP_TESTCAFE_ARTIFACTS_PATH/serve.log &
-          node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
-      - name: frontend/app | test:e2e
-        run: |
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/screenshots
-          mkdir -p $APP_TESTCAFE_ARTIFACTS_PATH/videos
-          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
-      - uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: app-testface-artifacts
-          path: frontend/app/artifacts/testcafe
-
-  deploy:
-    name: Deploy scripts to CDN
-    runs-on: ubuntu-latest
-    needs: [lint_test_build, e2e]
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/download-artifact@v1
-        with:
-          name: s
-          path: deployment/s
-      - name: Prepare files for deployment
-        run: |
-          mv deployment/s/insight.js.gz deployment/s/insight.js
-      - uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --follow-symlinks --delete --content-encoding gzip
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: 'deployment'

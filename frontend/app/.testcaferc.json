@@ -4,9 +4,9 @@
   "screenshots": {
     "takeOnFails": true,
     "pathPattern": "${USERAGENT}/${FIXTURE}/${TEST}-${QUARANTINE_ATTEMPT}.png",
-    "path": "artifacts/testcafe/screenshots/"
+    "path": "artifacts/screenshots/"
   },
-  "videoPath": "artifacts/testcafe/videos/",
+  "videoPath": "artifacts/videos/",
   "videoOptions": {
     "failedOnly": true,
     "pathPattern": "${USERAGENT}/${FIXTURE}/${TEST}-${QUARANTINE_ATTEMPT}.mp4"
