@@ -28,7 +28,7 @@ jobs:
         run: |
           yarn install
           yarn lint
-          yarn test:coverage
+          xvfb-run --auto-servernum yarn test:coverage
         env:
           CI: true
       - uses: codecov/codecov-action@v1
@@ -69,9 +69,15 @@ jobs:
         run: |
           yarn install
           yarn workspace @insight/app build
-          yarn workspace @insight/app start &
+          mkdir -p artifacts/testface
+          yarn workspace @insight/app start 2>&1 | tee artifacts/testface/serve.log &
           node_modules/wait-on/bin/wait-on http-get://localhost:3000 --timeout 60000
           xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: testface-screenshots
+          path: artifacts/testcafe
 
   deploy:
     name: Deploy scripts to CDN
