@@ -46,8 +46,6 @@ jobs:
   e2e:
     name: E2E tests
     runs-on: ubuntu-latest
-    env:
-      APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
     services:
       postgres:
         image: postgres:11
@@ -58,6 +56,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      APP_TESTCAFE_ARTIFACTS_PATH: frontend/app/artifacts/testcafe
 
     steps:
       - uses: actions/checkout@master
@@ -66,7 +66,7 @@ jobs:
           docker build -f backend/auth-service/migrations/Dockerfile -t auth-service-migrations backend/auth-service/migrations
           docker run -e DATABASE_HOST=$DATABASE_HOST auth-service-migrations
         env:
-          DATABASE_HOST: localhost:${{ job.services.postgres.ports[5432] }}
+          DATABASE_HOST: $(ip route show | awk '/default/ {print $3}'):${{ job.services.postgres.ports[5432] }}
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
