@@ -58,9 +58,6 @@ jobs:
         with:
           name: s
           path: deployment/s
-      - name: Prepare files for deployment
-        run: |
-          mv deployment/s/index.js deployment/s/bootstrap.js
       - uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks --delete --content-encoding gzip
