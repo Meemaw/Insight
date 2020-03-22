@@ -65,6 +65,10 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: frontend/app | install
         run: yarn add -W --dev @ffmpeg-installer/ffmpeg
+      - uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/frontend/app/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}
       - name: frontend/app | build
         run: yarn workspace @insight/app build
       - name: frontend/app | start
