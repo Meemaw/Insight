@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
+import path from 'path';
+
 import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import gzipPlugin from 'rollup-plugin-gzip';
 
-const input = 'src/index.ts';
+const input = path.join('src', 'index.ts');
+const output = path.join('dist', 'insight.js');
 
 export default {
   input,
@@ -13,6 +16,6 @@ export default {
     gzipPlugin(),
   ],
   output: {
-    file: 'dist/insight.js',
+    file: output,
   },
 };

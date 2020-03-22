@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/camelcase */
+import path from 'path';
+
 import { terser } from 'rollup-plugin-terser';
 
 const prettier = require('rollup-plugin-prettier');
 
-const input = 'src/index.js';
+const input = path.join('src', 'index.js');
+const output = path.join('dist', 'bootstrap.js');
 
 const plugins = [terser({ compress: false, mangle: true }), prettier()];
 
@@ -13,7 +16,7 @@ export default [
     input,
     plugins,
     output: {
-      file: 'dist/index.js',
+      file: output,
     },
   },
   {
@@ -28,7 +31,7 @@ export default [
       },
     ],
     output: {
-      file: 'dist/index.html',
+      file: output.replace('.js', '.html'),
     },
   },
 ];
