@@ -43,7 +43,7 @@ jobs:
           flags: frontend:browser:bootstrap
       - name: build
         run: |
-          yarn build
+          yarn workspace @insight/browser-bootstrap build
       - uses: actions/upload-artifact@v1
         with:
           name: s
