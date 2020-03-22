@@ -52,3 +52,6 @@ yarn-error.log
 
 # Environment files
 .env
+
+# Artifacts
+artifacts

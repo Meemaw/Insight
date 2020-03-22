@@ -80,7 +80,7 @@ jobs:
         run: |
           mkdir -p $ARTIFACTS_PATH/screenshots
           mkdir -p $ARTIFACTS_PATH/videos
-          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e --concurrency 2
+          xvfb-run --server-args="-screen 0 1280x720x24" yarn workspace @insight/app test:e2e
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
