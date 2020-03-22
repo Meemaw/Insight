@@ -14,7 +14,7 @@ export const Base = () => {
 };
 
 Base.story = configureStory({
-  setupMocks: sandbox => {
+  setupMocks: (sandbox) => {
     return {
       resend: sandbox.stub(InviteApi, 'resend').resolves({ data: true }),
       delete: sandbox.stub(InviteApi, 'delete').resolves({ data: true }),

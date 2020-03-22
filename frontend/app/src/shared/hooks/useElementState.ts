@@ -25,7 +25,7 @@ function useElementState<T extends Element>({
   const setOff = useCallback(() => setValue(false), []);
 
   const callbackRef = useCallback(
-    node => {
+    (node) => {
       if (ref.current != null) {
         ref.current.removeEventListener(on, setOn);
         ref.current.removeEventListener(off, setOff);

@@ -20,8 +20,8 @@ const useCompleteSignup = (signupRequest: SignupRequestDTO) => {
     },
     onSubmit: (values, { setSubmitting }) => {
       SignupApi.complete({ ...signupRequest, password: values.password })
-        .then(_ => router.replace('/'))
-        .catch(async error => {
+        .then((_) => router.replace('/'))
+        .catch(async (error) => {
           const errorDTO: APIErrorDataResponse = await error.response.json();
           setFormError(errorDTO.error.message);
         })

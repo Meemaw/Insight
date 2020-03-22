@@ -45,10 +45,10 @@ const GlobalSearch = () => {
 
   const content = (
     <ul style={{ width, margin: 0 }}>
-      {[1, 2, 3, 4, 5].map(item => {
+      {[1, 2, 3, 4, 5].map((item) => {
         return (
           <li
-            onMouseDown={event => {
+            onMouseDown={(event) => {
               event.preventDefault();
             }}
             onClick={blur}

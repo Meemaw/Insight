@@ -21,7 +21,7 @@ const PendingInvitesList = ({ invites, deleteInvite, resendInvite }: Props) => {
         <div />
       </li>
 
-      {invites.map(teamInvite => {
+      {invites.map((teamInvite) => {
         return (
           <li key={teamInvite.token}>
             <InviteRow

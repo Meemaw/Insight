@@ -21,10 +21,10 @@ export const Base = () => {
   return <SignupComplete {...baseProps} />;
 };
 Base.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(SignupApi, 'complete').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(SignupApi, 'complete').callsFake((_) => {
       const response = { data: true };
-      return new Promise(resolve => setTimeout(() => resolve(response), 250));
+      return new Promise((resolve) => setTimeout(() => resolve(response), 250));
     });
   },
 });
@@ -33,8 +33,8 @@ export const WithError = () => {
   return <SignupComplete {...baseProps} />;
 };
 WithError.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(SignupApi, 'complete').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(SignupApi, 'complete').callsFake((_) => {
       const error = mockApiError({
         message: 'Something went wrong. Please try again later.',
         statusCode: 500,

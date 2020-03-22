@@ -29,7 +29,7 @@ describe('bootstrap', () => {
 
     const windowHandle = await page.evaluateHandle(() => window);
 
-    const windowResult = await page.evaluate(win => {
+    const windowResult = await page.evaluate((win) => {
       return {
         host: win._i_host,
         script: win._i_script,
@@ -47,7 +47,7 @@ describe('bootstrap', () => {
     });
 
     const headHandle = await page.$('head');
-    const injectedScriptResult = await page.evaluate(head => {
+    const injectedScriptResult = await page.evaluate((head) => {
       const injectedScript = head!.getElementsByTagName('script')[0];
       return {
         src: injectedScript.src,

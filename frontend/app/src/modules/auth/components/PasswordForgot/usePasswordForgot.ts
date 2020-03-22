@@ -19,8 +19,8 @@ const usePasswordForgot = () => {
     },
     onSubmit: (values, { setSubmitting }) => {
       PasswordApi.forgot(values.email)
-        .then(response => setCheckYourInbox(response.data))
-        .catch(async error => {
+        .then((response) => setCheckYourInbox(response.data))
+        .catch(async (error) => {
           const errorDTO: APIErrorDataResponse = await error.response.json();
           setFormError(errorDTO.error.message);
         })

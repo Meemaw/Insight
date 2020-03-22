@@ -21,10 +21,10 @@ export const Base = () => {
   return <PasswordReset {...baseProps} />;
 };
 Base.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(PasswordApi, 'reset').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(PasswordApi, 'reset').callsFake((_) => {
       const response = { data: true };
-      return new Promise(resolve => setTimeout(() => resolve(response), 250));
+      return new Promise((resolve) => setTimeout(() => resolve(response), 250));
     });
   },
 });
@@ -33,8 +33,8 @@ export const WithError = () => {
   return <PasswordReset {...baseProps} />;
 };
 WithError.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(PasswordApi, 'reset').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(PasswordApi, 'reset').callsFake((_) => {
       const error = mockApiError({
         message: 'Something went wrong. Please try again later.',
         statusCode: 500,

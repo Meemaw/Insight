@@ -18,7 +18,7 @@ type Props = {
 
 class InsightDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
-    const page = ctx.renderPage(App => props => (
+    const page = ctx.renderPage((App) => (props) => (
       <StyletronProvider value={styletron}>
         <App {...props} />
       </StyletronProvider>

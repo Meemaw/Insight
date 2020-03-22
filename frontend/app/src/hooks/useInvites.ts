@@ -11,8 +11,8 @@ const useInvites = () => {
 
   const deleteInvite = useCallback(
     async (token: string, email: string) => {
-      return InviteApi.delete(token, email).then(resp => {
-        const nextInvites = invites.filter(invite => invite.token !== token);
+      return InviteApi.delete(token, email).then((resp) => {
+        const nextInvites = invites.filter((invite) => invite.token !== token);
         mutate(cacheKey, { data: nextInvites });
         return resp;
       });
@@ -22,7 +22,7 @@ const useInvites = () => {
 
   const createInvite = useCallback(
     async (role: UserRole, email: string) => {
-      return InviteApi.create(role, email).then(resp => {
+      return InviteApi.create(role, email).then((resp) => {
         mutate(cacheKey, { data: [...invites, resp.data] });
         return resp;
       });

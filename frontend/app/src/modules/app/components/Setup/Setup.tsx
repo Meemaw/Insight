@@ -39,7 +39,7 @@ const Setup = () => {
         <StyledTabs>
           <Tabs
             selectedTabId={selectedId}
-            onChange={newTab => setSelectedId(newTab as string)}
+            onChange={(newTab) => setSelectedId(newTab as string)}
           >
             <Tab
               id="profile"

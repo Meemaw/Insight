@@ -9,7 +9,7 @@ export default {
 export const Success = () => {
   return (
     <SendInvite
-      createInvite={() => new Promise(resolve => setTimeout(resolve, 1000))}
+      createInvite={() => new Promise((resolve) => setTimeout(resolve, 1000))}
     />
   );
 };

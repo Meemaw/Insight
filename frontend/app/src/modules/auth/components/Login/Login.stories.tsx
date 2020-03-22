@@ -14,10 +14,10 @@ export const Base = () => {
   return <Login dest={encodeURIComponent('/')} />;
 };
 Base.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(SsoApi, 'login').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(SsoApi, 'login').callsFake((_) => {
       const response = { data: true };
-      return new Promise(resolve => setTimeout(() => resolve(response), 250));
+      return new Promise((resolve) => setTimeout(() => resolve(response), 250));
     });
   },
 });
@@ -26,10 +26,10 @@ export const CustomDest = () => {
   return <Login dest={encodeURIComponent('/settings/general')} />;
 };
 CustomDest.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(SsoApi, 'login').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(SsoApi, 'login').callsFake((_) => {
       const response = { data: true };
-      return new Promise(resolve => setTimeout(() => resolve(response), 250));
+      return new Promise((resolve) => setTimeout(() => resolve(response), 250));
     });
   },
 });
@@ -38,8 +38,8 @@ export const WithError = () => {
   return <Login dest={encodeURIComponent('/')} />;
 };
 WithError.story = configureStory({
-  setupMocks: sandbox => {
-    return sandbox.stub(SsoApi, 'login').callsFake(_ => {
+  setupMocks: (sandbox) => {
+    return sandbox.stub(SsoApi, 'login').callsFake((_) => {
       const error = new Error('APIError');
       Object.assign(error, {
         response: {

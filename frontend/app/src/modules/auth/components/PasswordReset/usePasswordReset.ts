@@ -20,8 +20,8 @@ const usePasswordReset = (props: PasswordResetRequestBase) => {
     },
     onSubmit: (values, { setSubmitting }) => {
       PasswordApi.reset({ ...props, password: values.password })
-        .then(_ => router.replace('/'))
-        .catch(async error => {
+        .then((_) => router.replace('/'))
+        .catch(async (error) => {
           const errorDTO: APIErrorDataResponse = await error.response.json();
           setFormError(errorDTO.error.message);
         })

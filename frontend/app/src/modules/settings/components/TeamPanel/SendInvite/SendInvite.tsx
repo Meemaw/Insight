@@ -13,7 +13,7 @@ const SendInvite = ({ createInvite }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const togleIsOpen = useCallback(() => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   }, []);
 
   const onCancel = useCallback(() => {
@@ -35,7 +35,7 @@ const SendInvite = ({ createInvite }: Props) => {
     <Popover
       isOpen={isOpen}
       position="bottom"
-      onInteraction={open => {
+      onInteraction={(open) => {
         setIsOpen(open);
       }}
       content={

@@ -9,8 +9,8 @@ import Api from 'api';
   const eventQueue = new EventQueue(context);
   const api = new Api('http://localhost:8080/v1/beacon');
 
-  const observer = new PerformanceObserver(performanceEntryList => {
-    performanceEntryList.getEntries().forEach(entry => {
+  const observer = new PerformanceObserver((performanceEntryList) => {
+    performanceEntryList.getEntries().forEach((entry) => {
       eventQueue.enqueue(EventType.PERFORMANCE, [
         entry.name,
         entry.entryType,

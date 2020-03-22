@@ -43,7 +43,7 @@ const usePenvingInvitesList = ({ rejecting = false }: Options = {}) => {
         if (rejecting) {
           reject();
         } else {
-          setInvites(prev => prev.filter(i => i.token !== token));
+          setInvites((prev) => prev.filter((i) => i.token !== token));
           resolve({ data: true });
         }
       }, 1000);
