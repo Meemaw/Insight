@@ -1,16 +1,9 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: grafana
-  labels:
-    team: infrastructure
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
-  namespace: grafana
+  namespace: monitoring
   labels:
     team: infrastructure
 spec:

@@ -4619,7 +4619,7 @@ babel-jest@^25.1.0:
     chalk "^3.0.0"
     slash "^3.0.0"
 
-babel-loader@8.0.6, babel-loader@^8.0.6:
+babel-loader@8.0.6:
   version "8.0.6"
   resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-8.0.6.tgz#e33bdb6f362b03f4bb141a0c21ab87c501b70dfb"
   integrity sha512-4BmWKtBOBm13uoUwd08UwjZlaw3O9GWf456R9j+5YykFZ6LUIjIKLc0zEZf+hauxPOJs96C8k6FvYD09vWzhYw==
@@ -5406,10 +5406,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-baseui@^9.64.1:
-  version "9.64.1"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.64.1.tgz#dc3d4a8fe7947d3885c004e1819c50bf92253df5"
-  integrity sha512-wvVHQXrI5BjLNGGd7f7uCwb/PA+H6KpM/LkbfQ32Wu3DfQvaOoVGqtBeXtSgQbsf92/JE9F3MKG0MAGr4RnX9g==
+baseui@^9.64.9:
+  version "9.64.9"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.64.9.tgz#3bfefc42a144b2e04c033c20274370f17f64aeaa"
+  integrity sha512-iCv7oOn407zNs1jTfeCut/p2+xSDiw4J5jVaafpv3KwtR8EHMpV3pc+aD0iJS7cb/wvefVJ2SLbRoTiLx8KvCw==
   dependencies:
     card-validator "^6.2.0"
     date-fns "^2.6.0"
@@ -16490,7 +16490,7 @@ testcafe-reporter-xunit@^2.1.0:
   resolved "https://registry.yarnpkg.com/testcafe-reporter-xunit/-/testcafe-reporter-xunit-2.1.0.tgz#e6d66c572ce15af266706af0fd610b2a841dd443"
   integrity sha1-5tZsVyzhWvJmcGrw/WELKoQd1EM=
 
-testcafe@^1.6.1, testcafe@^1.8.2:
+testcafe@^1.6.1:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-1.8.2.tgz#1c558c1ef014ef2df5db120f769f568ae5c59a5a"
   integrity sha512-bMUF+O9hGVsQPonUkiSVSPs9TiyeWT3IAM/GHLfEhUP2yXgbjneuUg6YmG/+jrCbgZ9AuB4nDKcaZIVaQJyeSA==

@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: prometheus
-  namespace: prometheus
+  namespace: monitoring
   labels:
     team: infrastructure
 ---
@@ -40,4 +40,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: prometheus
-    namespace: prometheus
+    namespace: monitoring
