@@ -7,7 +7,7 @@ import { terser } from 'rollup-plugin-terser';
 const prettier = require('rollup-plugin-prettier');
 
 const input = path.join('src', 'index.js');
-const output = path.join('dist', 'bootstrap.js');
+const output = path.join('dist', 'insight.js');
 
 const plugins = [terser({ compress: false, mangle: true }), prettier()];
 

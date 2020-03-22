@@ -46,7 +46,7 @@ jobs:
           yarn workspace @insight/browser-bootstrap build
       - uses: actions/upload-artifact@v1
         with:
-          name: s
+          name: b
           path: frontend/browser/bootstrap/dist
 
   deploy:
@@ -56,8 +56,8 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
         with:
-          name: s
-          path: deployment/s
+          name: b
+          path: deployment/b
       - uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks --delete --content-encoding gzip

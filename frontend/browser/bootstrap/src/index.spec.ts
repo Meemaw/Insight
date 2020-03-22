@@ -24,7 +24,7 @@ describe('bootstrap', () => {
 
     await page.goto(`file:${pagePath}`);
 
-    const bundledScriptTag = path.join(process.cwd(), 'dist', 'bootstrap.js');
+    const bundledScriptTag = path.join(process.cwd(), 'dist', 'insight.js');
     await page.addScriptTag({ path: bundledScriptTag });
 
     const windowHandle = await page.evaluateHandle(() => window);
