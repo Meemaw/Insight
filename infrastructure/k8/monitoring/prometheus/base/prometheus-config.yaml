@@ -41,7 +41,7 @@ data:
         regex: true
       - action: keep
         source_labels: [__meta_kubernetes_pod_container_port_name, __meta_kubernetes_pod_container_name]
-        regex: (.*metrics.*;.*|^http;elasticsearch$)
+        regex: (^metrics;.*$|^http;.*$)
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__

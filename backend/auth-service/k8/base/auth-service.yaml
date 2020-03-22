@@ -14,7 +14,7 @@ metadata:
   labels:
     team: auth
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: auth-service
   ports:

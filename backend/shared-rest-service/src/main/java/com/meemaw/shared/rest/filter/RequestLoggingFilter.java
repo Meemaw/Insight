@@ -39,7 +39,7 @@ public class RequestLoggingFilter implements ContainerRequestFilter, ContainerRe
   HttpServerRequest request;
 
   /**
-   * @return unique requestId
+   * @return Unique requestId
    */
   private String requestId() {
     return UUID.randomUUID().toString();

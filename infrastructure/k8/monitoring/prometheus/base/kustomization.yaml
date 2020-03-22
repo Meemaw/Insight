@@ -5,3 +5,4 @@ resources:
   - prometheus-core.yaml
   - prometheus-config.yaml
   - prometheus-rbac.yaml
+  - prometheus-service.yaml
