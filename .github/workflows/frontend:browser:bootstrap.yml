@@ -11,6 +11,9 @@ on:
 
 env:
   CI: true
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
   unit_tests_build:
@@ -68,7 +71,8 @@ jobs:
           args: --follow-symlinks --content-encoding gzip
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           SOURCE_DIR: 'deployment'
+      - uses: chetan/invalidate-cloudfront-action@master
+        env:
+          PATHS: '/b/*'
+          DISTRIBUTION: ${{ secrets.AWS_CF_DISTRIBUTION_ID }}
