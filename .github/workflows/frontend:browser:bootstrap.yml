@@ -34,7 +34,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libgbm-dev xvfb
-      - name: intall and unit test
+      - name: Install dependencies and run tests
         run: |
           yarn install
           xvfb-run --auto-servernum yarn workspace @insight/browser-bootstrap test --coverage
@@ -45,6 +45,9 @@ jobs:
       - name: build
         run: |
           yarn workspace @insight/browser-bootstrap build
+      - name: Prepare files for deployment
+        run: |
+          mv frontend/browser/bootstrap/dist/insight.js.gz frontend/browser/bootstrap/dist/insight.js
       - uses: actions/upload-artifact@v1
         with:
           name: b

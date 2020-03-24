@@ -3,6 +3,7 @@
 import path from 'path';
 
 import { terser } from 'rollup-plugin-terser';
+import gzipPlugin from 'rollup-plugin-gzip';
 
 const prettier = require('rollup-plugin-prettier');
 
@@ -14,7 +15,7 @@ const plugins = [terser({ compress: false, mangle: true }), prettier()];
 export default [
   {
     input,
-    plugins,
+    plugins: [...plugins, gzipPlugin()],
     output: {
       file: output,
     },

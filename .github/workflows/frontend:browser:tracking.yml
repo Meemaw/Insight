@@ -30,12 +30,15 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: intall
+      - name: Install dependencies
         run: |
           yarn install
       - name: build
         run: |
           yarn workspace @insight/browser-tracking build
+      - name: Prepare files for deployment
+        run: |
+          mv frontend/browser/tracking/dist/insight.js.gz frontend/browser/tracking/dist/insight.js
       - uses: actions/upload-artifact@v1
         with:
           name: s
@@ -51,9 +54,6 @@ jobs:
         with:
           name: s
           path: deployment/s
-      - name: Prepare files for deployment
-        run: |
-          mv deployment/s/insight.js.gz deployment/s/insight.js
       - uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks --content-encoding gzip
