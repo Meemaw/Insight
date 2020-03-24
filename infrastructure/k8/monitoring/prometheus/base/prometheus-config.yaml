@@ -14,88 +14,104 @@ data:
       evaluation_interval: 1m
 
     rule_files:
-    - "/etc/prometheus/rules/*.yaml"
+      - /etc/prometheus/rules/*.yaml
 
     scrape_configs:
-    - job_name: 'prometheus'
-      static_configs:
-      - targets:
-        - 'localhost:9090'
+      - job_name: prometheus
+        static_configs:
+          - targets:
+            - localhost:9090
 
     - job_name: 'pushgateway'
-      kubernetes_sd_configs:
-      - role: pod
-      # We want to keep the job label as pushgateway, and let prometheus add the exported_job for pushgateway jobs.
       honor_labels: false
-      relabel_configs:
-      - action: keep
-        source_labels: [__meta_kubernetes_pod_container_name]
-        regex: prometheus-pushgateway
 
-    - job_name: "kubernetes-pods"
       kubernetes_sd_configs:
-      - role: pod
+        - role: pod
+
       relabel_configs:
-      - action: keep
-        source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        - source_labels: [__meta_kubernetes_pod_container_name]
+          action: keep
+          regex: prometheus-pushgateway
+
+    # Example scrape config for pods
+    #
+    # The relabeling allows the actual pod scrape endpoint to be configured via the
+    # following annotations:
+    #
+    # * `prometheus.io/scrape`: Only scrape pods that have a value of `true`
+    # * `prometheus.io/path`: If the metrics path is not `/metrics` override this.
+    - job_name: 'kubernetes-pods'
+
+      kubernetes_sd_configs:
+        - role: pod
+
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
         regex: true
-      - action: keep
-        source_labels: [__meta_kubernetes_pod_container_port_name, __meta_kubernetes_pod_container_name]
-        regex: (^metrics;.*$|^http;.*$)
+      - source_labels: [__meta_kubernetes_pod_container_port_name]
+        action: keep
+        regex: (^metrics$|^http$)
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__
         regex: (https?)
-      - action: replace
-        source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - action: replace
-        source_labels: [__address__, __meta_kubernetes_pod_container_port_number]
+      - source_labels: [__address__, __meta_kubernetes_pod_container_port_number]
+        action: replace
         regex: (.+):(?:\d+);(\d+)
         replacement: $1:$2
         target_label: __address__
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(app|team|app_kubernetes_io_version|cluster|service)$
         replacement: $1
-      - action: replace
-        source_labels: [__meta_kubernetes_namespace]
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
         target_label: namespace
-      - action: replace
-        source_labels: [__meta_kubernetes_pod_name]
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
         target_label: pod
-      - action: replace
-        source_labels: [__meta_kubernetes_pod_container_name]
+      - source_labels: [__meta_kubernetes_pod_container_name]
+        action: replace
         target_label: container
       
     - job_name: 'kubernetes-kubelet'
+
       kubernetes_sd_configs:
-      - role: node
+        - role: node
+
       tls_config:
         ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
       bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
       scheme: https
+
       relabel_configs:
       - action: replace
         target_label: __address__
         replacement: kubernetes.default.svc:443
-      - action: replace
-        source_labels: [__meta_kubernetes_node_name]
+      - source_labels: [__meta_kubernetes_node_name]
+        action: replace
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/$1/proxy/metrics
       metric_relabel_configs:
-      - action: keep
-        source_labels: [__name__]
+      - source_labels: [__name__]
+        action: keep
         regex: '(kubernetes_build_info|kubelet_volume_stats_used_bytes|kubelet_volume_stats_capacity_bytes)'
         
     - job_name: 'kubernetes-cadvisor'
+
       kubernetes_sd_configs:
-      - role: node
+        - role: node
+
       tls_config:
         ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
       bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
       scheme: https
+
       relabel_configs:
       - target_label: __address__
         replacement: kubernetes.default.svc:443
@@ -105,11 +121,11 @@ data:
         replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
         action: replace
       metric_relabel_configs:
-      - action: keep
-        source_labels: [__name__]
+      - source_labels: [__name__]
+        action: keep
         regex: ^container_((spec_cpu_(quota|period)$)|(memory_(working_set_bytes|usage_bytes)$|network_(transmit_bytes_total|receive_bytes_total)$|last_seen$|fs_(writes_total|reads_total|io_time_seconds_total)$|file_descriptors$|cpu_(usage_seconds_total|cfs_periods_total|cfs_throttled_(periods|seconds)_total)$))
-      - action: drop
-        source_labels: [pod, container, namespace]
+      - source_labels: [pod, container, namespace]
+        action: drop
         regex: ;;
       - action: labeldrop
         regex: '(image|id|pod_name)'

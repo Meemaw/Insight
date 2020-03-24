@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "./dist",
-    "target": "es5"
+    "target": "es5",
+    "skipLibCheck": true
   }
 }

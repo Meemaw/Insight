@@ -1,8 +1,8 @@
 on:
   push:
     paths:
-      - '.github/workflows/frontend:browser:bootstrap.yml'
-      - 'frontend/browser/bootstrap/**'
+      - '.github/workflows/frontend:browser:tracking.yml'
+      - 'frontend/browser/tracking/**'
       - 'jest.config.js'
       - 'lerna.json'
       - 'package.json'
@@ -13,7 +13,7 @@ env:
   CI: true
 
 jobs:
-  unit_tests_build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,37 +30,30 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install required packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install libgbm-dev xvfb
-      - name: intall and unit test
+      - name: intall
         run: |
           yarn install
-          xvfb-run --auto-servernum yarn workspace @insight/browser-bootstrap test --coverage
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: frontend:browser:bootstrap
       - name: build
         run: |
-          yarn workspace @insight/browser-bootstrap build
+          yarn workspace @insight/browser-tracking build
       - uses: actions/upload-artifact@v1
         with:
-          name: b
-          path: frontend/browser/bootstrap/dist
+          name: s
+          path: frontend/browser/tracking/dist
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [unit_tests_build]
-    if: github.ref == 'refs/heads/master'
+    needs: [build]
 
     steps:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
         with:
-          name: b
-          path: deployment/b
+          name: s
+          path: deployment/s
+      - name: Prepare files for deployment
+        run: |
+          mv deployment/s/insight.js.gz deployment/s/insight.js
       - uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks --content-encoding gzip
