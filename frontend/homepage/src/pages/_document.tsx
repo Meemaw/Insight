@@ -9,7 +9,10 @@ import Document, {
   DocumentContext,
 } from 'next/document';
 import { Provider as StyletronProvider } from 'styletron-react';
-import { styletron, STYLETRON_HYDRATE_CLASSNAME } from 'styles/styletron';
+import {
+  styletron,
+  STYLETRON_HYDRATE_CLASSNAME,
+} from 'shared/styles/styletron';
 import { Server, Sheet } from 'styletron-engine-atomic';
 
 type Props = {
@@ -18,11 +21,13 @@ type Props = {
 
 class InsightDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
-    const page = ctx.renderPage((App) => (props) => (
-      <StyletronProvider value={styletron}>
-        <App {...props} />
-      </StyletronProvider>
-    ));
+    const page = ctx.renderPage({
+      enhanceApp: (App) => (props) => (
+        <StyletronProvider value={styletron}>
+          <App {...props} />
+        </StyletronProvider>
+      ),
+    });
     const stylesheets = (styletron as Server).getStylesheets() || [];
     return { ...page, stylesheets };
   }
@@ -31,6 +36,15 @@ class InsightDocument extends Document<Props> {
     return (
       <Html>
         <Head>
+          <style>
+            {`
+              html, body, #__next {
+                height: 100%;
+                margin: 0px;
+              }
+            `}
+          </style>
+
           {this.props.stylesheets.map((sheet, i) => (
             <style
               className={STYLETRON_HYDRATE_CLASSNAME}

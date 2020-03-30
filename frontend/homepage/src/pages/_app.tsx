@@ -1,18 +1,14 @@
 import React from 'react';
 import App from 'next/app';
-import { Provider as StyletronProvider } from 'styletron-react';
-import { styletron, debug } from 'styles/styletron';
-import { LightTheme, BaseProvider } from 'baseui';
+import AppProviders from 'shared/containers/AppProviders';
 
 class InsightApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     return (
-      <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
-        <BaseProvider theme={LightTheme}>
-          <Component {...pageProps} />
-        </BaseProvider>
-      </StyletronProvider>
+      <AppProviders>
+        <Component {...pageProps} />
+      </AppProviders>
     );
   }
 }
