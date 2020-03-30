@@ -15,7 +15,7 @@
   },
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "next build --tsconfig=tsconfig.devserver.json",
     "start": "next start",
     "test": "jest --env=jest-environment-jsdom-sixteen",
     "test:e2e": "testcafe chrome e2e/specs",
@@ -26,7 +26,9 @@
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
-    "snapshot": "build-storybook && percy-storybook --widths=320,1280"
+    "snapshot": "build-storybook && percy-storybook --widths=320,1280",
+    "pretest": "yarn workspace @insight/storybook build",
+    "prebuild": "yarn workspace @insight/storybook build"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.24.0",
