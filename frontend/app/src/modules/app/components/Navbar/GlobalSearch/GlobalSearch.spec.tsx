@@ -6,7 +6,7 @@ import {
   focusElement,
   pressEscape,
 } from 'test/utils';
-import { wait } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 
 import GlobalSearch from './GlobalSearch';
 
@@ -22,7 +22,7 @@ describe('<GlobalSearch />', () => {
     focusElement(searchInput);
     expect(queryAllByText('item').length).toEqual(5);
     blurElement(searchInput);
-    await wait(() => {
+    await waitFor(() => {
       expect(queryAllByText('item').length).toEqual(0);
     });
 
@@ -30,7 +30,7 @@ describe('<GlobalSearch />', () => {
     clickElement(searchInput);
     expect(queryAllByText('item').length).toEqual(5);
     blurElement(searchInput);
-    await wait(() => {
+    await waitFor(() => {
       expect(queryAllByText('item').length).toEqual(0);
     });
 
@@ -38,7 +38,7 @@ describe('<GlobalSearch />', () => {
     clickElement(getByText('/'));
     expect(queryAllByText('item').length).toEqual(5);
     blurElement(searchInput);
-    await wait(() => {
+    await waitFor(() => {
       expect(queryAllByText('item').length).toEqual(0);
     });
 
@@ -46,7 +46,7 @@ describe('<GlobalSearch />', () => {
     clickElement(searchInput);
     expect(queryAllByText('item').length).toEqual(5);
     pressEscape(searchInput);
-    await wait(() => {
+    await waitFor(() => {
       expect(queryAllByText('item').length).toEqual(0);
     });
   });

@@ -23,5 +23,10 @@
     "prettier": "prettier -l 'src/**/*'"
   },
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "@storybook/addon-actions": "^5.3.17",
+    "@storybook/addon-knobs": "^5.3.17",
+    "@storybook/preset-typescript": "^3.0.0",
+    "@storybook/react": "^5.3.17"
+  }
 }
