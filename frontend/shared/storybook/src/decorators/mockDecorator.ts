@@ -1,6 +1,7 @@
 import { StoryFn, StoryContext } from '@storybook/addons';
 
-import useSandbox, { SetupMocks } from './useSandbox';
+import useSandbox from '../utils/useSandbox';
+import { SetupMocks } from '../utils/types';
 
 function mockDecorator<T, F>(setupMocks: SetupMocks<T>) {
   return (storyFn: StoryFn<F>, context: StoryContext) => {

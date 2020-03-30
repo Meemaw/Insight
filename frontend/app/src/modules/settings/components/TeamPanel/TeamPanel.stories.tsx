@@ -1,7 +1,7 @@
 import React from 'react';
-import configureStory from 'storybook/utils/configureStory';
+import { configureStory } from '@insight/storybook';
 import InviteApi from 'api/invite';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 import TeamPanel from './TeamPanel';
 
@@ -23,7 +23,7 @@ Base.story = configureStory({
           data: {
             role,
             email,
-            token: uuid.v4(),
+            token: uuid(),
             org: 'org123',
             creator: 'creator@gmail.com',
             createdAt: Date.now(),

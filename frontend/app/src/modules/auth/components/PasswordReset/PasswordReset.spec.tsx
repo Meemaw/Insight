@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  waitForElement,
-  waitForElementToBeRemoved,
-  wait,
-} from '@testing-library/react';
+import { waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import { typeText, clickElement, sandbox, render } from 'test/utils';
 
 import { Base, WithError } from './PasswordReset.stories';
@@ -17,6 +13,7 @@ describe('<PasswordForgot />', () => {
       getByPlaceholderText,
       replace,
       queryByDisplayValue,
+      findByText,
     } = render(<Base />);
 
     expect(
@@ -26,9 +23,7 @@ describe('<PasswordForgot />', () => {
     const passwordInput = getByPlaceholderText('Password');
 
     typeText(passwordInput, 'aba');
-    await waitForElement(() =>
-      queryByText('Password should be at least 8 characters long.')
-    );
+    await findByText('Password should be at least 8 characters long.');
 
     const password = 'abcdefgh';
     typeText(passwordInput, password);
@@ -39,7 +34,7 @@ describe('<PasswordForgot />', () => {
     const submitButton = getByText('Reset password and log in');
     clickElement(submitButton);
 
-    await wait(() => {
+    await waitFor(() => {
       sandbox.assert.calledWithExactly(replace, '/');
       sandbox.assert.calledWithExactly(resetStub, {
         email: 'matthew.brandon@gmail.com',
@@ -52,7 +47,7 @@ describe('<PasswordForgot />', () => {
 
   it('Should display error message on server error', async () => {
     const resetStub = WithError.story.setupMocks(sandbox);
-    const { getByPlaceholderText, queryByText, getByText } = render(
+    const { getByPlaceholderText, getByText, findByText } = render(
       <WithError />
     );
     const passwordInput = getByPlaceholderText('Password');
@@ -63,9 +58,7 @@ describe('<PasswordForgot />', () => {
     const submitButton = getByText('Reset password and log in');
     clickElement(submitButton);
 
-    await waitForElement(() =>
-      queryByText('Something went wrong. Please try again later.')
-    );
+    await findByText('Something went wrong. Please try again later.');
 
     sandbox.assert.calledWithExactly(resetStub, {
       email: 'matthew.brandon@gmail.com',

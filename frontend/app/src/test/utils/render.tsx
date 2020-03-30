@@ -1,6 +1,6 @@
 import React, { JSXElementConstructor } from 'react';
 import { render as renderImpl } from '@testing-library/react';
-import { StoryConfiguration } from 'storybook/utils/configureStory';
+import { StoryConfiguration } from '@insight/storybook';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import { NextRouter } from 'next/router';
 import { BaseRouter } from 'next/dist/next-server/lib/router/router';

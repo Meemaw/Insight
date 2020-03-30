@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
-import sinon, { SinonSandbox } from 'sinon';
+import sinon from 'sinon';
 
-export type SetupMocks<T> = (sandbox: SinonSandbox) => T;
+import { SetupMocks } from './types';
 
 const useMocks = <T>(setupMocks: SetupMocks<T>) => {
   const sandbox = sinon.createSandbox();

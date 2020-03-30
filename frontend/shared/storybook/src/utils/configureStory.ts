@@ -1,13 +1,6 @@
-import { DecoratorFunction } from '@storybook/addons';
+import mockDecorator from '../decorators/mockDecorator';
 
-import { SetupMocks } from './useSandbox';
-import mockDecorator from './mockDecorator';
-
-export type StoryConfiguration<T> = {
-  name?: string;
-  decorators?: DecoratorFunction[];
-  setupMocks?: SetupMocks<T>;
-};
+import { StoryConfiguration } from './types';
 
 const configureStory = <T, S extends StoryConfiguration<T>>({
   setupMocks,

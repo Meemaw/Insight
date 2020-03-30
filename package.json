@@ -1,5 +1,5 @@
 {
-  "name": "insight",
+  "name": "@insight/frontend",
   "private": true,
   "workspaces": [
     "frontend/**"
@@ -44,6 +44,7 @@
     "sinon": "^9.0.1",
     "testcafe": "^1.8.3",
     "ts-jest": "^25.3.0",
+    "tsdx": "^0.13.1",
     "typescript": "^3.8.3",
     "wait-on": "^4.0.1"
   },

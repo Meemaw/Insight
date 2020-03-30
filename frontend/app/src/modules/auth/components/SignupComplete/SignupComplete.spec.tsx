@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  waitForElement,
-  waitForElementToBeRemoved,
-  wait,
-} from '@testing-library/react';
+import { waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import { typeText, clickElement, sandbox, render } from 'test/utils';
 
 import { Base, WithError } from './SignupComplete.stories';
@@ -13,6 +9,7 @@ describe('<SignupComplete />', () => {
     const completeSignupStub = Base.story.setupMocks(sandbox);
     const {
       queryByText,
+      findByText,
       getByText,
       getByPlaceholderText,
       replace,
@@ -25,9 +22,7 @@ describe('<SignupComplete />', () => {
 
     const passwordInput = getByPlaceholderText('Password');
     typeText(passwordInput, 'aba');
-    await waitForElement(() =>
-      queryByText('Password should be at least 8 characters long.')
-    );
+    await findByText('Password should be at least 8 characters long.');
 
     const password = 'abcdefgh';
     typeText(passwordInput, password);
@@ -38,7 +33,7 @@ describe('<SignupComplete />', () => {
     const submitButton = getByText('Create account and log in');
     clickElement(submitButton);
 
-    await wait(() => {
+    await waitFor(() => {
       sandbox.assert.calledWithExactly(replace, '/');
       sandbox.assert.calledWithExactly(completeSignupStub, {
         email: 'matthew.brandon@gmail.com',
@@ -51,7 +46,7 @@ describe('<SignupComplete />', () => {
 
   it('Should display error message on server error', async () => {
     const completeSignupStub = WithError.story.setupMocks(sandbox);
-    const { getByPlaceholderText, queryByText, getByText } = render(
+    const { getByPlaceholderText, getByText, findByText } = render(
       <WithError />
     );
     const passwordInput = getByPlaceholderText('Password');
@@ -62,9 +57,7 @@ describe('<SignupComplete />', () => {
     const submitButton = getByText('Create account and log in');
     clickElement(submitButton);
 
-    await waitForElement(() =>
-      queryByText('Something went wrong. Please try again later.')
-    );
+    await findByText('Something went wrong. Please try again later.');
 
     sandbox.assert.calledWithExactly(completeSignupStub, {
       email: 'matthew.brandon@gmail.com',

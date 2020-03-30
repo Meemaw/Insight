@@ -1,6 +1,5 @@
 import React from 'react';
-import fullHeightDecorator from 'storybook/decorators/fullHeightDecorator';
-import configureStory from 'storybook/utils/configureStory';
+import { fullHeightDecorator, configureStory } from '@insight/storybook';
 import SignupApi from 'api/signup';
 import { mockApiError } from 'test/utils/error';
 

@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  waitForElement,
-  waitForElementToBeRemoved,
-  wait,
-} from '@testing-library/react';
+import { waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import { typeText, clickElement, sandbox, render } from 'test/utils';
 
 import { Base, CustomDest, WithError } from './Login.stories';
@@ -11,32 +7,32 @@ import { Base, CustomDest, WithError } from './Login.stories';
 describe('<Login />', () => {
   it('Should be able to successfully login', async () => {
     const loginStub = Base.story.setupMocks(sandbox);
-    const { getByPlaceholderText, queryByText, getByText, replace } = render(
-      <Base />
-    );
+    const {
+      getByPlaceholderText,
+      queryByText,
+      getByText,
+      replace,
+      findByText,
+    } = render(<Base />);
 
     const emailInput = getByPlaceholderText('me@example.com');
 
     typeText(emailInput, 'text');
-    await waitForElement(() =>
-      queryByText('Please enter a valid email address.')
-    );
-    await waitForElement(() => queryByText('Required.'));
+    await findByText('Please enter a valid email address.');
+    await findByText('Required.');
 
     const email = 'login@gmail.com';
     typeText(emailInput, email);
     await waitForElementToBeRemoved(() =>
       queryByText('Please enter a valid email address.')
     );
-    await waitForElement(() => queryByText('Required.'));
+    await findByText('Required.');
 
     const passwordInput = getByPlaceholderText('Password');
     typeText(passwordInput, 'abc');
     await waitForElementToBeRemoved(() => queryByText('Required.'));
 
-    await waitForElement(() =>
-      queryByText('Password should be at least 8 characters long.')
-    );
+    await findByText('Password should be at least 8 characters long.');
 
     const password = 'abcdefgh';
     typeText(passwordInput, password);
@@ -47,7 +43,7 @@ describe('<Login />', () => {
     const submitButton = getByText('Sign in');
     clickElement(submitButton);
 
-    await wait(() => {
+    await waitFor(() => {
       sandbox.assert.calledWithExactly(replace, '/');
       sandbox.assert.calledWithExactly(loginStub, email, password);
     });
@@ -69,7 +65,7 @@ describe('<Login />', () => {
     const submitButton = getByText('Sign in');
     clickElement(submitButton);
 
-    await wait(() => {
+    await waitFor(() => {
       sandbox.assert.calledWithExactly(replace, '/settings/general');
       sandbox.assert.calledWithExactly(loginStub, email, password);
     });
@@ -77,7 +73,7 @@ describe('<Login />', () => {
 
   it('Should display error message on server error', async () => {
     const loginStub = WithError.story.setupMocks(sandbox);
-    const { getByPlaceholderText, queryByText, getByText } = render(
+    const { getByPlaceholderText, findByText, getByText } = render(
       <WithError />
     );
 
@@ -92,7 +88,7 @@ describe('<Login />', () => {
     const submitButton = getByText('Sign in');
     clickElement(submitButton);
 
-    await waitForElement(() => queryByText('Something went wrong'));
+    await findByText('Something went wrong');
 
     sandbox.assert.calledWithExactly(loginStub, email, password);
   });

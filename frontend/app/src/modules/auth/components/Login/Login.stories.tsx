@@ -1,7 +1,6 @@
 import React from 'react';
-import fullHeightDecorator from 'storybook/decorators/fullHeightDecorator';
+import { fullHeightDecorator, configureStory } from '@insight/storybook';
 import SsoApi from 'api/sso';
-import configureStory from 'storybook/utils/configureStory';
 
 import Login from './Login';
 
