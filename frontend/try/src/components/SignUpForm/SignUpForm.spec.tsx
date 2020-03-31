@@ -1,16 +1,8 @@
 import React from 'react';
 import { render, clickElement, typeText, sandbox } from 'test/utils';
-import { Base } from './SignUpForm.stories';
 import { waitFor } from '@testing-library/react';
 
-jest.mock('react-virtualized', () => {
-  return {
-    __esModule: true,
-    AutoSizer: ({ children }: any) => {
-      return children({ width: 500, height: 500 });
-    },
-  };
-});
+import { Base } from './SignUpForm.stories';
 
 describe('<SignUpForm />', () => {
   test('User can signup in normal flow', async () => {
@@ -21,7 +13,6 @@ describe('<SignUpForm />', () => {
       getByText,
       findByText,
       findAllByText,
-      container,
     } = render(<Base onSubmit={onSubmit} />);
     const submitButton = getByText('Get started');
     const firstNameInput = getByPlaceholderText('First name');

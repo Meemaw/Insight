@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from 'test/utils';
-import { Base } from './GetStarted.stories';
 import config from 'shared/config';
+
+import { Base } from './GetStarted.stories';
 
 describe('<GetStarted />', () => {
   test('Contains all relevant data', () => {

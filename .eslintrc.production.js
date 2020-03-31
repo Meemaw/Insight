@@ -10,7 +10,6 @@ module.exports = {
     'plugin:testing-library/react',
     'plugin:testcafe/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
   ],
   plugins: [
     'react',
@@ -53,6 +52,9 @@ module.exports = {
     'lodash/prefer-lodash-method': ['off'],
 
     'jest/expect-expect': ['off'],
+
+    'react-hooks/rules-of-hooks': ['error'],
+    'react-hooks/exhaustive-deps': ['warn'],
 
     'lines-between-class-members': ['off'],
     'jsx-a11y/anchor-is-valid': ['off'],

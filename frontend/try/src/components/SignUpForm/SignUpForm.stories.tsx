@@ -12,9 +12,10 @@ type StoryProps = Pick<Props, 'onSubmit'>;
 
 const baseProps: StoryProps = {
   onSubmit: (data: FormData) => {
-    return new Promise<any>((resolve) =>
-      setTimeout(() => resolve(action('onSubmit')(data)), 200)
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new Promise<any>((resolve) => {
+      setTimeout(() => resolve(action('onSubmit')(data)), 200);
+    });
   },
 };
 
