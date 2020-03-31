@@ -6,8 +6,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   env: {
-    APP_BASE_URL: process.env.APP_BASE_URL || 'http://localhost:3000',
-    TRY_BASE_URL: process.env.APP_BASE_URL || 'http://localhost:3002',
+    APP_BASE_URL: process.env.APP_BASE_URL,
+    HELP_BASE_URL: process.env.HELP_BASE_URL,
   },
   webpack: (config, _config) => {
     return config;
