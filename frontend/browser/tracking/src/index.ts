@@ -24,8 +24,10 @@ import Api from 'api';
 
   const onUploadInterval = () => {
     const events = eventQueue.drainEvents();
-    console.debug('[onUploadInterval]', { numEvents: events.length });
     api.beacon(events);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[onUploadInterval]', { numEvents: events.length });
+    }
   };
 
   setInterval(onUploadInterval, UPLOAD_INTERVAL_MILLIS);
@@ -34,25 +36,32 @@ import Api from 'api';
   observer.observe({ entryTypes });
 
   const onUnload = () => {
-    console.debug(`[unUnload]: [${lastLocation}]`);
     eventQueue.enqueue(EventType.UNLOAD, [lastLocation]);
     api.beacon(eventQueue.events());
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug(`[unUnload]: [${lastLocation}]`);
+    }
   };
 
   const onResize = () => {
     const { innerWidth, innerHeight } = window;
-    console.debug(`[onResize]: [${innerWidth}, ${innerHeight}]`);
     eventQueue.enqueue(EventType.RESIZE, [innerWidth, innerHeight]);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug(`[onResize]: [${innerWidth}, ${innerHeight}]`);
+    }
   };
 
   const onNavigationChange = () => {
     const { href: currentLocation } = location;
     if (lastLocation !== currentLocation) {
       lastLocation = currentLocation;
-      console.debug(
-        `[onNavigationChange]: [${currentLocation}, ${document.title}]`
-      );
+
       eventQueue.enqueue(EventType.NAVIGATE, [currentLocation, document.title]);
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug(
+          `[onNavigationChange]: [${currentLocation}, ${document.title}]`
+        );
+      }
     }
   };
 

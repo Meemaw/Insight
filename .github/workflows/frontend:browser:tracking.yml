@@ -42,6 +42,7 @@ jobs:
       - name: Prepare files for deployment
         run: |
           mv frontend/browser/tracking/dist/insight.js.gz frontend/browser/tracking/dist/insight.js
+          mv frontend/browser/tracking/dist/insight.development.js.gz frontend/browser/tracking/dist/insight.development.js
       - uses: actions/upload-artifact@v1
         with:
           name: s

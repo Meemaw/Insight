@@ -4,18 +4,38 @@ import path from 'path';
 import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import gzipPlugin from 'rollup-plugin-gzip';
+import replace from '@rollup/plugin-replace';
 
 const input = path.join('src', 'index.ts');
-const output = path.join('dist', 'insight.js');
 
-export default {
-  input,
-  plugins: [
-    typescript(),
-    terser({ compress: true, mangle: true }),
-    gzipPlugin(),
-  ],
-  output: {
-    file: output,
-  },
+const environments = ['development', 'production'];
+
+const config = (env) => {
+  const fileName =
+    env === 'development' ? 'development.insight.js' : 'insight.js';
+
+  const output = path.join('dist', fileName);
+
+  return {
+    input,
+    plugins: [
+      typescript(),
+      replace({ 'process.env.NODE_ENV': JSON.stringify(env) }),
+      terser({
+        output: { comments: false },
+        compress: {
+          keep_infinity: true,
+          pure_getters: true,
+          passes: 10,
+        },
+        ecma: 5,
+        warnings: true,
+      }),
+
+      gzipPlugin(),
+    ],
+    output: { file: output },
+  };
 };
+
+export default environments.map((env) => config(env));
