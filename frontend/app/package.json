@@ -27,24 +27,22 @@
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
     "snapshot": "build-storybook && percy-storybook --widths=320,1280",
+    "pretest": "yarn workspace @insight/storybook build",
     "prebuild": "yarn workspace @insight/storybook build"
   },
   "dependencies": {
-    "@blueprintjs/core": "^3.24.0",
-    "@blueprintjs/select": "^3.12.0",
     "baseui": "^9.67.0",
     "formik": "^2.1.4",
     "ky": "^0.19.0",
     "ky-universal": "^0.5.0",
     "next": "^9.3.2",
     "next-cookies": "^2.0.3",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
     "react-hook-form": "^5.2.0",
-    "styled-components": "^5.0.1",
     "styletron-engine-atomic": "^1.4.6",
     "styletron-react": "^5.2.7",
-    "swr": "^0.1.18",
+    "swr": "^0.2.0",
     "yup": "^0.28.3"
   },
   "devDependencies": {
@@ -54,10 +52,8 @@
     "@testing-library/testcafe": "^4.0.0",
     "@types/react": "^16.9.24",
     "@types/react-dom": "^16.9.5",
-    "@types/styled-components": "^5.0.1",
     "@types/uuid": "^7.0.2",
     "@types/yup": "^0.26.33",
-    "babel-plugin-styled-components": "^1.10.7",
     "uuid": "^7.0.2"
   }
 }

@@ -4,6 +4,7 @@ import { StoryConfiguration } from '@insight/storybook';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
 import { NextRouter } from 'next/router';
 import { BaseRouter } from 'next/dist/next-server/lib/router/router';
+import AppProviders from 'shared/containers/AppProviders';
 
 import sandbox from './sandbox';
 
@@ -41,7 +42,11 @@ const render = <Props, T, S extends StoryConfiguration<T>>(
   };
 
   const renderResult = renderImpl(
-    <RouterContext.Provider value={router}>{component}</RouterContext.Provider>
+    <AppProviders>
+      <RouterContext.Provider value={router}>
+        {component}
+      </RouterContext.Provider>
+    </AppProviders>
   );
 
   return { ...renderResult, replace, push, back, reload };

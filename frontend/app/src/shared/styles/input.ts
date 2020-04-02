@@ -1,7 +1,7 @@
 import { Theme } from 'baseui/theme';
 import { InputOverrides } from 'baseui/input';
 
-const inputBorderRadius = (theme: Theme) => {
+export const createInputBorderRadius = (theme: Theme) => {
   return {
     borderBottomRightRadius: theme.sizing.scale100,
     borderTopRightRadius: theme.sizing.scale100,
@@ -11,7 +11,7 @@ const inputBorderRadius = (theme: Theme) => {
 };
 
 export const createInputOverrides = (theme: Theme): InputOverrides => {
-  const inputBorders = inputBorderRadius(theme);
+  const inputBorders = createInputBorderRadius(theme);
   return {
     InputContainer: { style: inputBorders },
     Input: { style: inputBorders },
