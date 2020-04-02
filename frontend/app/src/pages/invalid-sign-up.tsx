@@ -1,20 +1,28 @@
 import React from 'react';
-import AuthLayout from 'components/common/auth/Layout';
 import Link from 'next/link';
+import AuthPageLayout from 'modules/authV2/components/PageLayout';
+import { useStyletron } from 'baseui';
+import { Paragraph4 } from 'baseui/typography';
 
 const InvalidSignUpPage = () => {
+  const [css, theme] = useStyletron();
   return (
-    <AuthLayout>
-      <h2>Hmm.</h2>
-      <p>It looks like this invite is invalid or has already been accepted.</p>
+    <AuthPageLayout subtitle="Hmm.">
+      <Paragraph4>
+        It looks like this invite is invalid or has already been accepted.
+      </Paragraph4>
       <Link href="/login">
         <a
-          style={{ color: 'white', textDecoration: 'underline', marginTop: 12 }}
+          className={css({
+            color: 'white',
+            textDecoration: 'underline',
+            marginTop: theme.sizing.scale400,
+          })}
         >
           Log in or reset your password.
         </a>
       </Link>
-    </AuthLayout>
+    </AuthPageLayout>
   );
 };
 
