@@ -11,8 +11,8 @@ const input = path.join('src', 'index.ts');
 const environments = ['development', 'production'];
 
 const config = (env) => {
-  const fileName =
-    env === 'development' ? 'development.insight.js' : 'insight.js';
+  const baseName = 'insight.js';
+  const fileName = env === 'production' ? baseName : `${env}.${baseName}`;
 
   const output = path.join('dist', fileName);
 
