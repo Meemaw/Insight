@@ -1,4 +1,5 @@
 import { getByText, getByPlaceholderText } from '@testing-library/testcafe';
+
 import config from '../config';
 
 fixture('<IndexPage />').page(config.baseURL);
