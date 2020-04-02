@@ -40,11 +40,7 @@ class Api {
   // rs.fullstory.com#F30Z5#6707089592745984:5400286932205568#6e484e3a#/1602002651
   public beacon = (e: BrowserEvent[]) => {
     this.beaconSeq += 1;
-    return this.json(
-      `${this.baseURL}/v1/beacon`,
-      { e, s: this.beaconSeq },
-      { keepalive: true }
-    );
+    return this.json(`${this.baseURL}/v1/beacon`, { e, s: this.beaconSeq });
   };
 
   public page = (pageDTO: PageDTO) => {
