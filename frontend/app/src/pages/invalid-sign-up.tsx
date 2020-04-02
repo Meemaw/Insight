@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import AuthPageLayout from 'modules/authV2/components/PageLayout';
+import AuthPageLayout from 'modules/auth/components/PageLayout';
 import { useStyletron } from 'baseui';
 import { Paragraph4 } from 'baseui/typography';
 
