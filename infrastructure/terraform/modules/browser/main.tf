@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "static" {
   cors_rule {
     allowed_methods = ["GET"]
     allowed_origins = ["*"]
-    expose_headers  = ["ETag"]
+    allowed_headers = ["*"]
     max_age_seconds = 3000
   }
 
