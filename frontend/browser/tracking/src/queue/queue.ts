@@ -29,7 +29,7 @@ class EventQueue {
     kind: EventType,
     args: BrowserEventArgument[]
   ) => {
-    this._rawQueue.push({ when, kind, args });
+    this._rawQueue.push({ t: when, e: kind, a: args });
   };
 }
 
