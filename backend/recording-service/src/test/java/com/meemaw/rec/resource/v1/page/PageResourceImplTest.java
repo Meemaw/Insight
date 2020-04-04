@@ -1,5 +1,6 @@
 package com.meemaw.rec.resource.v1.page;
 
+import com.meemaw.rec.page.resource.v1.PageResource;
 import com.meemaw.test.testconainers.Postgres;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;

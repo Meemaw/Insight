@@ -4,7 +4,7 @@ package com.meemaw.rec.resource.other;
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
-import com.meemaw.rec.resource.v1.page.PageResource;
+import com.meemaw.rec.page.resource.v1.PageResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import org.junit.jupiter.api.Tag;

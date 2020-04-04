@@ -27,9 +27,11 @@ import Backend from 'backend';
 
   const onUploadInterval = () => {
     const events = eventQueue.drainEvents();
-    backend.sendEvents(events);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[onUploadInterval]', [events.length]);
+    if (events.length > 0) {
+      backend.sendEvents(events);
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('[onUploadInterval]', [events.length]);
+      }
     }
   };
 

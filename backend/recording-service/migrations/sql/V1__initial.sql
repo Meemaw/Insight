@@ -5,7 +5,8 @@ CREATE SCHEMA IF NOT EXISTS rec;
 CREATE TABLE IF NOT EXISTS rec.beacon
 (
     sequence  smallint NOT NULL,
-    timestamp integer  NOT NULL
+    timestamp integer  NOT NULL,
+    events    jsonb    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS rec.page
