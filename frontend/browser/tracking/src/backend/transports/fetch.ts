@@ -1,6 +1,6 @@
 import { EventData } from 'backend/types';
 
-import { BaseTransport, Status, getGlobalObject } from './base';
+import { BaseTransport, Status, GlobalObject } from './base';
 
 /** `fetch` based transport */
 export class FetchTranport implements BaseTransport {
@@ -18,8 +18,8 @@ export class FetchTranport implements BaseTransport {
     });
   };
 
-  public static isSupported = () => {
-    if (!('fetch' in getGlobalObject())) {
+  public static isSupported = (global: GlobalObject) => {
+    if (!('fetch' in global)) {
       return false;
     }
 

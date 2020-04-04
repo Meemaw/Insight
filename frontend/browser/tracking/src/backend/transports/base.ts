@@ -40,7 +40,9 @@ export interface BaseTransport {
   send: (url: string, data: string) => Promise<TransportResponse>;
 }
 
-export function getGlobalObject(): Window | NodeJS.Global | {} {
+export type GlobalObject = Window | {};
+
+export function getGlobalObject(): GlobalObject {
   return typeof window !== 'undefined'
     ? window
     : typeof global !== 'undefined'

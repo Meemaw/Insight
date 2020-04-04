@@ -3,7 +3,7 @@ import { BrowserEvent } from 'event';
 
 import { PageDTO } from './types';
 import { BeaconTransport } from './transports/beacon';
-import { BaseTransport } from './transports/base';
+import { BaseTransport, getGlobalObject } from './transports/base';
 import { FetchTranport } from './transports/fetch';
 import { XHRTransport } from './transports/xhr';
 
@@ -18,12 +18,14 @@ class Backend {
     this.beaconUrl = `${baseURL}/v1/beacon`;
     this.pageUrl = `${baseURL}/v1/page`;
     this.beaconSeq = 0;
-    if (BeaconTransport.isSupported()) {
+
+    const globalObject = getGlobalObject();
+    if (BeaconTransport.isSupported(globalObject)) {
       this.transport = new BeaconTransport();
       if (process.env.NODE_ENV !== 'production') {
         console.debug('BeaconTransport enabled');
       }
-    } else if (FetchTranport.isSupported()) {
+    } else if (FetchTranport.isSupported(globalObject)) {
       this.transport = new FetchTranport();
       if (process.env.NODE_ENV !== 'production') {
         console.debug('FetchTransport enabled');

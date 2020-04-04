@@ -33,7 +33,7 @@ const config = (env) => {
   return {
     input,
     plugins: [
-      typescript(),
+      typescript({ tsconfig: 'tsconfig.build.json' }),
       replace({
         'process.env.NODE_ENV': JSON.stringify(env),
         'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
