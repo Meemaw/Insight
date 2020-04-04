@@ -13,6 +13,8 @@ const environments = ['development', 'production'];
 const config = (env) => {
   const baseName = 'insight.js';
   const fileName = env === 'production' ? baseName : `${env}.${baseName}`;
+  const apiBaseUrl =
+    env === 'production' ? 'https://api.insight.com' : 'http://localhost:8080';
 
   const output = path.join('dist', fileName);
 
@@ -20,7 +22,10 @@ const config = (env) => {
     input,
     plugins: [
       typescript(),
-      replace({ 'process.env.NODE_ENV': JSON.stringify(env) }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(env),
+        'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
+      }),
       terser({
         output: { comments: false },
         compress: {

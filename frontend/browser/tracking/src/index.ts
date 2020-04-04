@@ -8,7 +8,7 @@ import Api from 'api';
   let { href: lastLocation } = location;
   const context = new Context();
   const eventQueue = new EventQueue(context);
-  const api = new Api('http://localhost:8080/v1/beacon');
+  const api = new Api(`${process.env.API_BASE_URL}/v1/beacon`);
   const UPLOAD_INTERVAL_MILLIS = 1000 * 30;
 
   const observer = new PerformanceObserver((performanceEntryList) => {
