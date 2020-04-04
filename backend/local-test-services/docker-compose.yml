@@ -30,7 +30,18 @@ services:
     ports:
       - '${RECORDING_SERVICE_PORT:-8081}:8080'
     depends_on:
+      - recording-service-migrations
+  recording-service-migrations:
+    build:
+      context: ../recording-service/migrations
+      dockerfile: Dockerfile
+    depends_on:
       - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
   db:
     image: postgres:11
     ports:

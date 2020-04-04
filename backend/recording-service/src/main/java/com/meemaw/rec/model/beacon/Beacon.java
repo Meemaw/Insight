@@ -3,7 +3,9 @@ package com.meemaw.rec.model.beacon;
 import com.meemaw.rec.model.beacon.event.AbstractBeaconEvent;
 import java.util.List;
 import java.util.Objects;
+import lombok.ToString;
 
+@ToString
 public class Beacon {
 
   private final int timestamp;

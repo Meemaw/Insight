@@ -15,7 +15,7 @@ const envConfig = (env) => {
   switch (env) {
     case 'development': {
       const fileName = `${env}.${baseName}`;
-      return { fileName, apiBaseUrl: 'http://localhost:8080' };
+      return { fileName, apiBaseUrl: 'http://localhost:8081' };
     }
     case 'production': {
       return { fileName: baseName, apiBaseUrl: 'https://api.insight.com' };
