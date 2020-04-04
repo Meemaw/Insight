@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
 import Context from 'context';
 import EventQueue from 'queue';
-import { EventType, getEventTarget } from 'event';
+import { EventType, getEventTarget, BrowserEventArguments } from 'event';
 import Api from 'api';
 import { encodeTarget } from 'dom';
 
@@ -30,48 +29,49 @@ import { encodeTarget } from 'dom';
     const events = eventQueue.drainEvents();
     api.beacon(events);
     if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
       console.debug('[onUploadInterval]', [events.length]);
     }
   };
 
   setInterval(onUploadInterval, UPLOAD_INTERVAL_MILLIS);
 
+  const processEvent = (
+    eventType: EventType,
+    args: BrowserEventArguments,
+    eventName: string
+  ) => {
+    eventQueue.enqueue(eventType, args);
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.debug(`[${eventName}]`, args);
+    }
+  };
+
   const onMouseMove = (event: MouseEvent) => {
     const target = getEventTarget(event);
     const { clientX, clientY } = event;
     const params = [clientX, clientY, ...encodeTarget(target)];
-    eventQueue.enqueue(EventType.MOUSEMOVE, params);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[onClick]', params);
-    }
+    processEvent(EventType.MOUSEMOVE, params, 'mousemove');
   };
 
   const onClick = (event: MouseEvent) => {
     const target = getEventTarget(event);
     const { clientX, clientY } = event;
     const params = [clientX, clientY, ...encodeTarget(target)];
-    eventQueue.enqueue(EventType.CLICK, params);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[onClick]', params);
-    }
+    processEvent(EventType.CLICK, params, 'onclick');
   };
 
   const onUnload = () => {
     const params = [lastLocation];
-    eventQueue.enqueue(EventType.UNLOAD, params);
+    processEvent(EventType.UNLOAD, params, 'unload');
     api.beacon(eventQueue.events());
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[unUnload]', params);
-    }
   };
 
   const onResize = () => {
     const { innerWidth, innerHeight } = window;
     const params = [innerWidth, innerHeight];
-    eventQueue.enqueue(EventType.RESIZE, params);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[onResize]', params);
-    }
+    processEvent(EventType.RESIZE, params, 'resize');
   };
 
   const onNavigationChange = () => {
@@ -79,10 +79,7 @@ import { encodeTarget } from 'dom';
     if (lastLocation !== currentLocation) {
       lastLocation = currentLocation;
       const params = [currentLocation, document.title];
-      eventQueue.enqueue(EventType.NAVIGATE, params);
-      if (process.env.NODE_ENV !== 'production') {
-        console.debug('[onNavigationChange]', params);
-      }
+      processEvent(EventType.NAVIGATE, params, 'navigate');
     }
   };
 
