@@ -1,8 +1,8 @@
+/* eslint-disable no-console */
 import Context from 'context';
 import EventQueue from 'queue';
-import { EventType, getEventTarget, BrowserEventArguments } from 'event';
+import { EventType, encodeEventTarget } from 'event';
 import Api from 'api';
-import { encodeTarget } from 'dom';
 
 ((window, location) => {
   let { href: lastLocation } = location;
@@ -29,57 +29,51 @@ import { encodeTarget } from 'dom';
     const events = eventQueue.drainEvents();
     api.beacon(events);
     if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
       console.debug('[onUploadInterval]', [events.length]);
     }
   };
 
   setInterval(onUploadInterval, UPLOAD_INTERVAL_MILLIS);
 
-  const processEvent = (
-    eventType: EventType,
-    args: BrowserEventArguments,
-    eventName: string
-  ) => {
-    eventQueue.enqueue(eventType, args);
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.debug(`[${eventName}]`, args);
-    }
-  };
-
   const onMouseMove = (event: MouseEvent) => {
-    const target = getEventTarget(event);
     const { clientX, clientY } = event;
-    const params = [clientX, clientY, ...encodeTarget(target)];
-    processEvent(EventType.MOUSEMOVE, params, 'mousemove');
+    const params = [clientX, clientY, ...encodeEventTarget(event)];
+    eventQueue.enqueue(EventType.MOUSEMOVE, params);
   };
 
   const onClick = (event: MouseEvent) => {
-    const target = getEventTarget(event);
     const { clientX, clientY } = event;
-    const params = [clientX, clientY, ...encodeTarget(target)];
-    processEvent(EventType.CLICK, params, 'onclick');
+    const args = [clientX, clientY, ...encodeEventTarget(event)];
+    eventQueue.enqueue(EventType.CLICK, args);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[click]', args);
+    }
   };
 
   const onUnload = () => {
-    const params = [lastLocation];
-    processEvent(EventType.UNLOAD, params, 'unload');
+    const args = [lastLocation];
+    eventQueue.enqueue(EventType.UNLOAD, args);
     api.beacon(eventQueue.events());
   };
 
   const onResize = () => {
     const { innerWidth, innerHeight } = window;
-    const params = [innerWidth, innerHeight];
-    processEvent(EventType.RESIZE, params, 'resize');
+    const args = [innerWidth, innerHeight];
+    eventQueue.enqueue(EventType.RESIZE, args);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[resize]', args);
+    }
   };
 
   const onNavigationChange = () => {
     const { href: currentLocation } = location;
     if (lastLocation !== currentLocation) {
       lastLocation = currentLocation;
-      const params = [currentLocation, document.title];
-      processEvent(EventType.NAVIGATE, params, 'navigate');
+      const args = [currentLocation, document.title];
+      eventQueue.enqueue(EventType.NAVIGATE, args);
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('[navigate]', args);
+      }
     }
   };
 

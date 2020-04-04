@@ -1,4 +1,4 @@
-import { isHtmlElement } from 'dom';
+import { isHtmlElement, encodeTarget } from 'dom';
 
 export const enum EventType {
   NAVIGATE = 0,
@@ -28,4 +28,16 @@ export const getEventTarget = (event: MouseEvent): EventTarget | null => {
     }
   }
   return event.target;
+};
+
+export const encodeEventTarget = (event: MouseEvent) => {
+  const eventTarget = getEventTarget(event);
+  if (!eventTarget) {
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.debug('Target not found for event', event);
+    }
+    return [];
+  }
+  return encodeTarget(eventTarget);
 };

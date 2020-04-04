@@ -10,12 +10,7 @@ export const isHtmlElement = (target: EventTarget): target is HTMLElement => {
 
 type EncodedTagAndAttributes = (string | null)[];
 
-export const encodeTarget = (
-  target: EventTarget | null
-): EncodedTagAndAttributes => {
-  if (!target) {
-    return [];
-  }
+export const encodeTarget = (target: EventTarget): EncodedTagAndAttributes => {
   if (isHtmlElement(target)) {
     const values = [`<${target.nodeName}`] as (string | null)[];
 
@@ -37,7 +32,12 @@ export const encodeTarget = (
         pushAttributes(attribute.name, attribute.value);
       }
     }
-    return [];
+    return values;
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.debug('Unknown element type', target);
   }
   return [];
 };
