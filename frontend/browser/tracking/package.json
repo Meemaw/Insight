@@ -21,7 +21,7 @@
     "prettier": "prettier -l 'src/**/*'"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^3.0.0",
+    "@rollup/plugin-typescript": "^4.0.0",
     "rollup-plugin-gzip": "^2.3.0"
   }
 }

@@ -10,12 +10,24 @@ const input = path.join('src', 'index.ts');
 
 const environments = ['development', 'production'];
 
-const config = (env) => {
+const envConfig = (env) => {
   const baseName = 'insight.js';
-  const fileName = env === 'production' ? baseName : `${env}.${baseName}`;
-  const apiBaseUrl =
-    env === 'production' ? 'https://api.insight.com' : 'http://localhost:8080';
+  switch (env) {
+    case 'development': {
+      const fileName = `${env}.${baseName}`;
+      return { fileName, apiBaseUrl: 'http://localhost:8080' };
+    }
+    case 'production': {
+      return { fileName: baseName, apiBaseUrl: 'https://api.insight.com' };
+    }
+    default: {
+      throw new Error(`Unknown environment: ${env}`);
+    }
+  }
+};
 
+const config = (env) => {
+  const { fileName, apiBaseUrl } = envConfig(env);
   const output = path.join('dist', fileName);
 
   return {

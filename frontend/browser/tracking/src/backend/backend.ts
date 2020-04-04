@@ -19,14 +19,20 @@ class Backend {
     this.pageUrl = `${baseURL}/v1/page`;
     this.beaconSeq = 0;
     if (BeaconTransport.isSupported()) {
-      console.debug('BeaconTransport enabled');
       this.transport = new BeaconTransport();
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('BeaconTransport enabled');
+      }
     } else if (FetchTranport.isSupported()) {
-      console.debug('FetchTransport enabled');
       this.transport = new FetchTranport();
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('FetchTransport enabled');
+      }
     } else {
-      console.debug('XHRTransport enabled');
       this.transport = new XHRTransport();
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('XHRTransport enabled');
+      }
     }
   }
 
