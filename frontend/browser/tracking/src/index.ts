@@ -2,13 +2,13 @@
 import Context from 'context';
 import EventQueue from 'queue';
 import { EventType, encodeEventTarget } from 'event';
-import Api from 'api';
+import Backend from 'backend';
 
 ((window, location) => {
   let { href: lastLocation } = location;
   const context = new Context();
   const eventQueue = new EventQueue(context);
-  const api = new Api(`${process.env.API_BASE_URL}/v1/beacon`);
+  const backend = new Backend(`${process.env.API_BASE_URL}`);
   const UPLOAD_INTERVAL_MILLIS = 1000 * 30;
 
   const observer = new PerformanceObserver((performanceEntryList) => {
@@ -27,7 +27,7 @@ import Api from 'api';
 
   const onUploadInterval = () => {
     const events = eventQueue.drainEvents();
-    api.beacon(events);
+    backend.sendEvents(events);
     if (process.env.NODE_ENV !== 'production') {
       console.debug('[onUploadInterval]', [events.length]);
     }
@@ -53,7 +53,7 @@ import Api from 'api';
   const onUnload = () => {
     const args = [lastLocation];
     eventQueue.enqueue(EventType.UNLOAD, args);
-    api.beacon(eventQueue.events());
+    backend.sendEvents(eventQueue.events());
   };
 
   const onResize = () => {
