@@ -1,15 +1,38 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import Context from 'context';
 import EventQueue from 'queue';
 import { EventType, encodeEventTarget } from 'event';
 import Backend from 'backend';
 
-((window, location) => {
+declare global {
+  interface Window {
+    _i_org: string;
+  }
+}
+
+((window, location, compiledTs) => {
   let { href: lastLocation } = location;
   const context = new Context();
   const eventQueue = new EventQueue(context);
   const backend = new Backend(`${process.env.API_BASE_URL}`);
   const UPLOAD_INTERVAL_MILLIS = 1000 * 10;
+
+  backend
+    .page({
+      orgId: window._i_org,
+      compiledTs,
+      doctype: '<!DOCTYPE html>',
+      height: window.innerHeight,
+      width: window.innerWidth,
+      screenHeight: window.screen.height,
+      screenWidth: window.screen.width,
+      referrer: document.referrer,
+      url: lastLocation,
+    })
+    .then((response) => {
+      console.log(response);
+    });
 
   const observer = new PerformanceObserver((performanceEntryList) => {
     performanceEntryList.getEntries().forEach((entry) => {
@@ -83,4 +106,4 @@ import Backend from 'backend';
   window.addEventListener('click', onClick);
   window.addEventListener('mousemove', onMouseMove);
   // eslint-disable-next-line no-restricted-globals
-})(window, location);
+})(window, location, (process.env.COMPILED_TS as unknown) as number);

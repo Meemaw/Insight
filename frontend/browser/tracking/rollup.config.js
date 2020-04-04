@@ -33,6 +33,8 @@ const envConfig = (env) => {
   }
 };
 
+const compiledTs = Date.now();
+
 const config = (env) => {
   const { fileName, apiBaseUrl } = envConfig(env);
   const output = path.join('dist', fileName);
@@ -44,6 +46,7 @@ const config = (env) => {
       replace({
         'process.env.NODE_ENV': JSON.stringify(env),
         'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
+        'process.env.COMPILED_TS': JSON.stringify(compiledTs),
       }),
       terser({
         output: { comments: false },

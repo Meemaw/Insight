@@ -2,7 +2,7 @@ import { BrowserEvent } from 'event';
 
 export type PageDTO = {
   orgId: string;
-  userId: string;
+  uid?: string;
   url: string;
   width: number;
   height: number;
