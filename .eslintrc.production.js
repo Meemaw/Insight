@@ -28,6 +28,7 @@ module.exports = {
     es6: true,
   },
   rules: {
+    'no-plusplus': ['off'],
     'react/prop-types': ['off'],
     'react/jsx-props-no-spreading': ['off'],
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],

@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import Context from 'context';
 import EventQueue from 'queue';
-import { EventType } from 'event';
+import { EventType, getEventTarget } from 'event';
 import Api from 'api';
+import { encodeTarget } from 'dom';
 
 ((window, location) => {
   let { href: lastLocation } = location;
@@ -22,32 +23,54 @@ import Api from 'api';
     });
   });
 
+  const entryTypes = ['navigation', 'resource', 'measure', 'mark'];
+  observer.observe({ entryTypes });
+
   const onUploadInterval = () => {
     const events = eventQueue.drainEvents();
     api.beacon(events);
     if (process.env.NODE_ENV !== 'production') {
-      console.debug('[onUploadInterval]', { numEvents: events.length });
+      console.debug('[onUploadInterval]', [events.length]);
     }
   };
 
   setInterval(onUploadInterval, UPLOAD_INTERVAL_MILLIS);
 
-  const entryTypes = ['navigation', 'resource', 'measure', 'mark'];
-  observer.observe({ entryTypes });
+  const onMouseMove = (event: MouseEvent) => {
+    const target = getEventTarget(event);
+    const { clientX, clientY } = event;
+    const params = [clientX, clientY, ...encodeTarget(target)];
+    eventQueue.enqueue(EventType.MOUSEMOVE, params);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[onClick]', params);
+    }
+  };
+
+  const onClick = (event: MouseEvent) => {
+    const target = getEventTarget(event);
+    const { clientX, clientY } = event;
+    const params = [clientX, clientY, ...encodeTarget(target)];
+    eventQueue.enqueue(EventType.CLICK, params);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[onClick]', params);
+    }
+  };
 
   const onUnload = () => {
-    eventQueue.enqueue(EventType.UNLOAD, [lastLocation]);
+    const params = [lastLocation];
+    eventQueue.enqueue(EventType.UNLOAD, params);
     api.beacon(eventQueue.events());
     if (process.env.NODE_ENV !== 'production') {
-      console.debug(`[unUnload]: [${lastLocation}]`);
+      console.debug('[unUnload]', params);
     }
   };
 
   const onResize = () => {
     const { innerWidth, innerHeight } = window;
-    eventQueue.enqueue(EventType.RESIZE, [innerWidth, innerHeight]);
+    const params = [innerWidth, innerHeight];
+    eventQueue.enqueue(EventType.RESIZE, params);
     if (process.env.NODE_ENV !== 'production') {
-      console.debug(`[onResize]: [${innerWidth}, ${innerHeight}]`);
+      console.debug('[onResize]', params);
     }
   };
 
@@ -55,12 +78,10 @@ import Api from 'api';
     const { href: currentLocation } = location;
     if (lastLocation !== currentLocation) {
       lastLocation = currentLocation;
-
-      eventQueue.enqueue(EventType.NAVIGATE, [currentLocation, document.title]);
+      const params = [currentLocation, document.title];
+      eventQueue.enqueue(EventType.NAVIGATE, params);
       if (process.env.NODE_ENV !== 'production') {
-        console.debug(
-          `[onNavigationChange]: [${currentLocation}, ${document.title}]`
-        );
+        console.debug('[onNavigationChange]', params);
       }
     }
   };
@@ -68,5 +89,7 @@ import Api from 'api';
   window.addEventListener('popstate', onNavigationChange);
   window.addEventListener('unload', onUnload);
   window.addEventListener('resize', onResize);
+  window.addEventListener('click', onClick);
+  window.addEventListener('mousemove', onMouseMove);
   // eslint-disable-next-line no-restricted-globals
 })(window, location);
