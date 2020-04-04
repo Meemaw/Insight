@@ -8,17 +8,24 @@ import replace from '@rollup/plugin-replace';
 
 const input = path.join('src', 'index.ts');
 
-const environments = ['development', 'production'];
+const environments = ['local', 'development', 'staging', 'production'];
 
 const envConfig = (env) => {
   const baseName = 'insight.js';
+  const fileName = `${env}.${baseName}`;
+
   switch (env) {
-    case 'development': {
-      const fileName = `${env}.${baseName}`;
+    case 'local': {
       return { fileName, apiBaseUrl: 'http://localhost:8081' };
     }
+    case 'development': {
+      return { fileName, apiBaseUrl: 'https://development.insight.com' };
+    }
+    case 'staging': {
+      return { fileName, apiBaseUrl: 'https://staging.insight.com' };
+    }
     case 'production': {
-      return { fileName: baseName, apiBaseUrl: 'https://api.insight.com' };
+      return { fileName: baseName, apiBaseUrl: 'https://insight.com' };
     }
     default: {
       throw new Error(`Unknown environment: ${env}`);

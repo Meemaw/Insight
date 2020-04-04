@@ -21,23 +21,23 @@ import org.junit.jupiter.api.Test;
 public class BeaconResourceImplTest {
 
   @Test
-  public void postBeacon_shouldThrowError_whenUnsupportedMediaType() {
+  public void postBeacon_shouldThrowError_whenEmptyTextPlainPayload() {
     given()
         .when().contentType(MediaType.TEXT_PLAIN).post(BeaconResource.PATH)
         .then()
-        .statusCode(415)
+        .statusCode(422)
         .body(sameJson(
-            "{\"error\":{\"message\":\"Media type not supported.\",\"reason\":\"Unsupported Media Type\",\"statusCode\":415}}"));
+            "{\"error\":{\"statusCode\":422,\"reason\":\"Unprocessable Entity\",\"message\":\"No content to map due to end-of-input\"}}"));
   }
 
   @Test
-  public void postBeacon_shouldThrowError_whenEmptyPayload() {
+  public void postBeacon_shouldThrowError_whenEmptyJsonPayload() {
     given()
         .when().contentType(MediaType.APPLICATION_JSON).post(BeaconResource.PATH)
         .then()
-        .statusCode(400)
+        .statusCode(422)
         .body(sameJson(
-            "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Payload may not be blank\"}}}"));
+            "{\"error\":{\"statusCode\":422,\"reason\":\"Unprocessable Entity\",\"message\":\"No content to map due to end-of-input\"}}"));
   }
 
   @Test
@@ -53,7 +53,7 @@ public class BeaconResourceImplTest {
   @Test
   public void postBeaconShouldStore_whenValidPayload() throws IOException, URISyntaxException {
     String payload = Files.readString(Path.of(getClass().getResource(
-        "/beacon.json").toURI()));
+        "/beacon/initial.json").toURI()));
 
     given()
         .when().contentType(ContentType.JSON).body(payload).post(BeaconResource.PATH)

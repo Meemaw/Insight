@@ -13,9 +13,9 @@ export type BrowserEventArgument = string | number | null;
 export type BrowserEventArguments = BrowserEventArgument[];
 
 export type BrowserEvent = {
-  when: number;
-  kind: EventType;
-  args: BrowserEventArguments;
+  t: number;
+  e: EventType;
+  a: BrowserEventArguments;
 };
 
 export const getEventTarget = (event: MouseEvent): EventTarget | null => {
