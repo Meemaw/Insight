@@ -1,27 +1,33 @@
 import { EventData } from 'backend/types';
 
-import { BaseTransport, Status, TransportResponse } from './base';
+import { Status, RequestResponseTransport, PostResponse } from './base';
 
 /** `XHR` based transport */
-export class XHRTransport implements BaseTransport {
-  public send = (url: string, body: string) => {
-    return new Promise<TransportResponse>((resolve, reject) => {
-      const request = new XMLHttpRequest();
+export class XHRTransport implements RequestResponseTransport {
+  public post = <T>(url: string, body: string) => {
+    return new Promise<PostResponse<T>>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
 
-      request.onreadystatechange = () => {
-        if (request.readyState !== 4) {
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState !== 4) {
           return;
         }
 
-        if (request.status === 200) {
-          resolve({ status: Status.fromHttpCode(request.status) });
+        if (xhr.status === 200) {
+          resolve({ status: xhr.status, json: xhr.response });
         }
 
-        reject(request);
+        reject(xhr);
       };
 
-      request.open('POST', url);
-      request.send(body);
+      xhr.open('POST', url);
+      xhr.send(body);
+    });
+  };
+
+  public send = (url: string, body: string) => {
+    return this.post(url, body).then(({ status }) => {
+      return { status: Status.fromHttpCode(status) };
     });
   };
 

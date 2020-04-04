@@ -40,6 +40,15 @@ export interface BaseTransport {
   send: (url: string, data: string) => Promise<TransportResponse>;
 }
 
+export type PostResponse<T> = {
+  status: number;
+  json: Promise<T>;
+};
+
+export interface RequestResponseTransport extends BaseTransport {
+  post: <T>(url: string, data: string) => Promise<PostResponse<T>>;
+}
+
 export type GlobalObject = Window | {};
 
 export function getGlobalObject(): GlobalObject {

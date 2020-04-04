@@ -2,7 +2,9 @@ package com.meemaw.rec.page.page;
 
 import java.util.Objects;
 import java.util.UUID;
+import lombok.Getter;
 
+@Getter
 public class Page {
 
   private final String organization;
@@ -14,10 +16,10 @@ public class Page {
   private final int width;
   private final int screenHeight;
   private final int screenWidth;
-  private final int compiledTimestamp;
+  private final long compiledTimestamp;
 
   private Page(PageDTO dto) {
-    this.organization = dto.getOrg();
+    this.organization = dto.getOrgId();
     this.uid = dto.getUid();
     this.doctype = dto.getDoctype();
     this.url = dto.getUrl();
@@ -26,50 +28,11 @@ public class Page {
     this.width = dto.getWidth();
     this.screenHeight = dto.getScreenHeight();
     this.screenWidth = dto.getScreenWidth();
-    this.compiledTimestamp = dto.getCompiledTimestamp();
+    this.compiledTimestamp = dto.getCompiledTs();
   }
 
   public static Page from(PageDTO dto) {
     return new Page(Objects.requireNonNull(dto));
   }
 
-  public String getOrganization() {
-    return organization;
-  }
-
-  public UUID getUid() {
-    return uid;
-  }
-
-  public String getDoctype() {
-    return doctype;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public String getReferrer() {
-    return referrer;
-  }
-
-  public int getHeight() {
-    return height;
-  }
-
-  public int getWidth() {
-    return width;
-  }
-
-  public int getScreenHeight() {
-    return screenHeight;
-  }
-
-  public int getScreenWidth() {
-    return screenWidth;
-  }
-
-  public int getCompiledTimestamp() {
-    return compiledTimestamp;
-  }
 }

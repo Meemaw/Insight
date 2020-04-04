@@ -17,6 +17,7 @@ public class PageService {
   @Inject
   PageDatasource pageDatasource;
 
+  // "uid:sessionId"
   public CompletionStage<PageIdentityDTO> process(Page page) {
     UUID pageId = UUID.randomUUID();
     UUID uid = Optional.ofNullable(page.getUid()).orElseGet(UUID::randomUUID);

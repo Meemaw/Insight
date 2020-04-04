@@ -5,90 +5,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
+@Value
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class PageDTO {
 
-  @JsonProperty("org")
   @NotNull(message = "may not be null")
-  private String org;
+  String orgId;
 
-  @JsonProperty("uid")
-  private UUID uid;
+  UUID uid;
 
-  @JsonProperty("url")
   @NotNull(message = "may not be null")
-  private String url;
+  String url;
 
-  @JsonProperty("referrer")
   @NotNull(message = "may not be null")
-  private String referrer;
+  String referrer;
 
-  @JsonProperty("doctype")
   @NotNull(message = "may not be null")
-  private String doctype;
+  String doctype;
 
-  @JsonProperty("screenWidth")
   @NotNull(message = "may not be null")
   @Min(message = "must be non negative", value = 0)
-  private int screenWidth;
+  int screenWidth;
 
-  @JsonProperty("screenHeight")
   @NotNull(message = "may not be null")
   @Min(message = "must be non negative", value = 0)
-  private int screenHeight;
+  int screenHeight;
 
-  @JsonProperty("width")
   @NotNull(message = "may not be null")
   @Min(message = "must be non negative", value = 0)
-  private int width;
+  int width;
 
   @JsonProperty("height")
   @NotNull(message = "may not be null")
   @Min(message = "must be non negative", value = 0)
   private int height;
 
-  @JsonProperty("compiledTimestamp")
   @NotNull(message = "may not be null")
   @Min(message = "must be non negative", value = 0)
-  private int compiledTimestamp;
+  long compiledTs;
 
-  public String getOrg() {
-    return org;
-  }
-
-  public UUID getUid() {
-    return uid;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public String getReferrer() {
-    return referrer;
-  }
-
-  public String getDoctype() {
-    return doctype;
-  }
-
-  public int getScreenWidth() {
-    return screenWidth;
-  }
-
-  public int getScreenHeight() {
-    return screenHeight;
-  }
-
-  public int getWidth() {
-    return width;
-  }
-
-  public int getHeight() {
-    return height;
-  }
-
-  public int getCompiledTimestamp() {
-    return compiledTimestamp;
-  }
 }
