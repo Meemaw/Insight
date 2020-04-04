@@ -9,7 +9,7 @@ import Backend from 'backend';
   const context = new Context();
   const eventQueue = new EventQueue(context);
   const backend = new Backend(`${process.env.API_BASE_URL}`);
-  const UPLOAD_INTERVAL_MILLIS = 1000 * 30;
+  const UPLOAD_INTERVAL_MILLIS = 1000 * 10;
 
   const observer = new PerformanceObserver((performanceEntryList) => {
     performanceEntryList.getEntries().forEach((entry) => {
@@ -25,7 +25,7 @@ import Backend from 'backend';
   const entryTypes = ['navigation', 'resource', 'measure', 'mark'];
   observer.observe({ entryTypes });
 
-  const onUploadInterval = () => {
+  setInterval(() => {
     const events = eventQueue.drainEvents();
     if (events.length > 0) {
       backend.sendEvents(events);
@@ -33,9 +33,7 @@ import Backend from 'backend';
         console.debug('[onUploadInterval]', [events.length]);
       }
     }
-  };
-
-  setInterval(onUploadInterval, UPLOAD_INTERVAL_MILLIS);
+  }, UPLOAD_INTERVAL_MILLIS);
 
   const onMouseMove = (event: MouseEvent) => {
     const { clientX, clientY } = event;

@@ -19,7 +19,7 @@ const envConfig = (env) => {
       return { fileName, apiBaseUrl: 'http://localhost:8081' };
     }
     case 'development': {
-      return { fileName, apiBaseUrl: 'https://development.insight.com' };
+      return { fileName, apiBaseUrl: 'http://localhost:8081' };
     }
     case 'staging': {
       return { fileName, apiBaseUrl: 'https://staging.insight.com' };
