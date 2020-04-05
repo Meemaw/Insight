@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import Context from 'context';
 import EventQueue from 'queue';
-import { EventType, encodeEventTarget } from 'event';
+import { EventType, encodeEventTarget, BrowserEventArguments } from 'event';
 import Backend from 'backend';
 import { PageResponse } from 'backend/types';
 import Identity from 'identity';
@@ -76,31 +76,21 @@ declare global {
   const entryTypes = ['navigation', 'resource', 'measure', 'mark'];
   observer.observe({ entryTypes });
 
-  const onMouseMove = (event: MouseEvent) => {
-    const { clientX, clientY } = event;
-    const args = [clientX, clientY, ...encodeEventTarget(event)];
-    eventQueue.enqueue(EventType.MOUSEMOVE, args);
+  const enqueue = (
+    eventType: EventType,
+    args: BrowserEventArguments,
+    eventName: string
+  ) => {
+    eventQueue.enqueue(eventType, args);
     if (process.env.NODE_ENV !== 'production') {
-      console.debug('[mousemove]', args);
-    }
-  };
-
-  const onClick = (event: MouseEvent) => {
-    const { clientX, clientY } = event;
-    const args = [clientX, clientY, ...encodeEventTarget(event)];
-    eventQueue.enqueue(EventType.CLICK, args);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[click]', args);
+      console.debug(eventName, args);
     }
   };
 
   const onResize = () => {
     const { innerWidth, innerHeight } = window;
     const args = [innerWidth, innerHeight];
-    eventQueue.enqueue(EventType.RESIZE, args);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[resize]', args);
-    }
+    enqueue(EventType.RESIZE, args, '[resize]');
   };
 
   const onNavigationChange = () => {
@@ -108,29 +98,48 @@ declare global {
     if (lastLocation !== currentLocation) {
       lastLocation = currentLocation;
       const args = [currentLocation, document.title];
-      eventQueue.enqueue(EventType.NAVIGATE, args);
-      if (process.env.NODE_ENV !== 'production') {
-        console.debug('[navigate]', args);
-      }
+      enqueue(EventType.NAVIGATE, args, '[navigate]');
     }
+  };
+
+  const mouseEventSimpleArgs = (event: MouseEvent) => {
+    return [event.clientX, event.clientX];
+  };
+
+  const mouseEventSimple = (
+    event: MouseEvent,
+    eventType: EventType,
+    eventName: string
+  ) => {
+    enqueue(eventType, mouseEventSimpleArgs(event), eventName);
+  };
+
+  const mouseEventWithTarget = (
+    event: MouseEvent,
+    eventType: EventType,
+    eventName: string
+  ) => {
+    enqueue(
+      eventType,
+      [...mouseEventSimpleArgs(event), ...encodeEventTarget(event)],
+      eventName
+    );
   };
 
   const onMouseDown = (event: MouseEvent) => {
-    const { clientX, clientY } = event;
-    const args = [clientX, clientY];
-    eventQueue.enqueue(EventType.MOUSEDOWN, args);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[mousedown]', args);
-    }
+    mouseEventSimple(event, EventType.MOUSEDOWN, '[mousedown]');
   };
 
   const onMouseUp = (event: MouseEvent) => {
-    const { clientX, clientY } = event;
-    const args = [clientX, clientY];
-    eventQueue.enqueue(EventType.MOUSEUP, args);
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[mouseup]', args);
-    }
+    mouseEventSimple(event, EventType.MOUSEUP, '[mouseup]');
+  };
+
+  const onMouseMove = (event: MouseEvent) => {
+    mouseEventWithTarget(event, EventType.MOUSEMOVE, '[mousemove]');
+  };
+
+  const onClick = (event: MouseEvent) => {
+    mouseEventWithTarget(event, EventType.CLICK, '[click]');
   };
 
   window.addEventListener('popstate', onNavigationChange);
