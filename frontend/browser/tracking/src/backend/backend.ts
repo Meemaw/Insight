@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import { BrowserEvent } from 'event';
 
@@ -13,7 +14,7 @@ import { XHRTransport } from './transports/xhr';
 
 class Backend {
   private readonly requestResponseTransport: RequestResponseTransport;
-  private readonly transport: BaseTransport;
+  private readonly maybeBeaconTransport: BaseTransport;
   private readonly beaconUrl: string;
   private readonly pageUrl: string;
 
@@ -38,18 +39,26 @@ class Backend {
     }
 
     if (BeaconTransport.isSupported(globalObject)) {
-      this.transport = new BeaconTransport();
+      this.maybeBeaconTransport = new BeaconTransport();
       if (process.env.NODE_ENV !== 'production') {
         console.debug('BeaconTransport enabled');
       }
     } else {
-      this.transport = this.requestResponseTransport;
+      this.maybeBeaconTransport = this.requestResponseTransport;
     }
   }
 
   public sendEvents = (e: BrowserEvent[]) => {
+    return this._sendEvents(this.requestResponseTransport, e);
+  };
+
+  public sendBeacon = (e: BrowserEvent[]) => {
+    return this._sendEvents(this.maybeBeaconTransport, e);
+  };
+
+  private _sendEvents = (transport: BaseTransport, e: BrowserEvent[]) => {
     this.beaconSeq += 1;
-    return this.transport.sendEvents(this.beaconUrl, { e, s: this.beaconSeq });
+    return transport.sendEvents(this.beaconUrl, { e, s: this.beaconSeq });
   };
 
   public page = (pageDTO: PageDTO) => {

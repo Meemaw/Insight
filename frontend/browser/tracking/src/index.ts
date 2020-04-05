@@ -104,7 +104,7 @@ declare global {
   const onUnload = () => {
     const args = [lastLocation];
     eventQueue.enqueue(EventType.UNLOAD, args);
-    backend.sendEvents(eventQueue.events());
+    backend.sendBeacon(eventQueue.events());
   };
 
   const startBeaconing = (page: PageResponse) => {
