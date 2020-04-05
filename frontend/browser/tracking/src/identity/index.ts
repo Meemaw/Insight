@@ -5,6 +5,12 @@
 /* eslint-disable no-underscore-dangle */
 
 import { PageResponse } from 'backend/types';
+import {
+  MILLIS_IN_SECOND,
+  currentTimeSeconds,
+  yearFromNow,
+  expiresUTC,
+} from 'time';
 
 type InsightIdentity = {
   orgId: string;
@@ -56,7 +62,7 @@ class Identity {
     }
 
     const newIdentity = {
-      expiresSeconds: Identity.createExpiresSeconds(),
+      expiresSeconds: yearFromNow(),
       host,
       orgId,
       uid: '',
@@ -67,37 +73,6 @@ class Identity {
     return new Identity(newIdentity);
   };
 
-  private encode = (expirationAbsTimeSeconds: number) => {
-    return `${this._cookie.host}#${this._cookie.orgId}#${this._cookie.uid}:${this._cookie.sessionId}/${expirationAbsTimeSeconds}`;
-  };
-
-  public handleIdentity = (pageResponse: PageResponse) => {
-    this._cookie.uid = pageResponse.data.uid;
-    this._cookie.sessionId = pageResponse.data.sessionId;
-    this.writeIdentity();
-  };
-
-  private writeIdentity = () => {
-    const expirationAbsTimeSeconds = this._cookie.expiresSeconds as number;
-    const encoded = this.encode(expirationAbsTimeSeconds);
-    const expires = new Date(1e3 * expirationAbsTimeSeconds).toUTCString();
-    this.setCookie(encoded, expires);
-    try {
-      localStorage[storageKey] = encoded;
-    } catch (e) {
-      // noop
-    }
-    console.debug('Wrote identity', encoded);
-  };
-
-  private setCookie = (encoded: string, expires: string) => {
-    let cookie = `${storageKey}=${encoded}; domain=; Expires=${expires}; path=/; SameSite=Strict`;
-    if (location.protocol === 'https:') {
-      cookie += '; Secure';
-    }
-    document.cookie = cookie;
-  };
-
   private static decodeIdentity = (
     encoded: string | undefined
   ): InsightIdentity | undefined => {
@@ -106,7 +81,7 @@ class Identity {
     }
     const [maybeIdentity, maybeExpiresSeconds] = encoded.split('/');
     const expiresSeconds = parseInt(maybeExpiresSeconds, 10);
-    if (isNaN(expiresSeconds) || expiresSeconds < Identity.currentMillis()) {
+    if (isNaN(expiresSeconds) || expiresSeconds < currentTimeSeconds()) {
       return undefined;
     }
 
@@ -126,12 +101,35 @@ class Identity {
     };
   };
 
-  private static currentMillis = () => {
-    return Math.floor(Date.now() / 1e3);
+  private encode = (expiresSeconds: number) => {
+    return `${this._cookie.host}#${this._cookie.orgId}#${this._cookie.uid}:${this._cookie.sessionId}/${expiresSeconds}`;
   };
 
-  private static createExpiresSeconds = () => {
-    return Identity.currentMillis() + 31536e3;
+  public handleIdentity = (pageResponse: PageResponse) => {
+    this._cookie.uid = pageResponse.data.uid;
+    this._cookie.sessionId = pageResponse.data.sessionId;
+    this.writeIdentity();
+  };
+
+  private writeIdentity = () => {
+    const expiresSeconds = this._cookie.expiresSeconds as number;
+    const encoded = this.encode(expiresSeconds);
+    const expires = expiresUTC(MILLIS_IN_SECOND * expiresSeconds);
+    this.setCookie(encoded, expires);
+    try {
+      localStorage[storageKey] = encoded;
+    } catch (e) {
+      // noop
+    }
+    console.debug('Wrote identity', encoded);
+  };
+
+  private setCookie = (encoded: string, expires: string) => {
+    let cookie = `${storageKey}=${encoded}; domain=; Expires=${expires}; path=/; SameSite=Strict`;
+    if (location.protocol === 'https:') {
+      cookie += '; Secure';
+    }
+    document.cookie = cookie;
   };
 }
 
