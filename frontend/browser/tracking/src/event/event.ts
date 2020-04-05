@@ -7,6 +7,8 @@ export const enum EventType {
   PERFORMANCE = 3,
   CLICK = 4,
   MOUSEMOVE = 5,
+  MOUSEDOWN = 6,
+  MOUSEUP = 7,
 }
 
 export type BrowserEventArgument = string | number | null;
