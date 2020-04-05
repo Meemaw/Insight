@@ -11,5 +11,7 @@ public final class BeaconEventTypeConstants {
   public static final String PERFORMANCE = "3";
   public static final String CLICK = "4";
   public static final String MOUSEMOVE = "5";
+  public static final String MOUSEDOWN = "6";
+  public static final String MOUSEUP = "7";
 
 }

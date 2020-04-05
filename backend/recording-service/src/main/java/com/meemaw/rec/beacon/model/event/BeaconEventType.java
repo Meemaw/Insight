@@ -7,7 +7,9 @@ public enum BeaconEventType {
 
   NAVIGATE(BeaconEventTypeConstants.NAVIGATE), UNLOAD(BeaconEventTypeConstants.UNLOAD), RESIZE(
       BeaconEventTypeConstants.RESIZE), PERFORMANCE(
-      BeaconEventTypeConstants.PERFORMANCE);
+      BeaconEventTypeConstants.PERFORMANCE), CLICK(BeaconEventTypeConstants.CLICK), MOUSEMOVE(
+      BeaconEventTypeConstants.MOUSEMOVE), MOUSEDOWN(BeaconEventTypeConstants.MOUSEDOWN), MOUSEUP(
+      BeaconEventTypeConstants.MOUSEUP);
 
   String value;
 

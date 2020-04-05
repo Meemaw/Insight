@@ -42,7 +42,7 @@ declare global {
     });
   });
 
-  const entryTypes = ['navigation', 'resource', 'measure', 'mark'];
+  const entryTypes = ['navigation', 'resource', 'measure'];
   observer.observe({ entryTypes });
 
   const enqueue = (

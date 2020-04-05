@@ -18,6 +18,8 @@ import java.util.List;
     @Type(value = PerformanceBeaconEvent.class, name = BeaconEventTypeConstants.PERFORMANCE),
     @Type(value = ClickBeaconEvent.class, name = BeaconEventTypeConstants.CLICK),
     @Type(value = MouseMoveBeaconEvent.class, name = BeaconEventTypeConstants.MOUSEMOVE),
+    @Type(value = MouseDownBeaconEvent.class, name = BeaconEventTypeConstants.MOUSEDOWN),
+    @Type(value = MouseUpBeaconEvent.class, name = BeaconEventTypeConstants.MOUSEUP),
 })
 public abstract class AbstractBeaconEvent {
 
