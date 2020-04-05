@@ -1,4 +1,4 @@
-package com.meemaw.rec.page.page;
+package com.meemaw.rec.page.model;
 
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
 package com.meemaw.rec.page.service;
 
 import com.meemaw.rec.page.datasource.PageDatasource;
-import com.meemaw.rec.page.page.Page;
-import com.meemaw.rec.page.page.PageIdentityDTO;
+import com.meemaw.rec.page.model.Page;
+import com.meemaw.rec.page.model.PageIdentityDTO;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;

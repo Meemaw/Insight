@@ -1,4 +1,4 @@
-package com.meemaw.rec.page.page;
+package com.meemaw.rec.page.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 

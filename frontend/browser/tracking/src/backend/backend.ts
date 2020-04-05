@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { BrowserEvent } from 'event';
 
-import { PageDTO } from './types';
+import { PageDTO, PageResponse } from './types';
 import { BeaconTransport } from './transports/beacon';
 import {
   BaseTransport,
@@ -54,7 +54,7 @@ class Backend {
 
   public page = (pageDTO: PageDTO) => {
     return this.requestResponseTransport
-      .post<PageDTO>(this.pageUrl, JSON.stringify(pageDTO))
+      .post<PageResponse>(this.pageUrl, JSON.stringify(pageDTO))
       .then((response) => response.json);
   };
 }

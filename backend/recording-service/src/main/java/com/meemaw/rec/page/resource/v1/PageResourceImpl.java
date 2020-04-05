@@ -2,9 +2,8 @@ package com.meemaw.rec.page.resource.v1;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meemaw.rec.beacon.model.BeaconDTO;
-import com.meemaw.rec.page.page.Page;
-import com.meemaw.rec.page.page.PageDTO;
+import com.meemaw.rec.page.model.Page;
+import com.meemaw.rec.page.model.PageDTO;
 import com.meemaw.rec.page.service.PageService;
 import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.response.DataResponse;

@@ -17,3 +17,11 @@ export type EventData = {
   e: BrowserEvent[];
   s: number;
 };
+
+export type DataResponse<D> = { data: D };
+
+export type PageResponse = DataResponse<{
+  uid: string;
+  sessionId: string;
+  pageId: string;
+}>;

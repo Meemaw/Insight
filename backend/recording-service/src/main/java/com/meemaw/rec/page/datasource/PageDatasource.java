@@ -1,8 +1,8 @@
 package com.meemaw.rec.page.datasource;
 
-import com.meemaw.rec.page.page.Page;
-import com.meemaw.rec.page.page.PageIdentityDTO;
-import com.meemaw.rec.page.page.PageIdentityDTOBuilder;
+import com.meemaw.rec.page.model.Page;
+import com.meemaw.rec.page.model.PageIdentityDTO;
+import com.meemaw.rec.page.model.PageIdentityDTOBuilder;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import io.vertx.axle.pgclient.PgPool;
 import io.vertx.axle.sqlclient.Tuple;
