@@ -79,7 +79,10 @@ declare global {
     enqueue(EventType.MOUSEUP, mouseEventSimpleArgs(event), '[mouseup]');
   };
 
-  const { execute: onMouseMove, clear: mouseMoveClear } = dedupMouseEventSimple(
+  const {
+    onMouseEvent: onMouseMove,
+    clearMouseEvent: onMouseMoveClear,
+  } = dedupMouseEventSimple(
     (event: MouseEvent, clientX: number, clientY: number) => {
       const args = [clientX, clientY, ...encodeEventTarget(event)];
       enqueue(EventType.MOUSEMOVE, args, '[mousemove]');
@@ -111,7 +114,7 @@ declare global {
       const events = eventQueue.drainEvents();
       if (events.length > 0) {
         backend.sendEvents(events);
-        mouseMoveClear();
+        onMouseMoveClear();
         if (process.env.NODE_ENV !== 'production') {
           console.debug('[onUploadInterval]', [events.length]);
         }

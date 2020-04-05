@@ -55,22 +55,23 @@ export const mouseEventWithTargetArgs = (event: MouseEvent) => {
 export const dedupMouseEventSimple = (
   fn: (event: MouseEvent, clientX: number, clientY: number) => void
 ) => {
-  let lastArgs: BrowserEventArguments | undefined;
+  let lastX: number | undefined;
+  let lastY: number | undefined;
 
-  const execute = (event: MouseEvent) => {
+  const onMouseEvent = (event: MouseEvent) => {
     const [clientX, clientY] = mouseEventSimpleArgs(event);
-    if (lastArgs) {
-      const [lastClientX, lastClientY] = lastArgs;
-      if (clientX === lastClientX && clientY === lastClientY) {
-        return;
-      }
+    if (clientX === lastX && clientY === lastY) {
+      return;
     }
+    lastX = clientX;
+    lastY = clientY;
     fn(event, clientX, clientY);
   };
 
-  const clear = () => {
-    lastArgs = undefined;
+  const clearMouseEvent = () => {
+    lastX = undefined;
+    lastY = undefined;
   };
 
-  return { execute, clear };
+  return { onMouseEvent, clearMouseEvent };
 };
