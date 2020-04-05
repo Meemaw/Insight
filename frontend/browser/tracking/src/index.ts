@@ -39,6 +39,7 @@ declare global {
   backend
     .page({
       orgId,
+      uid: identity.uid(),
       compiledTs,
       doctype: '<!DOCTYPE html>',
       height: window.innerHeight,

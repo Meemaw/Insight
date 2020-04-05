@@ -23,7 +23,7 @@ class Identity {
   }
 
   public static initFromCookie = (host: string, orgId: string) => {
-    const cookies = document.cookie.split(';').reduce((acc, value) => {
+    const cookies = document.cookie.split('; ').reduce((acc, value) => {
       const valueSplit = value.split('=');
       return { ...acc, [valueSplit[0]]: valueSplit[1] };
     }, {} as { _is_uid?: string });
@@ -33,7 +33,9 @@ class Identity {
     if (!maybeCookie) {
       try {
         maybeCookie = localStorage[Identity.storageKey];
-        console.debug('Restored identity from localStorage', maybeCookie);
+        if (maybeCookie) {
+          console.debug('Restored identity from localStorage', maybeCookie);
+        }
       } catch (err) {
         // noop
       }
@@ -121,6 +123,10 @@ class Identity {
       cookie += '; Secure';
     }
     document.cookie = cookie;
+  };
+
+  public uid = () => {
+    return this._cookie.uid;
   };
 }
 
