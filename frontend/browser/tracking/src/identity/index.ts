@@ -12,19 +12,10 @@ import {
   expiresUTC,
 } from 'time';
 
-type InsightIdentity = {
-  orgId: string;
-  uid: string;
-  sessionId: string;
-  host: string;
-  expiresSeconds: number;
-};
-
-type Cookie = Partial<InsightIdentity>;
-
-const storageKey = '_is_uid';
+import { Cookie, InsightIdentity } from './types';
 
 class Identity {
+  private static storageKey = '_is_uid' as const;
   private readonly _cookie: Cookie;
 
   constructor(cookie: Cookie) {
@@ -38,10 +29,10 @@ class Identity {
     }, {} as { _is_uid?: string });
 
     console.debug('[initFromCookie]', { cookies, host, orgId });
-    let maybeCookie = cookies[storageKey];
+    let maybeCookie = cookies[Identity.storageKey];
     if (!maybeCookie) {
       try {
-        maybeCookie = localStorage[storageKey];
+        maybeCookie = localStorage[Identity.storageKey];
         console.debug('Restored identity from localStorage', maybeCookie);
       } catch (err) {
         // noop
@@ -117,7 +108,7 @@ class Identity {
     const expires = expiresUTC(MILLIS_IN_SECOND * expiresSeconds);
     this.setCookie(encoded, expires);
     try {
-      localStorage[storageKey] = encoded;
+      localStorage[Identity.storageKey] = encoded;
     } catch (e) {
       // noop
     }
@@ -125,7 +116,7 @@ class Identity {
   };
 
   private setCookie = (encoded: string, expires: string) => {
-    let cookie = `${storageKey}=${encoded}; domain=; Expires=${expires}; path=/; SameSite=Strict`;
+    let cookie = `${Identity.storageKey}=${encoded}; domain=; Expires=${expires}; path=/; SameSite=Strict`;
     if (location.protocol === 'https:') {
       cookie += '; Secure';
     }
