@@ -13,6 +13,7 @@ import {
 import Backend from 'backend';
 import { PageResponse } from 'backend/types';
 import Identity from 'identity';
+import { MILLIS_IN_SECOND } from 'time';
 
 declare global {
   interface Window {
@@ -26,7 +27,7 @@ declare global {
   const context = new Context();
   const eventQueue = new EventQueue(context);
   const backend = new Backend(`${process.env.API_BASE_URL}`);
-  const UPLOAD_INTERVAL_MILLIS = 1000 * 10;
+  const UPLOAD_INTERVAL_MILLIS = MILLIS_IN_SECOND * 10;
   const { _i_org: orgId, _i_host: host } = window;
   const identity = Identity.initFromCookie(host, orgId);
 

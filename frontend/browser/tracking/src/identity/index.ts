@@ -28,29 +28,35 @@ class Identity {
       return { ...acc, [valueSplit[0]]: valueSplit[1] };
     }, {} as { _is_uid?: string });
 
-    console.debug('[initFromCookie]', { cookies, host, orgId });
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[initFromCookie]', { cookies, host, orgId });
+    }
     let maybeCookie = cookies[Identity.storageKey];
     if (!maybeCookie) {
       try {
         maybeCookie = localStorage[Identity.storageKey];
-        if (maybeCookie) {
+        if (process.env.NODE_ENV !== 'production' && maybeCookie) {
           console.debug('Restored identity from localStorage', maybeCookie);
         }
       } catch (err) {
         // noop
       }
-    } else {
+    } else if (process.env.NODE_ENV !== 'production') {
       console.debug('Restored identity from cookie', maybeCookie);
     }
 
     const decoded = Identity.decodeIdentity(maybeCookie);
     if (decoded) {
       if (decoded.orgId === orgId) {
-        console.debug('Matching orgId, setting identity', decoded);
+        if (process.env.NODE_ENV !== 'production') {
+          console.debug('Matching orgId, setting identity', decoded);
+        }
         return new Identity(decoded);
       }
-      console.debug('Unmatching identity', { decoded, orgId });
-    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('Unmatching identity', { decoded, orgId });
+      }
+    } else if (process.env.NODE_ENV !== 'production') {
       console.debug('Could not parse identity');
     }
 
@@ -62,7 +68,9 @@ class Identity {
       sessionId: '',
     };
 
-    console.debug('Created new identity', newIdentity);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('Created new identity', newIdentity);
+    }
     return new Identity(newIdentity);
   };
 
@@ -75,7 +83,9 @@ class Identity {
     const [maybeIdentity, maybeExpiresSeconds] = encoded.split('/');
     const expiresSeconds = parseInt(maybeExpiresSeconds, 10);
     if (isNaN(expiresSeconds) || expiresSeconds < currentTimeSeconds()) {
-      console.debug('identity expired?', { expiresSeconds });
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('identity expired?', { expiresSeconds });
+      }
       return undefined;
     }
 
@@ -115,7 +125,9 @@ class Identity {
     } catch (e) {
       // noop
     }
-    console.debug('Wrote identity', encoded);
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('Wrote identity', encoded);
+    }
   };
 
   private setCookie = (encoded: string, expires: string) => {
