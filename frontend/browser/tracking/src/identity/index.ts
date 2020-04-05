@@ -75,6 +75,7 @@ class Identity {
     const [maybeIdentity, maybeExpiresSeconds] = encoded.split('/');
     const expiresSeconds = parseInt(maybeExpiresSeconds, 10);
     if (isNaN(expiresSeconds) || expiresSeconds < currentTimeSeconds()) {
+      console.debug('identity expired?', { expiresSeconds });
       return undefined;
     }
 

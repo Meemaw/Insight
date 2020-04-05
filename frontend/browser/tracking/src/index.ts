@@ -22,6 +22,7 @@ declare global {
   const UPLOAD_INTERVAL_MILLIS = 1000 * 10;
   const { _i_org: orgId, _i_host: host } = window;
   const identity = Identity.initFromCookie(host, orgId);
+  let lastMouseMoveArgs: BrowserEventArguments | undefined;
 
   const onUnload = () => {
     const args = [lastLocation];
@@ -36,6 +37,7 @@ declare global {
       const events = eventQueue.drainEvents();
       if (events.length > 0) {
         backend.sendEvents(events);
+        lastMouseMoveArgs = undefined;
         if (process.env.NODE_ENV !== 'production') {
           console.debug('[onUploadInterval]', [events.length]);
         }
@@ -103,7 +105,7 @@ declare global {
   };
 
   const mouseEventSimpleArgs = (event: MouseEvent) => {
-    return [event.clientX, event.clientX];
+    return [event.clientX, event.clientY];
   };
 
   const mouseEventSimple = (
@@ -135,7 +137,16 @@ declare global {
   };
 
   const onMouseMove = (event: MouseEvent) => {
-    mouseEventWithTarget(event, EventType.MOUSEMOVE, '[mousemove]');
+    const [clientX, clientY] = mouseEventSimpleArgs(event);
+    if (lastMouseMoveArgs) {
+      const [lastClientX, lastClientY] = lastMouseMoveArgs;
+      if (clientX === lastClientX && clientY === lastClientY) {
+        console.debug('deduping mouse move', [clientX, clientY]);
+        return;
+      }
+    }
+    const args = [clientX, clientY, ...encodeEventTarget(event)];
+    enqueue(EventType.MOUSEMOVE, args, '[mousemove]');
   };
 
   const onClick = (event: MouseEvent) => {

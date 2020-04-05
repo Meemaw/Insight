@@ -17,7 +17,6 @@ public class PageService {
   @Inject
   PageDatasource pageDatasource;
 
-  // "uid:sessionId"
   public CompletionStage<PageIdentityDTO> process(Page page) {
     UUID pageId = UUID.randomUUID();
     UUID uid = Optional.ofNullable(page.getUid()).orElseGet(UUID::randomUUID);
@@ -33,14 +32,11 @@ public class PageService {
     // recognized device; try to link it with an existing session
     return pageDatasource.findDeviceSession(org, uid).thenCompose(
         maybeSessionId -> {
-          if (maybeSessionId == null) {
-            maybeSessionId = UUID.randomUUID();
+          UUID sessionId = maybeSessionId.orElseGet(() -> {
             log.info("Could not link session for uid {}, pageId {} org {}", uid, pageId, org);
-          } else {
-            log.info("Session {} linked for uid {}, pageId {} org {}", maybeSessionId, uid, pageId,
-                org);
-          }
-          return pageDatasource.insertPage(pageId, uid, maybeSessionId, page);
+            return UUID.randomUUID();
+          });
+          return pageDatasource.insertPage(pageId, uid, sessionId, page);
         }
     );
   }
