@@ -2,7 +2,14 @@
 /* eslint-disable no-console */
 import Context from 'context';
 import EventQueue from 'queue';
-import { EventType, encodeEventTarget, BrowserEventArguments } from 'event';
+import {
+  EventType,
+  encodeEventTarget,
+  BrowserEventArguments,
+  dedupMouseEventSimple,
+  mouseEventSimpleArgs,
+  mouseEventWithTargetArgs,
+} from 'event';
 import Backend from 'backend';
 import { PageResponse } from 'backend/types';
 import Identity from 'identity';
@@ -22,47 +29,6 @@ declare global {
   const UPLOAD_INTERVAL_MILLIS = 1000 * 10;
   const { _i_org: orgId, _i_host: host } = window;
   const identity = Identity.initFromCookie(host, orgId);
-  let lastMouseMoveArgs: BrowserEventArguments | undefined;
-
-  const onUnload = () => {
-    const args = [lastLocation];
-    eventQueue.enqueue(EventType.UNLOAD, args);
-    backend.sendEvents(eventQueue.events());
-  };
-
-  const startBeaconing = (page: PageResponse) => {
-    identity.handleIdentity(page);
-    window.addEventListener('unload', onUnload);
-    setInterval(() => {
-      const events = eventQueue.drainEvents();
-      if (events.length > 0) {
-        backend.sendEvents(events);
-        lastMouseMoveArgs = undefined;
-        if (process.env.NODE_ENV !== 'production') {
-          console.debug('[onUploadInterval]', [events.length]);
-        }
-      }
-    }, UPLOAD_INTERVAL_MILLIS);
-  };
-
-  backend
-    .page({
-      orgId,
-      uid: identity.uid(),
-      compiledTs,
-      doctype: '<!DOCTYPE html>',
-      height: window.innerHeight,
-      width: window.innerWidth,
-      screenHeight: window.screen.height,
-      screenWidth: window.screen.width,
-      referrer: document.referrer,
-      url: lastLocation,
-    })
-    .then(startBeaconing)
-    .catch((error) => {
-      // TODO: have some error reporting
-      console.error('Something went wrong while creating page', error);
-    });
 
   const observer = new PerformanceObserver((performanceEntryList) => {
     performanceEntryList.getEntries().forEach((entry) => {
@@ -104,53 +70,24 @@ declare global {
     }
   };
 
-  const mouseEventSimpleArgs = (event: MouseEvent) => {
-    return [event.clientX, event.clientY];
-  };
-
-  const mouseEventSimple = (
-    event: MouseEvent,
-    eventType: EventType,
-    eventName: string
-  ) => {
-    enqueue(eventType, mouseEventSimpleArgs(event), eventName);
-  };
-
-  const mouseEventWithTarget = (
-    event: MouseEvent,
-    eventType: EventType,
-    eventName: string
-  ) => {
-    enqueue(
-      eventType,
-      [...mouseEventSimpleArgs(event), ...encodeEventTarget(event)],
-      eventName
-    );
-  };
-
   const onMouseDown = (event: MouseEvent) => {
-    mouseEventSimple(event, EventType.MOUSEDOWN, '[mousedown]');
+    enqueue(EventType.MOUSEDOWN, mouseEventSimpleArgs(event), '[mousedown]');
   };
 
   const onMouseUp = (event: MouseEvent) => {
-    mouseEventSimple(event, EventType.MOUSEUP, '[mouseup]');
+    enqueue(EventType.MOUSEUP, mouseEventSimpleArgs(event), '[mouseup]');
   };
 
-  const onMouseMove = (event: MouseEvent) => {
-    const [clientX, clientY] = mouseEventSimpleArgs(event);
-    if (lastMouseMoveArgs) {
-      const [lastClientX, lastClientY] = lastMouseMoveArgs;
-      if (clientX === lastClientX && clientY === lastClientY) {
-        console.debug('deduping mouse move', [clientX, clientY]);
-        return;
-      }
+  const { execute: onMouseMove, clear: mouseMoveClear } = dedupMouseEventSimple(
+    (event: MouseEvent, clientX: number, clientY: number) => {
+      const args = [clientX, clientY, ...encodeEventTarget(event)];
+      enqueue(EventType.MOUSEMOVE, args, '[mousemove]');
     }
-    const args = [clientX, clientY, ...encodeEventTarget(event)];
-    enqueue(EventType.MOUSEMOVE, args, '[mousemove]');
-  };
+  );
 
   const onClick = (event: MouseEvent) => {
-    mouseEventWithTarget(event, EventType.CLICK, '[click]');
+    const args = mouseEventWithTargetArgs(event);
+    enqueue(EventType.MOUSEMOVE, args, '[mousemove]');
   };
 
   window.addEventListener('popstate', onNavigationChange);
@@ -159,5 +96,46 @@ declare global {
   window.addEventListener('mousemove', onMouseMove);
   window.addEventListener('mousedown', onMouseDown);
   window.addEventListener('mouseup', onMouseUp);
+
+  const onUnload = () => {
+    const args = [lastLocation];
+    eventQueue.enqueue(EventType.UNLOAD, args);
+    backend.sendEvents(eventQueue.events());
+  };
+
+  const startBeaconing = (page: PageResponse) => {
+    identity.handleIdentity(page);
+    window.addEventListener('unload', onUnload);
+    setInterval(() => {
+      const events = eventQueue.drainEvents();
+      if (events.length > 0) {
+        backend.sendEvents(events);
+        mouseMoveClear();
+        if (process.env.NODE_ENV !== 'production') {
+          console.debug('[onUploadInterval]', [events.length]);
+        }
+      }
+    }, UPLOAD_INTERVAL_MILLIS);
+  };
+
+  backend
+    .page({
+      orgId,
+      uid: identity.uid(),
+      compiledTs,
+      doctype: '<!DOCTYPE html>',
+      height: window.innerHeight,
+      width: window.innerWidth,
+      screenHeight: window.screen.height,
+      screenWidth: window.screen.width,
+      referrer: document.referrer,
+      url: lastLocation,
+    })
+    .then(startBeaconing)
+    .catch((error) => {
+      // TODO: have some error reporting
+      console.error('Something went wrong while creating page', error);
+    });
+
   // eslint-disable-next-line no-restricted-globals
 })(window, location, (process.env.COMPILED_TS as unknown) as number);

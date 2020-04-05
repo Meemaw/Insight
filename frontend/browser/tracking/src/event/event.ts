@@ -43,3 +43,34 @@ export const encodeEventTarget = (event: MouseEvent) => {
   }
   return encodeTarget(eventTarget);
 };
+
+export const mouseEventSimpleArgs = (event: MouseEvent) => {
+  return [event.clientX, event.clientY];
+};
+
+export const mouseEventWithTargetArgs = (event: MouseEvent) => {
+  return [...mouseEventSimpleArgs(event), ...encodeEventTarget(event)];
+};
+
+export const dedupMouseEventSimple = (
+  fn: (event: MouseEvent, clientX: number, clientY: number) => void
+) => {
+  let lastArgs: BrowserEventArguments | undefined;
+
+  const execute = (event: MouseEvent) => {
+    const [clientX, clientY] = mouseEventSimpleArgs(event);
+    if (lastArgs) {
+      const [lastClientX, lastClientY] = lastArgs;
+      if (clientX === lastClientX && clientY === lastClientY) {
+        return;
+      }
+    }
+    fn(event, clientX, clientY);
+  };
+
+  const clear = () => {
+    lastArgs = undefined;
+  };
+
+  return { execute, clear };
+};
