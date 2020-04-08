@@ -1,6 +1,8 @@
 package com.meemaw.rec.beacon.model.event;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ClickBeaconEvent extends AbstractBeaconEvent {
 
@@ -13,17 +15,27 @@ public class ClickBeaconEvent extends AbstractBeaconEvent {
   }
 
   public List<Object> getAttributes() {
-    return args.subList(3, args.size());
+    int size = args.size();
+    if (size <= 3) {
+      return Collections.emptyList();
+    }
+    return args.subList(3, size);
   }
 
   public List<Object> getNodeWithAttributes() {
-    return args.subList(2, args.size());
+    int size = args.size();
+    if (size <= 2) {
+      return Collections.emptyList();
+    }
+    return args.subList(2, size);
   }
 
-  public String getNode() {
+  public Optional<String> getNode() {
+    if (args.size() <= 2) {
+      return Optional.empty();
+    }
     String node = (String) args.get(2);
-    return node.substring(1);
+    return Optional.of(node.substring(1));
   }
-
 
 }

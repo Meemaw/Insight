@@ -19,7 +19,6 @@ public class PerformanceBeaconEvent extends AbstractBeaconEvent {
     }
   }
 
-
   public double getDuration() {
     Object duration = args.get(3);
     if (duration instanceof Integer) {

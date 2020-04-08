@@ -51,6 +51,4 @@ public class BeaconResourceImpl implements BeaconResource {
     return beaconService.process(Beacon.from(beaconDTO))
         .thenApply(nothing -> Response.noContent().build());
   }
-
-
 }

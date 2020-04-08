@@ -11,7 +11,9 @@ import com.meemaw.rec.beacon.model.event.PerformanceBeaconEvent;
 import com.meemaw.rec.beacon.model.event.ResizeBeaconEvent;
 import com.meemaw.rec.beacon.model.event.UnloadBeaconEvent;
 import com.meemaw.test.rest.mappers.JacksonMapper;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class BeaconEventTest {
@@ -96,10 +98,25 @@ public class BeaconEventTest {
     ClickBeaconEvent beaconEvent = (ClickBeaconEvent) deserialized;
     assertEquals(1167, beaconEvent.getClientX());
     assertEquals(732, beaconEvent.getClientY());
-    assertEquals("BUTTON", beaconEvent.getNode());
+    assertEquals("BUTTON", beaconEvent.getNode().get());
     assertEquals(List.of("<BUTTON", ":data-baseweb", "button", ":type", "submit", ":class",
         "__debug-3 as at au av aw ax ay az b0 b1 b2 b3 b4 b5 b6 ak b7 b8 b9 ba bb bc bd be bf bg bh bi an ci ao c8 d8 d9 d7 da ek el em df en eo ep eq bw"),
         beaconEvent.getNodeWithAttributes());
+  }
+
+  @Test
+  public void clickBeaconEventDeserialization2() throws JsonProcessingException {
+    String payload = "{\"t\": 1306,\"e\": 4,\"a\": [1167, 732]}";
+    AbstractBeaconEvent deserialized = JacksonMapper.get()
+        .readValue(payload, AbstractBeaconEvent.class);
+
+    assertEquals(ClickBeaconEvent.class, deserialized.getClass());
+
+    ClickBeaconEvent beaconEvent = (ClickBeaconEvent) deserialized;
+    assertEquals(1167, beaconEvent.getClientX());
+    assertEquals(732, beaconEvent.getClientY());
+    assertEquals(Optional.empty(), beaconEvent.getNode());
+    assertEquals(Collections.emptyList(), beaconEvent.getNodeWithAttributes());
   }
 
   @Test
@@ -113,7 +130,7 @@ public class BeaconEventTest {
     MouseMoveBeaconEvent beaconEvent = (MouseMoveBeaconEvent) deserialized;
     assertEquals(1167, beaconEvent.getClientX());
     assertEquals(732, beaconEvent.getClientY());
-    assertEquals("BUTTON", beaconEvent.getNode());
+    assertEquals("BUTTON", beaconEvent.getNode().get());
     assertEquals(List.of("<BUTTON", ":data-baseweb", "button", ":type", "submit", ":class",
         "__debug-3 as at au av aw ax ay az b0 b1 b2 b3 b4 b5 b6 ak b7 b8 b9 ba bb bc bd be bf bg bh bi an ci ao c8 d8 d9 d7 da ek el em df en eo ep eq bw"),
         beaconEvent.getNodeWithAttributes());
