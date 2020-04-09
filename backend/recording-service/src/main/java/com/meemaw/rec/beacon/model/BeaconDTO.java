@@ -1,13 +1,12 @@
 package com.meemaw.rec.beacon.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.meemaw.rec.beacon.model.event.AbstractBeaconEvent;
 import com.meemaw.rec.shared.Recorded;
+import com.meemaw.shared.event.model.AbstractBrowserEvent;
+import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 public class BeaconDTO extends Recorded {
 
@@ -18,13 +17,13 @@ public class BeaconDTO extends Recorded {
 
   @JsonProperty("e")
   @NotEmpty(message = "e may not be empty")
-  private List<AbstractBeaconEvent> events;
+  private List<AbstractBrowserEvent> events;
 
   public int getSequence() {
     return sequence;
   }
 
-  public List<AbstractBeaconEvent> getEvents() {
+  public List<AbstractBrowserEvent> getEvents() {
     return events;
   }
 }

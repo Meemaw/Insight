@@ -1,8 +1,8 @@
-package com.meemaw.rec.beacon.model.event;
+package com.meemaw.shared.event.model;
 
-public final class BeaconEventTypeConstants {
+public final class BrowserEventTypeConstants {
 
-  private BeaconEventTypeConstants() {
+  private BrowserEventTypeConstants() {
   }
 
   public static final String NAVIGATE = "0";
@@ -13,5 +13,4 @@ public final class BeaconEventTypeConstants {
   public static final String MOUSEMOVE = "5";
   public static final String MOUSEDOWN = "6";
   public static final String MOUSEUP = "7";
-
 }

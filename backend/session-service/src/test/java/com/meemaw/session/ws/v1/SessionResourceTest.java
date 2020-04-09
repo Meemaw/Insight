@@ -2,6 +2,8 @@ package com.meemaw.session.ws.v1;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meemaw.shared.event.model.AbstractBrowserEvent;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -27,8 +29,11 @@ import org.junit.jupiter.api.Test;
 public class SessionResourceTest {
 
   @Inject
+  ObjectMapper objectMapper;
+
+  @Inject
   @Channel("events")
-  Emitter<String> emitter;
+  Emitter<AbstractBrowserEvent> emitter;
 
   private static final LinkedBlockingDeque<String> MESSAGES = new LinkedBlockingDeque<>();
 
@@ -56,14 +61,18 @@ public class SessionResourceTest {
         .connectToServer(Client.class, uri)) {
       assertEquals(String.format("OPEN %s", session.getId()), MESSAGES.poll(10, TimeUnit.SECONDS));
 
-      emitter.send("10.0").exceptionally(error -> {
+      AbstractBrowserEvent abstractBrowserEvent = objectMapper
+          .readValue("{\"t\": 1234, \"e\": 1, \"a\": [\"http://localhost:8080\"]}",
+              AbstractBrowserEvent.class);
+
+      emitter.send(abstractBrowserEvent).exceptionally(error -> {
         System.out.println(error);
         throw new RuntimeException(error);
       }).thenRun(() -> System.out.println("Message emitted!"));
       System.out.println("After send!");
 
       assertEquals("MESSAGE 10.0", MESSAGES.poll(10, TimeUnit.SECONDS));
-     }
+    }
   }
 
 

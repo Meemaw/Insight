@@ -1,6 +1,6 @@
-package com.meemaw.rec.beacon.model.event;
+package com.meemaw.shared.event.model;
 
-public class NavigateBeaconEvent extends AbstractBeaconEvent {
+public class BrowserNavigateEvent extends AbstractBrowserEvent {
 
   public String getLocation() {
     return (String) args.get(0);

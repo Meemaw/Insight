@@ -9,7 +9,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-smallrye-health'
-    implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-kafka'
+    implementation project(":shared-events")
     implementation project(':shared-rest-service')
 
     testImplementation 'org.testcontainers:kafka:1.13.0'

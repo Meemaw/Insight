@@ -1,10 +1,10 @@
-package com.meemaw.rec.beacon.model.event;
+package com.meemaw.shared.event.model;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class ClickBeaconEvent extends AbstractBeaconEvent {
+public class BrowserClickEvent extends AbstractBrowserEvent {
 
   public int getClientX() {
     return (int) args.get(0);

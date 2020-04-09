@@ -1,5 +1,6 @@
 package com.meemaw.session.ws.v1;
 
+import com.meemaw.shared.event.model.AbstractBrowserEvent;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
@@ -15,6 +16,7 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 @ApplicationScoped
 @Slf4j
 public class SessionResource {
+
 
   private Map<String, Session> sessions = new ConcurrentHashMap<>();
 
@@ -36,17 +38,17 @@ public class SessionResource {
     log.error("onError {}", session.getId(), throwable);
   }
 
+
   @Incoming("events")
-  public void process(String test) {
-    log.info("Incoming event {}", test);
+  public void process(AbstractBrowserEvent event) {
+    log.info("Incoming event {}", event);
     sessions.values().forEach(session -> {
-      String message = String.valueOf(test);
       String sessionId = session.getId();
-      session.getAsyncRemote().sendText(message, sendResult -> {
+      session.getAsyncRemote().sendObject(event, sendResult -> {
         if (sendResult.getException() != null) {
           log.error("Failed to send message to client {}", sessionId, sendResult.getException());
         } else {
-          log.trace("Send message {} to client {}", message, sessionId);
+          log.trace("Send event {} to client {}", event, sessionId);
         }
       });
     });

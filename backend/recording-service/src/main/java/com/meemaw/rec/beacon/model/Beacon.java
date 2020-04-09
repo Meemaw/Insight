@@ -1,6 +1,6 @@
 package com.meemaw.rec.beacon.model;
 
-import com.meemaw.rec.beacon.model.event.AbstractBeaconEvent;
+import com.meemaw.shared.event.model.AbstractBrowserEvent;
 import java.util.List;
 import java.util.Objects;
 import lombok.ToString;
@@ -10,7 +10,7 @@ public class Beacon {
 
   private final int timestamp;
   private final int sequence;
-  private final List<AbstractBeaconEvent> events;
+  private final List<AbstractBrowserEvent> events;
 
   private Beacon(BeaconDTO dto) {
     this.timestamp = dto.getTimestamp();
@@ -30,7 +30,7 @@ public class Beacon {
     return sequence;
   }
 
-  public List<AbstractBeaconEvent> getEvents() {
+  public List<AbstractBrowserEvent> getEvents() {
     return events;
   }
 }

@@ -15,6 +15,7 @@ rootProject.name = 'backend'
 
 include ':shared-rest-service'
 include ':shared-testing-utils'
+include ':shared-events'
 include ':auth-service'
 include ':recording-service'
 include ':session-service'

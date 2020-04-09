@@ -1,6 +1,6 @@
-package com.meemaw.rec.beacon.model.event;
+package com.meemaw.shared.event.model;
 
-public class PerformanceBeaconEvent extends AbstractBeaconEvent {
+public class BrowserPerformanceEvent extends AbstractBrowserEvent {
 
   public String getName() {
     return (String) args.get(0);
