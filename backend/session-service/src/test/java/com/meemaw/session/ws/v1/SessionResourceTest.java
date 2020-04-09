@@ -28,7 +28,7 @@ public class SessionResourceTest {
 
   @Inject
   @Channel("events")
-  Emitter<Double> emitter;
+  Emitter<String> emitter;
 
   private static final LinkedBlockingDeque<String> MESSAGES = new LinkedBlockingDeque<>();
 
@@ -56,7 +56,7 @@ public class SessionResourceTest {
         .connectToServer(Client.class, uri)) {
       assertEquals(String.format("OPEN %s", session.getId()), MESSAGES.poll(10, TimeUnit.SECONDS));
 
-      emitter.send(10.0).exceptionally(error -> {
+      emitter.send("10.0").exceptionally(error -> {
         System.out.println(error);
         throw new RuntimeException(error);
       }).thenRun(() -> System.out.println("Message emitted!"));
