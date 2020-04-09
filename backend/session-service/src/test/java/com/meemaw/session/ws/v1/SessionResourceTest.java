@@ -71,7 +71,7 @@ public class SessionResourceTest {
       }).thenRun(() -> System.out.println("Message emitted!"));
       System.out.println("After send!");
 
-      assertEquals("MESSAGE 10.0", MESSAGES.poll(10, TimeUnit.SECONDS));
+      assertEquals("MESSAGE 1234", MESSAGES.poll(10, TimeUnit.SECONDS));
     }
   }
 

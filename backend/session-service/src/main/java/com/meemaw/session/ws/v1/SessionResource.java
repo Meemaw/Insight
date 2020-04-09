@@ -44,11 +44,13 @@ public class SessionResource {
     log.info("Incoming event {}", event);
     sessions.values().forEach(session -> {
       String sessionId = session.getId();
-      session.getAsyncRemote().sendObject(event, sendResult -> {
+      String message = String.format("MESSAGE %d", event.getTimestamp());
+
+      session.getAsyncRemote().sendText(message, sendResult -> {
         if (sendResult.getException() != null) {
           log.error("Failed to send message to client {}", sessionId, sendResult.getException());
         } else {
-          log.trace("Send event {} to client {}", event, sessionId);
+          log.trace("Send message {} to client {}", message, sessionId);
         }
       });
     });
