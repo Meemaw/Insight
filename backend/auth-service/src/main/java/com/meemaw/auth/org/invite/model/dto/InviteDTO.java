@@ -2,7 +2,7 @@ package com.meemaw.auth.org.invite.model.dto;
 
 import com.meemaw.auth.org.invite.model.CanInviteSend;
 import com.meemaw.auth.shared.CanExpire;
-import com.meemaw.auth.user.model.UserRole;
+import com.meemaw.shared.auth.UserRole;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;

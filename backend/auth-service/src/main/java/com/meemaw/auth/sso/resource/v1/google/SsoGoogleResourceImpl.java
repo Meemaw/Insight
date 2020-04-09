@@ -1,7 +1,8 @@
 package com.meemaw.auth.sso.resource.v1.google;
 
-import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.service.google.SsoGoogleService;
+import com.meemaw.shared.auth.SsoSession;
+import io.smallrye.mutiny.Uni;
 import java.net.URI;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
@@ -21,7 +22,6 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
   @Context
   UriInfo info;
 
-
   private String getRedirectUri() {
     return info.getBaseUri() + SsoGoogleResource.PATH + "/oauth2callback";
   }
@@ -35,9 +35,10 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
   }
 
   @Override
-  public CompletionStage<Response> oauth2callback(String state, String code, String sessionState) {
+  public Uni<Response> oauth2callback(String state, String code, String sessionState) {
     return ssoGoogleService.oauth2callback(state, sessionState, code, getRedirectUri())
-        .thenApply(ssoSocialLogin -> {
+        .onItem()
+        .apply(ssoSocialLogin -> {
           String Location = ssoSocialLogin.getLocation();
           String SessionId = ssoSocialLogin.getSessionId();
           return Response.status(Status.FOUND).header("Location", Location)

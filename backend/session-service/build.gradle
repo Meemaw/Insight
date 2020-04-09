@@ -5,13 +5,11 @@ plugins {
 dependencies {
     implementation 'io.quarkus:quarkus-undertow-websockets'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
-    implementation 'io.quarkus:quarkus-logging-json'
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation project(":shared-events")
-    implementation project(':shared-rest-service')
+    implementation project(':shared-auth-sidecar')
 
-    testImplementation 'org.testcontainers:kafka:1.13.0'
     testImplementation project(':shared-testing-utils')
 }

@@ -1,6 +1,5 @@
 package com.meemaw.auth.signup.datasource;
 
-import com.meemaw.auth.signup.model.SignupRequest;
 import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
 import com.meemaw.auth.user.model.UserDTO;
 import com.meemaw.shared.rest.exception.DatabaseException;

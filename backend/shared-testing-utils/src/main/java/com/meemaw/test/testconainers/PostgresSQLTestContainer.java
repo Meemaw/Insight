@@ -1,8 +1,5 @@
 package com.meemaw.test.testconainers;
 
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
 import io.vertx.axle.pgclient.PgPool;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.sqlclient.PoolOptions;
@@ -17,8 +14,7 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
   private static final String PASSWORD = "postgres";
   private static final int PORT = PostgreSQLContainer.POSTGRESQL_PORT;
 
-
-  public PostgresSQLTestContainer() {
+  private PostgresSQLTestContainer() {
     super(DOCKER_TAG);
   }
 
@@ -27,13 +23,7 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
         .withDatabaseName(DATABASE_NAME)
         .withUsername(USERNAME)
         .withPassword(PASSWORD)
-        .withExposedPorts(PORT)
-        .withCreateContainerCmdModifier(cmd -> {
-          cmd
-              .withHostName(HOST)
-              .withPortBindings(
-                  new PortBinding(Ports.Binding.bindPort(PORT), new ExposedPort(PORT)));
-        });
+        .withExposedPorts(PORT);
   }
 
   public PgPool client() {
@@ -50,5 +40,11 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
 
     PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
     return PgPool.pool(connectOptions, poolOptions);
+  }
+
+
+  public String getDatasourceURL() {
+    return String
+        .format("vertx-reactive:postgresql://%s:%d/%s", HOST, getMappedPort(PORT), DATABASE_NAME);
   }
 }

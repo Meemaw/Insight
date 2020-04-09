@@ -2,7 +2,7 @@ package com.meemaw.auth.user.datasource;
 
 import com.meemaw.auth.signup.model.SignupRequest;
 import com.meemaw.auth.user.model.UserDTO;
-import com.meemaw.auth.user.model.UserRole;
+import com.meemaw.shared.auth.UserRole;
 import com.meemaw.shared.pg.PgError;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.shared.rest.response.Boom;

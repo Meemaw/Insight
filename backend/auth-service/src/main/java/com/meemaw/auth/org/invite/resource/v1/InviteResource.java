@@ -3,7 +3,7 @@ package com.meemaw.auth.org.invite.resource.v1;
 import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
-import com.meemaw.auth.sso.core.CookieAuth;
+import com.meemaw.shared.auth.CookieAuth;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import javax.validation.Valid;

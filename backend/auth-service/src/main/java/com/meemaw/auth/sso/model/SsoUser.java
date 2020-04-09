@@ -4,17 +4,16 @@ import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
 import com.meemaw.auth.user.model.UserDTO;
-import com.meemaw.auth.user.model.UserRole;
+import com.meemaw.shared.auth.AuthUser;
+import com.meemaw.shared.auth.UserRole;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
-
 
 @Data
 @NoArgsConstructor
-public class SsoUser implements IdentifiedDataSerializable {
+public class SsoUser implements AuthUser, IdentifiedDataSerializable {
 
   UUID id;
   String email;

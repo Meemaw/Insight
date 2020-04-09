@@ -4,7 +4,7 @@ import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.org.invite.service.InviteService;
-import com.meemaw.auth.sso.core.InsightPrincipal;
+import com.meemaw.shared.auth.InsightPrincipal;
 import com.meemaw.shared.rest.response.DataResponse;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;

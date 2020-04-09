@@ -4,7 +4,7 @@ package com.meemaw.rec.resource.other;
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
-import com.meemaw.rec.page.resource.v1.PageResource;
+import com.meemaw.rec.beacon.resource.v1.BeaconResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ public class OtherResourceTest {
   @Test
   public void getPath_shouldThrowError_whenUnsupportedMethod() {
     given()
-        .when().get(PageResource.PATH)
+        .when().get(BeaconResource.PATH)
         .then()
         .statusCode(405)
         .body(sameJson(

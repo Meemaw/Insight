@@ -1,11 +1,18 @@
 package com.meemaw.shared.rest.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
+@Value
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 public class DataResponse<T> {
+
+  T data;
+  Boom error;
 
   public DataResponse(T data, Boom error) {
     this.data = data;
@@ -30,20 +37,6 @@ public class DataResponse<T> {
 
   public static <T> DataResponse<T> error(Boom error) {
     return new DataResponse<T>(null, Objects.requireNonNull(error));
-  }
-
-  @JsonProperty("data")
-  private T data;
-
-  @JsonProperty("error")
-  private Boom error;
-
-  public T getData() {
-    return data;
-  }
-
-  public Boom getError() {
-    return error;
   }
 
   public Response.ResponseBuilder builder(int statusCode) {

@@ -2,8 +2,8 @@ package com.meemaw.auth.signup.resource.v1;
 
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.signup.service.SignupService;
-import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.service.SsoService;
+import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.rest.response.DataResponse;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;

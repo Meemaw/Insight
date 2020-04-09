@@ -1,7 +1,7 @@
 package com.meemaw.auth.sso.resource.v1;
 
-import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.service.SsoService;
+import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.response.DataResponse;
 import java.util.concurrent.CompletionStage;

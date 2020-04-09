@@ -1,7 +1,7 @@
 package com.meemaw.auth.password.datasource;
 
-import com.meemaw.auth.user.model.UserRole;
 import com.meemaw.auth.user.model.UserWithHashedPasswordDTO;
+import com.meemaw.shared.auth.UserRole;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import io.vertx.axle.pgclient.PgPool;
 import io.vertx.axle.sqlclient.Row;

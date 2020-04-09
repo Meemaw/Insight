@@ -19,6 +19,6 @@ public class OpenApiTest {
         .get("/openapi")
         .then()
         .statusCode(200)
-        .body(containsString("Recording API"));
+        .body(containsString("Session API"));
   }
 }

@@ -1,0 +1,26 @@
+package com.meemaw.session.datasource;
+
+import com.meemaw.session.model.Page;
+import com.meemaw.session.model.PageSessionDTO;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletionStage;
+
+public interface PageDatasource {
+
+  /**
+   * @param orgId
+   * @param uid
+   * @return optionally linked sessionId that has been active in the last 30 minutes
+   */
+  CompletionStage<Optional<UUID>> findDeviceSession(String orgId, UUID uid);
+
+  /**
+   * @param pageId
+   * @param uid
+   * @param sessionId
+   * @param page
+   * @return newly created Page
+   */
+  CompletionStage<PageSessionDTO> insertPage(UUID pageId, UUID uid, UUID sessionId, Page page);
+}

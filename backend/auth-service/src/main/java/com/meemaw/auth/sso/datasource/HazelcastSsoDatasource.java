@@ -1,24 +1,27 @@
 package com.meemaw.auth.sso.datasource;
 
 import com.hazelcast.map.IMap;
-import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.model.SsoUser;
 import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.SsoSession;
+import io.quarkus.arc.AlternativePriority;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.Priorities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 @ApplicationScoped
+@AlternativePriority(Priorities.AUTHENTICATION)
 public class HazelcastSsoDatasource implements SsoDatasource {
 
   private static final Logger log = LoggerFactory.getLogger(HazelcastSsoDatasource.class);
-  private static final String SESSION_MAP_NAME = "auth.sso.session";
+  private static final String SESSION_MAP_NAME = "auth.auth.session";
 
   @Inject
   HazelcastProvider hazelcastProvider;

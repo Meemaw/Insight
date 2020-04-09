@@ -2,10 +2,9 @@ package com.meemaw.auth.org.invite.service;
 
 import com.meemaw.auth.org.invite.model.dto.InviteAcceptDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteCreateDTO;
-import com.meemaw.auth.org.invite.model.dto.InviteCreateIdentifiedDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteDTO;
 import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
-import com.meemaw.auth.sso.core.InsightPrincipal;
+import com.meemaw.shared.auth.InsightPrincipal;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;

@@ -1,6 +1,6 @@
 package com.meemaw.auth.org.invite.model;
 
-import com.meemaw.auth.user.model.UserRole;
+import com.meemaw.shared.auth.UserRole;
 import java.util.UUID;
 
 public interface CanInviteSend {
