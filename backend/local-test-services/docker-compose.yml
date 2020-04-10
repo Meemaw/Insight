@@ -23,17 +23,17 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-postgres}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-  recording-service:
+  beacon-service:
     build:
       context: ..
-      dockerfile: recording-service/docker/Dockerfile.jvm
+      dockerfile: beacon-service/docker/Dockerfile.jvm
     ports:
       - '${RECORDING_SERVICE_PORT:-8081}:8080'
     depends_on:
-      - recording-service-migrations
-  recording-service-migrations:
+      - beacon-service-migrations
+  beacon-service-migrations:
     build:
-      context: ../recording-service/migrations
+      context: ../beacon-service/migrations
       dockerfile: Dockerfile
     depends_on:
       - db

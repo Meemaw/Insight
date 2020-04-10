@@ -20,8 +20,10 @@ export type EventData = {
 
 export type DataResponse<D> = { data: D };
 
-export type PageResponse = DataResponse<{
+export type PageIdentity = {
   uid: string;
   sessionId: string;
   pageId: string;
-}>;
+};
+
+export type PageResponse = DataResponse<PageIdentity>;

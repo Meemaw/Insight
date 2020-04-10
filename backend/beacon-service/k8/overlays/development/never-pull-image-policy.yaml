@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beacon-service
+spec:
+  template:
+    spec:
+      containers:
+        - image: eu.gcr.io/insight/beacon-service
+          name: beacon-service
+          imagePullPolicy: Never

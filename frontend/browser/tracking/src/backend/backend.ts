@@ -15,9 +15,9 @@ import { XHRTransport } from './transports/xhr';
 class Backend {
   private readonly requestResponseTransport: RequestResponseTransport;
   private readonly maybeBeaconTransport: BaseTransport;
-  private readonly beaconURL: string;
   private readonly pageURL: string;
 
+  private beaconURL: string;
   private beaconSeq: number;
 
   constructor(recordingApiBaseURL: string, sessionApiBaseURL: string) {
@@ -64,7 +64,14 @@ class Backend {
   public page = (pageDTO: PageDTO) => {
     return this.requestResponseTransport
       .post<PageResponse>(this.pageURL, JSON.stringify(pageDTO))
-      .then((response) => response.json);
+      .then((response) => {
+        const promise = response.json;
+        promise.then((identity) => {
+          const { sessionId, uid, pageId } = identity.data;
+          this.beaconURL = `${this.beaconURL}?SessionId=${sessionId}&UserID=${uid}&PageID=${pageId}`;
+        });
+        return promise;
+      });
   };
 }
 
