@@ -3,6 +3,7 @@ package com.meemaw.auth.sso.service.google;
 import com.meemaw.auth.sso.model.SsoSocialLogin;
 import io.smallrye.mutiny.Uni;
 import java.net.URI;
+import java.util.concurrent.CompletionStage;
 
 public interface SsoGoogleService {
 
@@ -10,6 +11,6 @@ public interface SsoGoogleService {
 
   String secureState(String destination);
 
-  Uni<SsoSocialLogin> oauth2callback(String state, String sessionState, String code,
+  CompletionStage<SsoSocialLogin> oauth2callback(String state, String sessionState, String code,
       String redirectURI);
 }

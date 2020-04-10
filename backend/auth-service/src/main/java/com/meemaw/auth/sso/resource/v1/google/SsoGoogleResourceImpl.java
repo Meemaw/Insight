@@ -35,10 +35,9 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
   }
 
   @Override
-  public Uni<Response> oauth2callback(String state, String code, String sessionState) {
+  public CompletionStage<Response> oauth2callback(String state, String code, String sessionState) {
     return ssoGoogleService.oauth2callback(state, sessionState, code, getRedirectUri())
-        .onItem()
-        .apply(ssoSocialLogin -> {
+        .thenApply(ssoSocialLogin -> {
           String Location = ssoSocialLogin.getLocation();
           String SessionId = ssoSocialLogin.getSessionId();
           return Response.status(Status.FOUND).header("Location", Location)

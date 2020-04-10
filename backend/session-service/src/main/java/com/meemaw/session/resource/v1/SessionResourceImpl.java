@@ -16,7 +16,9 @@ public class SessionResourceImpl implements SessionResource {
 
   @Override
   public CompletionStage<Response> page(PageDTO payload) {
-    return pageService.process(Page.from(payload)).thenApply(DataResponse::ok);
+    return pageService.process(Page.from(payload))
+        .subscribeAsCompletionStage()
+        .thenApply(DataResponse::ok);
   }
 
   @Override

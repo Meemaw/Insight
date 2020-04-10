@@ -11,7 +11,7 @@ import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.auth.user.model.UserDTO;
 import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.rest.response.DataResponse;
-import com.meemaw.test.testconainers.Postgres;
+import com.meemaw.test.testconainers.pg.Postgres;
 import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.Cookie;

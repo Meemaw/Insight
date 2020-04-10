@@ -13,7 +13,7 @@ import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.auth.UserRole;
-import com.meemaw.test.testconainers.Postgres;
+import com.meemaw.test.testconainers.pg.Postgres;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;

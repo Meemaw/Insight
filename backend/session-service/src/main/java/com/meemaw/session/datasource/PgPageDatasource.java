@@ -3,14 +3,14 @@ package com.meemaw.session.datasource;
 import com.meemaw.session.model.Page;
 import com.meemaw.session.model.PageSessionDTO;
 import com.meemaw.shared.rest.exception.DatabaseException;
-import io.vertx.axle.pgclient.PgPool;
-import io.vertx.axle.sqlclient.Row;
-import io.vertx.axle.sqlclient.RowIterator;
-import io.vertx.axle.sqlclient.RowSet;
-import io.vertx.axle.sqlclient.Tuple;
+import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.pgclient.PgPool;
+import io.vertx.mutiny.sqlclient.Row;
+import io.vertx.mutiny.sqlclient.RowIterator;
+import io.vertx.mutiny.sqlclient.RowSet;
+import io.vertx.mutiny.sqlclient.Tuple;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,11 @@ public class PgPageDatasource implements PageDatasource {
 
   private static final String SELECT_LINK_DEVICE_SESSION_RAW_SQL = "SELECT session_id FROM rec.page WHERE organization = $1 AND uid = $2 AND page_start > now() - INTERVAL '30 min' ORDER BY page_start DESC LIMIT 1;";
 
-  public CompletionStage<Optional<UUID>> findDeviceSession(String orgId, UUID uid) {
+  public Uni<Optional<UUID>> findDeviceSession(String orgId, UUID uid) {
     Tuple values = Tuple.of(orgId, uid);
     return pgPool.preparedQuery(SELECT_LINK_DEVICE_SESSION_RAW_SQL, values)
-        .thenApply(this::extractSessionId)
-        .exceptionally(throwable -> {
+        .map(this::extractSessionId)
+        .onFailure().invoke(throwable -> {
           log.error("Failed to findDeviceSession", throwable);
           throw new DatabaseException();
         });
@@ -44,7 +44,7 @@ public class PgPageDatasource implements PageDatasource {
 
   private static final String INSERT_PAGE_RAW_SQL = "INSERT INTO rec.page (id, uid, session_id, organization, doctype, url, referrer, height, width, screen_height, screen_width, compiled_timestamp) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
 
-  public CompletionStage<PageSessionDTO> insertPage(UUID pageId, UUID uid, UUID sessionId,
+  public Uni<PageSessionDTO> insertPage(UUID pageId, UUID uid, UUID sessionId,
       Page page) {
     Tuple values = Tuple.newInstance(io.vertx.sqlclient.Tuple.of(
         pageId,
@@ -62,9 +62,8 @@ public class PgPageDatasource implements PageDatasource {
     ));
 
     return pgPool.preparedQuery(INSERT_PAGE_RAW_SQL, values)
-        .thenApply(
-            x -> PageSessionDTO.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
-        .exceptionally(throwable -> {
+        .map(x -> PageSessionDTO.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
+        .onFailure().invoke(throwable -> {
           System.out.println(throwable);
           log.error("Failed to insertPage", throwable);
           throw new DatabaseException();

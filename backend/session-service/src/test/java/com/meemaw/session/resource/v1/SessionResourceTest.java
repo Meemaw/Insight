@@ -9,7 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.meemaw.session.model.PageSessionDTO;
 import com.meemaw.shared.rest.response.DataResponse;
-import com.meemaw.test.testconainers.Postgres;
+import com.meemaw.test.testconainers.pg.PostgresResource;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
@@ -24,9 +25,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
-@Postgres
 @QuarkusTest
 @Tag("integration")
+@QuarkusTestResource(PostgresResource.class)
 public class SessionResourceTest {
 
   @Inject

@@ -12,7 +12,7 @@ import com.meemaw.auth.password.resource.v1.PasswordResourceImplTest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.shared.auth.SsoSession;
-import com.meemaw.test.testconainers.Postgres;
+import com.meemaw.test.testconainers.pg.Postgres;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;

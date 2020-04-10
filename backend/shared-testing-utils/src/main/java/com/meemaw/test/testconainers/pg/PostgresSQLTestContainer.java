@@ -1,8 +1,12 @@
-package com.meemaw.test.testconainers;
+package com.meemaw.test.testconainers.pg;
 
-import io.vertx.axle.pgclient.PgPool;
+import io.vertx.mutiny.pgclient.PgPool;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.sqlclient.PoolOptions;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTestContainer> {
@@ -44,7 +48,31 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
 
 
   public String getDatasourceURL() {
-    return String
-        .format("vertx-reactive:postgresql://%s:%d/%s", HOST, getMappedPort(PORT), DATABASE_NAME);
+    int mappedPort = getMappedPort(PORT);
+    return String.format("vertx-reactive:postgresql://%s:%d/%s", HOST, mappedPort, DATABASE_NAME);
+  }
+
+  public void applyMigrations() {
+    String projectPath = System.getProperty("user.dir");
+    Path migrationsSqlPath = Paths.get(projectPath, "migrations", "sql");
+    System.out.println("Applying migrations from: " + migrationsSqlPath.toAbsolutePath());
+
+    try {
+      Files.walk(migrationsSqlPath).filter(path -> !Files.isDirectory(path)).forEach(path -> {
+        System.out.println("Applying: " + path);
+        try {
+          client()
+              .query(Files.readString(path))
+              .await()
+              .indefinitely();
+
+        } catch (IOException ex) {
+          System.out.println("Failed to apply migration: " + ex.toString());
+          throw new RuntimeException(ex);
+        }
+      });
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 }

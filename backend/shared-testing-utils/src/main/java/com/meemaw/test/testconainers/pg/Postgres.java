@@ -1,4 +1,4 @@
-package com.meemaw.test.testconainers;
+package com.meemaw.test.testconainers.pg;
 
 
 import static java.lang.annotation.ElementType.TYPE;

@@ -2,9 +2,9 @@ package com.meemaw.session.datasource;
 
 import com.meemaw.session.model.Page;
 import com.meemaw.session.model.PageSessionDTO;
+import io.smallrye.mutiny.Uni;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletionStage;
 
 public interface PageDatasource {
 
@@ -13,7 +13,7 @@ public interface PageDatasource {
    * @param uid
    * @return optionally linked sessionId that has been active in the last 30 minutes
    */
-  CompletionStage<Optional<UUID>> findDeviceSession(String orgId, UUID uid);
+  Uni<Optional<UUID>> findDeviceSession(String orgId, UUID uid);
 
   /**
    * @param pageId
@@ -22,5 +22,5 @@ public interface PageDatasource {
    * @param page
    * @return newly created Page
    */
-  CompletionStage<PageSessionDTO> insertPage(UUID pageId, UUID uid, UUID sessionId, Page page);
+  Uni<PageSessionDTO> insertPage(UUID pageId, UUID uid, UUID sessionId, Page page);
 }
