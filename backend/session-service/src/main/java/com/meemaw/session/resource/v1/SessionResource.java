@@ -22,7 +22,6 @@ public interface SessionResource {
   String PATH = "/v1/sessions";
 
   @POST
-  @Path("/page")
   CompletionStage<Response> page(@NotNull(message = "Payload is required") @Valid PageDTO payload);
 
   @GET

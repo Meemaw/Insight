@@ -15,14 +15,14 @@ import { XHRTransport } from './transports/xhr';
 class Backend {
   private readonly requestResponseTransport: RequestResponseTransport;
   private readonly maybeBeaconTransport: BaseTransport;
-  private readonly beaconUrl: string;
-  private readonly pageUrl: string;
+  private readonly beaconURL: string;
+  private readonly pageURL: string;
 
   private beaconSeq: number;
 
   constructor(recordingApiBaseURL: string, sessionApiBaseURL: string) {
-    this.beaconUrl = `${recordingApiBaseURL}/v1/beacon`;
-    this.pageUrl = `${sessionApiBaseURL}/v1/session/page`;
+    this.beaconURL = `${recordingApiBaseURL}/v1/beacon`;
+    this.pageURL = `${sessionApiBaseURL}/v1/sessions`;
     this.beaconSeq = 0;
 
     const globalObject = getGlobalObject();
@@ -58,12 +58,12 @@ class Backend {
 
   private _sendEvents = (transport: BaseTransport, e: BrowserEvent[]) => {
     this.beaconSeq += 1;
-    return transport.sendEvents(this.beaconUrl, { e, s: this.beaconSeq });
+    return transport.sendEvents(this.beaconURL, { e, s: this.beaconSeq });
   };
 
   public page = (pageDTO: PageDTO) => {
     return this.requestResponseTransport
-      .post<PageResponse>(this.pageUrl, JSON.stringify(pageDTO))
+      .post<PageResponse>(this.pageURL, JSON.stringify(pageDTO))
       .then((response) => response.json);
   };
 }

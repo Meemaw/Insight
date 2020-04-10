@@ -36,7 +36,7 @@ public class SessionResourceTest {
   @Test
   public void postPage_shouldThrowError_whenUnsupportedMediaType() {
     given()
-        .when().contentType(MediaType.TEXT_PLAIN).post(SessionResource.PATH + "/page")
+        .when().contentType(MediaType.TEXT_PLAIN).post(SessionResource.PATH)
         .then()
         .statusCode(415)
         .body(sameJson(
@@ -46,7 +46,7 @@ public class SessionResourceTest {
   @Test
   public void postPage_shouldThrowError_whenEmptyPayload() {
     given()
-        .when().contentType(MediaType.APPLICATION_JSON).post(SessionResource.PATH + "/page")
+        .when().contentType(MediaType.APPLICATION_JSON).post(SessionResource.PATH)
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -57,7 +57,7 @@ public class SessionResourceTest {
   public void postPage_shouldThrowError_whenEmptyJson() {
     given()
         .when().contentType(MediaType.APPLICATION_JSON).body("{}")
-        .post(SessionResource.PATH + "/page")
+        .post(SessionResource.PATH)
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -74,7 +74,7 @@ public class SessionResourceTest {
         .when()
         .contentType(ContentType.JSON)
         .body(payload)
-        .post(SessionResource.PATH + "/page")
+        .post(SessionResource.PATH)
         .then()
         .statusCode(200)
         .extract()
@@ -94,7 +94,7 @@ public class SessionResourceTest {
         .when()
         .contentType(ContentType.JSON)
         .body(nextPageNode)
-        .post(SessionResource.PATH + "/page")
+        .post(SessionResource.PATH)
         .then()
         .statusCode(200)
         .extract()
@@ -116,7 +116,7 @@ public class SessionResourceTest {
         .when()
         .contentType(ContentType.JSON)
         .body(payload)
-        .post(SessionResource.PATH + "/page")
+        .post(SessionResource.PATH)
         .then()
         .statusCode(200)
         .extract()
@@ -133,7 +133,7 @@ public class SessionResourceTest {
         .when()
         .contentType(ContentType.JSON)
         .body(payload)
-        .post(SessionResource.PATH + "/page")
+        .post(SessionResource.PATH)
         .then()
         .statusCode(200)
         .extract()
