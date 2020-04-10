@@ -64,7 +64,6 @@ public class PgPageDatasource implements PageDatasource {
     return pgPool.preparedQuery(INSERT_PAGE_RAW_SQL, values)
         .map(x -> PageSessionDTO.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
         .onFailure().invoke(throwable -> {
-          System.out.println(throwable);
           log.error("Failed to insertPage", throwable);
           throw new DatabaseException();
         });

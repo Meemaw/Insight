@@ -20,9 +20,9 @@ class Backend {
 
   private beaconSeq: number;
 
-  constructor(baseURL: string) {
-    this.beaconUrl = `${baseURL}/v1/beacon`;
-    this.pageUrl = `${baseURL}/v1/page`;
+  constructor(recordingApiBaseURL: string, sessionApiBaseURL: string) {
+    this.beaconUrl = `${recordingApiBaseURL}/v1/beacon`;
+    this.pageUrl = `${sessionApiBaseURL}/v1/session/page`;
     this.beaconSeq = 0;
 
     const globalObject = getGlobalObject();

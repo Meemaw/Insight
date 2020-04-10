@@ -26,7 +26,10 @@ declare global {
   let { href: lastLocation } = location;
   const context = new Context();
   const eventQueue = new EventQueue(context);
-  const backend = new Backend(`${process.env.API_BASE_URL}`);
+  const backend = new Backend(
+    `${process.env.RECORDING_API_BASE_URL}`,
+    `${process.env.SESSION_API_BASE_URL}`
+  );
   const UPLOAD_INTERVAL_MILLIS = MILLIS_IN_SECOND * 10;
   const { _i_org: orgId, _i_host: host } = window;
   const identity = Identity.initFromCookie(host, orgId);
@@ -42,7 +45,7 @@ declare global {
     });
   });
 
-  const entryTypes = ['navigation', 'resource', 'measure'];
+  const entryTypes = ['navigation', 'resource', 'measure', 'mark'];
   observer.observe({ entryTypes });
 
   const enqueue = (

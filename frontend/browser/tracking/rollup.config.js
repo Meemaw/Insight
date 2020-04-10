@@ -16,16 +16,32 @@ const envConfig = (env) => {
 
   switch (env) {
     case 'local': {
-      return { fileName, apiBaseUrl: 'http://localhost:8081' };
+      return {
+        fileName,
+        recordingApiBaseURL: 'http://localhost:8081',
+        sessionApiBaseURL: 'http://localhost:8082',
+      };
     }
     case 'development': {
-      return { fileName, apiBaseUrl: 'http://localhost:8081' };
+      return {
+        fileName,
+        recordingApiBaseURL: 'http://localhost:8081',
+        sessionApiBaseURL: 'http://localhost:8082',
+      };
     }
     case 'staging': {
-      return { fileName, apiBaseUrl: 'https://staging.insight.com' };
+      return {
+        fileName,
+        recordingApiBaseURL: 'https://staging.insight.com',
+        sessionApiBaseURL: 'https://staging.insight.com',
+      };
     }
     case 'production': {
-      return { fileName: baseName, apiBaseUrl: 'https://insight.com' };
+      return {
+        fileName: baseName,
+        recordingApiBaseURL: 'https://insight.com',
+        sessionApiBaseURL: 'https://insight.com',
+      };
     }
     default: {
       throw new Error(`Unknown environment: ${env}`);
@@ -36,7 +52,7 @@ const envConfig = (env) => {
 const compiledTs = Date.now();
 
 const config = (env) => {
-  const { fileName, apiBaseUrl } = envConfig(env);
+  const { fileName, recordingApiBaseURL, sessionApiBaseURL } = envConfig(env);
   const output = path.join('dist', fileName);
 
   return {
@@ -45,7 +61,10 @@ const config = (env) => {
       typescript({ tsconfig: 'tsconfig.build.json' }),
       replace({
         'process.env.NODE_ENV': JSON.stringify(env),
-        'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
+        'process.env.RECORDING_API_BASE_URL': JSON.stringify(
+          recordingApiBaseURL
+        ),
+        'process.env.SESSION_API_BASE_URL': JSON.stringify(sessionApiBaseURL),
         'process.env.COMPILED_TS': JSON.stringify(compiledTs),
       }),
       terser({
