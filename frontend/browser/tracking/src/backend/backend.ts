@@ -1,8 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import { BrowserEvent } from 'event';
+import { Connected } from 'identity/types';
 
-import { PageDTO, PageResponse } from './types';
+import { PageDTO, PageResponse, PageIdentity } from './types';
 import { BeaconTransport } from './transports/beacon';
 import {
   BaseTransport,
@@ -12,7 +13,7 @@ import {
 import { FetchTranport } from './transports/fetch';
 import { XHRTransport } from './transports/xhr';
 
-class Backend {
+class Backend implements Connected {
   private readonly requestResponseTransport: RequestResponseTransport;
   private readonly maybeBeaconTransport: BaseTransport;
   private readonly pageURL: string;
@@ -56,6 +57,11 @@ class Backend {
     return this._sendEvents(this.maybeBeaconTransport, e);
   };
 
+  public connect = (identity: PageIdentity) => {
+    const { sessionId, uid, pageId } = identity;
+    this.beaconURL = `${this.beaconURL}?SessionId=${sessionId}&UserID=${uid}&PageID=${pageId}`;
+  };
+
   private _sendEvents = (transport: BaseTransport, e: BrowserEvent[]) => {
     this.beaconSeq += 1;
     return transport.sendEvents(this.beaconURL, { e, s: this.beaconSeq });
@@ -64,14 +70,7 @@ class Backend {
   public page = (pageDTO: PageDTO) => {
     return this.requestResponseTransport
       .post<PageResponse>(this.pageURL, JSON.stringify(pageDTO))
-      .then((response) => {
-        const promise = response.json;
-        promise.then((identity) => {
-          const { sessionId, uid, pageId } = identity.data;
-          this.beaconURL = `${this.beaconURL}?SessionId=${sessionId}&UserID=${uid}&PageID=${pageId}`;
-        });
-        return promise;
-      });
+      .then((response) => response.json);
   };
 }
 

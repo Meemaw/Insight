@@ -1,3 +1,5 @@
+import { PageIdentity } from 'backend/types';
+
 export type InsightIdentity = {
   orgId: string;
   uid: string;
@@ -7,3 +9,7 @@ export type InsightIdentity = {
 };
 
 export type Cookie = Partial<InsightIdentity>;
+
+export interface Connected {
+  connect(identity: PageIdentity): void;
+}

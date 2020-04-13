@@ -110,8 +110,10 @@ declare global {
     backend.sendBeacon(eventQueue.events());
   };
 
-  const startBeaconing = (page: PageResponse) => {
-    identity.handleIdentity(page);
+  const startBeaconing = (pageResponse: PageResponse) => {
+    const { data: pageIdentity } = pageResponse;
+    backend.connect(pageIdentity);
+    identity.connect(pageIdentity);
     window.addEventListener('unload', onUnload);
     setInterval(() => {
       const events = eventQueue.drainEvents();

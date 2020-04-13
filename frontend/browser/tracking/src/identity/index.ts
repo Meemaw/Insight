@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable no-underscore-dangle */
 
-import { PageResponse } from 'backend/types';
+import { PageIdentity } from 'backend/types';
 import {
   MILLIS_IN_SECOND,
   currentTimeSeconds,
@@ -12,9 +12,9 @@ import {
   expiresUTC,
 } from 'time';
 
-import { Cookie, InsightIdentity } from './types';
+import { Cookie, InsightIdentity, Connected } from './types';
 
-class Identity {
+class Identity implements Connected {
   private static storageKey = '_is_uid' as const;
   private readonly _cookie: Cookie;
 
@@ -109,9 +109,9 @@ class Identity {
     return `${this._cookie.host}#${this._cookie.orgId}#${this._cookie.uid}:${this._cookie.sessionId}/${expiresSeconds}`;
   };
 
-  public handleIdentity = (pageResponse: PageResponse) => {
-    this._cookie.uid = pageResponse.data.uid;
-    this._cookie.sessionId = pageResponse.data.sessionId;
+  public connect = (identity: PageIdentity) => {
+    this._cookie.uid = identity.uid;
+    this._cookie.sessionId = identity.sessionId;
     this.writeIdentity();
   };
 
