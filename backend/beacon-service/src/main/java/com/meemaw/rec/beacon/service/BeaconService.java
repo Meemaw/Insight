@@ -29,19 +29,20 @@ public class BeaconService {
   @Channel(EventsChannel.NAME)
   Emitter<AbstractBrowserEvent> eventsEmitter;
 
-  public Uni<Void> process(UUID sessionID, UUID uid, UUID pageID, Beacon beacon) {
+  public Uni<Uni<Void>> process(UUID sessionID, UUID uid, UUID pageID, Beacon beacon) {
     return pageDatasource.pageExists(sessionID, uid, pageID).onItem().produceUni(exists -> {
       if (!exists) {
+        log.warn("Unlinked beacon sessionID={} uid={} pageId={}", sessionID, uid, pageID);
         throw Boom.badRequest().message("Unlinked beacon").exception();
       }
 
-      System.out.println("BEFORE??????");
-      Multi<Void> beaconWrite = Multi.createFrom().uni(beaconDatasource.store(beacon));
-      Multi<Void> eventWrites = Multi.createFrom().iterable(beacon.getEvents())
+      Multi<Uni<Void>> beaconWrite = Multi.createFrom()
+          .uni(Uni.createFrom().item(beaconDatasource.store(beacon)));
+
+      Multi<Uni<Void>> eventWrites = Multi.createFrom().iterable(beacon.getEvents())
           .onItem()
           .apply(event -> {
-            System.out.println("Writing event: " + event);
-            log.info("Writing event" + event);
+            log.info("Writing event {}", event);
             return Uni.createFrom().completionStage(eventsEmitter.send(event))
                 .onFailure()
                 .apply(throwable -> {
@@ -50,11 +51,10 @@ public class BeaconService {
                 })
                 .onItem()
                 .apply(item -> {
-                  System.out.println("Wrote item: " + item);
+                  log.info("Wrote item {}", item);
                   return null;
                 });
-          })
-          .flatMap(i -> null);
+          });
 
       return Multi
           .createBy()

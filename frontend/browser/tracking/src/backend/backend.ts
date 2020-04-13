@@ -59,7 +59,7 @@ class Backend implements Connected {
 
   public connect = (identity: PageIdentity) => {
     const { sessionId, uid, pageId } = identity;
-    this.beaconURL = `${this.beaconURL}?SessionId=${sessionId}&UserID=${uid}&PageID=${pageId}`;
+    this.beaconURL = `${this.beaconURL}?SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}`;
   };
 
   private _sendEvents = (transport: BaseTransport, e: BrowserEvent[]) => {

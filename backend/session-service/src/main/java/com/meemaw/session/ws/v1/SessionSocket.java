@@ -1,6 +1,8 @@
 package com.meemaw.session.ws.v1;
 
 import com.meemaw.shared.event.model.AbstractBrowserEvent;
+import com.meemaw.shared.event.model.BrowserLoadEvent;
+import com.meemaw.shared.event.model.BrowserUnloadEvent;
 import io.smallrye.reactive.messaging.annotations.Merge;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,22 +40,35 @@ public class SessionSocket {
     log.error("onError {}", session.getId(), throwable);
   }
 
+  private void handleUnloadEvent(BrowserUnloadEvent event) {
+    log.info("Unload event {}", event);
+    sessions.values().forEach(session -> dispatchEvent(session, event));
+  }
+
+  private void handleLoadEvent(BrowserLoadEvent event) {
+    log.info("Load event {}", event);
+    sessions.values().forEach(session -> dispatchEvent(session, event));
+  }
+
+  private void dispatchEvent(Session session, AbstractBrowserEvent event) {
+    String sessionId = session.getId();
+    session.getAsyncRemote().sendObject(event, sendResult -> {
+      if (sendResult.getException() != null) {
+        log.error("Failed to send message to client {}", sessionId, sendResult.getException());
+      } else {
+        log.trace("Event {} sent to client {}", event, sessionId);
+      }
+    });
+  }
+
   @Merge
   @Incoming("events")
   public void process(AbstractBrowserEvent event) {
-    log.info("Incoming event {}", event);
-    sessions.values().forEach(session -> {
-      String sessionId = session.getId();
-      String message = String.format("%d", event.getTimestamp());
-
-      session.getAsyncRemote().sendText(message, sendResult -> {
-        if (sendResult.getException() != null) {
-          log.error("Failed to send message to client {}", sessionId, sendResult.getException());
-        } else {
-          log.trace("Send message {} to client {}", message, sessionId);
-        }
-      });
-    });
+    if (event instanceof BrowserLoadEvent) {
+      handleLoadEvent((BrowserLoadEvent) event);
+    } else if (event instanceof BrowserUnloadEvent) {
+      handleUnloadEvent((BrowserUnloadEvent) event);
+    }
   }
 
 }

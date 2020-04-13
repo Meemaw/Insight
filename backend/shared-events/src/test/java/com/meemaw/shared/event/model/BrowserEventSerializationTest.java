@@ -15,6 +15,16 @@ public class BrowserEventSerializationTest {
   private ObjectMapper objectMapper = JacksonMapper.get();
 
   @Test
+  public void loadBeaconEventDeserialization() throws JsonProcessingException {
+    String payload = "{\"t\": 1234, \"e\": 8, \"a\": [\"http://localhost:8080\"]}";
+    AbstractBrowserEvent deserialized = objectMapper.readValue(payload, AbstractBrowserEvent.class);
+    assertEquals(BrowserLoadEvent.class, deserialized.getClass());
+
+    BrowserLoadEvent browserUnloadEvent = (BrowserLoadEvent) deserialized;
+    assertEquals("http://localhost:8080", browserUnloadEvent.getLocation());
+  }
+
+  @Test
   public void unloadBeaconEventDeserialization() throws JsonProcessingException {
     String payload = "{\"t\": 1234, \"e\": 1, \"a\": [\"http://localhost:8080\"]}";
     AbstractBrowserEvent deserialized = objectMapper.readValue(payload, AbstractBrowserEvent.class);

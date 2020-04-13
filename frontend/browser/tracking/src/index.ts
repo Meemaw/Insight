@@ -97,8 +97,13 @@ declare global {
     enqueue(EventType.MOUSEMOVE, args, '[mousemove]');
   };
 
+  const onLoad = () => {
+    enqueue(EventType.LOAD, [lastLocation], '[resize]');
+  };
+
   window.addEventListener('popstate', onNavigationChange);
   window.addEventListener('resize', onResize);
+  window.addEventListener('load', onLoad);
   window.addEventListener('click', onClick);
   window.addEventListener('mousemove', onMouseMove);
   window.addEventListener('mousedown', onMouseDown);

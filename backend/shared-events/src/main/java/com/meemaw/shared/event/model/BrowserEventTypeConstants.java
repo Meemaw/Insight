@@ -1,9 +1,9 @@
 package com.meemaw.shared.event.model;
 
-public final class BrowserEventTypeConstants {
+import lombok.experimental.UtilityClass;
 
-  private BrowserEventTypeConstants() {
-  }
+@UtilityClass
+public class BrowserEventTypeConstants {
 
   public static final String NAVIGATE = "0";
   public static final String UNLOAD = "1";
@@ -13,4 +13,6 @@ public final class BrowserEventTypeConstants {
   public static final String MOUSEMOVE = "5";
   public static final String MOUSEDOWN = "6";
   public static final String MOUSEUP = "7";
+  public static final String LOAD = "8";
+
 }

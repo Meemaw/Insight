@@ -1,9 +1,9 @@
 package com.meemaw.shared.event.kafka;
 
-public final class EventsChannel {
+import lombok.experimental.UtilityClass;
 
-  private EventsChannel() {
-  }
+@UtilityClass
+public class EventsChannel {
 
   public static final String NAME = "events";
 
