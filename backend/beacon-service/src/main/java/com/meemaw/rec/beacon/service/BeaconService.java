@@ -42,7 +42,6 @@ public class BeaconService {
       Multi<Uni<Void>> eventWrites = Multi.createFrom().iterable(beacon.getEvents())
           .onItem()
           .apply(event -> {
-            log.info("Writing event {}", event);
             return Uni.createFrom().completionStage(eventsEmitter.send(event))
                 .onFailure()
                 .apply(throwable -> {
@@ -50,10 +49,7 @@ public class BeaconService {
                   return null;
                 })
                 .onItem()
-                .apply(item -> {
-                  log.info("Wrote item {}", item);
-                  return null;
-                });
+                .apply(item -> null);
           });
 
       return Multi

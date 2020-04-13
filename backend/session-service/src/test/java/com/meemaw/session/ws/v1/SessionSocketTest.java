@@ -3,6 +3,7 @@ package com.meemaw.session.ws.v1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meemaw.shared.event.kafka.EventsChannel;
 import com.meemaw.shared.event.model.AbstractBrowserEvent;
 import com.meemaw.test.testconainers.kafka.KafkaResource;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -29,17 +30,18 @@ import org.junit.jupiter.api.Test;
 @QuarkusTestResource(KafkaResource.class)
 public class SessionSocketTest {
 
+  @TestHTTPResource("/v1/sessions")
+  URI uri;
+
   @Inject
   ObjectMapper objectMapper;
 
   @Inject
-  @Channel("events")
+  @Channel(EventsChannel.NAME)
   Emitter<AbstractBrowserEvent> emitter;
 
   private static final LinkedBlockingDeque<String> MESSAGES = new LinkedBlockingDeque<>();
 
-  @TestHTTPResource("/v1/sessions")
-  URI uri;
 
   @BeforeEach
   public void cleanup() {
