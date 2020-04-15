@@ -2,7 +2,7 @@ package com.meemaw.auth.sso.datasource;
 
 import com.hazelcast.map.IMap;
 import com.meemaw.auth.sso.model.SsoUser;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import com.meemaw.shared.auth.SsoSession;
 import io.quarkus.arc.AlternativePriority;
 import java.util.Optional;

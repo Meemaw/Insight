@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.meemaw.session.model.PageSessionDTO;
+import com.meemaw.session.model.PageIdentity;
+import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.rest.response.DataResponse;
 import com.meemaw.test.testconainers.pg.PostgresResource;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -70,7 +71,7 @@ public class SessionResourceTest {
     String payload = Files.readString(Path.of(getClass().getResource(
         "/page/simple.json").toURI()));
 
-    DataResponse<PageSessionDTO> dataResponse = given()
+    DataResponse<PageIdentity> dataResponse = given()
         .when()
         .contentType(ContentType.JSON)
         .body(payload)
@@ -82,10 +83,10 @@ public class SessionResourceTest {
         .as(new TypeRef<>() {
         });
 
-    PageSessionDTO pageSessionDTO = dataResponse.getData();
-    UUID uid = pageSessionDTO.getUid();
-    UUID sessionId = pageSessionDTO.getSessionId();
-    UUID pageId = pageSessionDTO.getPageId();
+    PageIdentity pageIdentity = dataResponse.getData();
+    UUID uid = pageIdentity.getUid();
+    UUID sessionId = pageIdentity.getSessionId();
+    UUID pageId = pageIdentity.getPageId();
 
     ObjectNode nextPageNode = objectMapper.readValue(payload, ObjectNode.class);
     nextPageNode.put("uid", uid.toString());
@@ -112,7 +113,7 @@ public class SessionResourceTest {
     String payload = Files.readString(Path.of(getClass().getResource(
         "/page/simple.json").toURI()));
 
-    DataResponse<PageSessionDTO> dataResponse = given()
+    DataResponse<PageIdentity> dataResponse = given()
         .when()
         .contentType(ContentType.JSON)
         .body(payload)
@@ -124,10 +125,10 @@ public class SessionResourceTest {
         .as(new TypeRef<>() {
         });
 
-    PageSessionDTO pageSessionDTO = dataResponse.getData();
-    UUID uid = pageSessionDTO.getUid();
-    UUID sessionId = pageSessionDTO.getSessionId();
-    UUID pageId = pageSessionDTO.getPageId();
+    PageIdentity pageIdentity = dataResponse.getData();
+    UUID uid = pageIdentity.getUid();
+    UUID sessionId = pageIdentity.getSessionId();
+    UUID pageId = pageIdentity.getPageId();
 
     dataResponse = given()
         .when()
@@ -147,9 +148,36 @@ public class SessionResourceTest {
   }
 
   @Test
-  public void listSessions_shouldThrow_whenUnauthenticated() {
+  public void countPages_shouldThrowError_whenUnauthenticated() {
     given()
         .when()
+        .get(SessionResource.PATH)
+        .then()
+        .statusCode(401)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":401,\"reason\":\"Unauthorized\",\"message\":\"Unauthorized\"}}"));
+  }
+
+
+  @Test
+  public void countPages_shouldThrowError_whenRandomSessionId() {
+    given()
+        .when()
+        .cookie(SsoSession.COOKIE_NAME, "random")
+        .get(SessionResource.PATH)
+        .then()
+        .statusCode(401)
+        .body(sameJson(
+            "{\"error\":{\"statusCode\":401,\"reason\":\"Unauthorized\",\"message\":\"Unauthorized\"}}"));
+  }
+
+
+  // TODO: this test requires auth service to be running
+  @Test
+  public void countPages_shouldThrowError_whenInvalidSessionId() {
+    given()
+        .when()
+        .cookie(SsoSession.COOKIE_NAME, SsoSession.newIdentifier())
         .get(SessionResource.PATH)
         .then()
         .statusCode(401)

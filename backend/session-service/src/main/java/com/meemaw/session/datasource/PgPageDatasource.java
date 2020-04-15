@@ -1,7 +1,7 @@
 package com.meemaw.session.datasource;
 
 import com.meemaw.session.model.Page;
-import com.meemaw.session.model.PageSessionDTO;
+import com.meemaw.session.model.PageIdentity;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.pgclient.PgPool;
@@ -9,6 +9,8 @@ import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowIterator;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +26,7 @@ public class PgPageDatasource implements PageDatasource {
 
   private static final String SELECT_LINK_DEVICE_SESSION_RAW_SQL = "SELECT session_id FROM rec.page WHERE organization = $1 AND uid = $2 AND page_start > now() - INTERVAL '30 min' ORDER BY page_start DESC LIMIT 1;";
 
-  public Uni<Optional<UUID>> findDeviceSession(String orgId, UUID uid) {
+  public Uni<Optional<UUID>> findUserSessionLink(String orgId, UUID uid) {
     Tuple values = Tuple.of(orgId, uid);
     return pgPool.preparedQuery(SELECT_LINK_DEVICE_SESSION_RAW_SQL, values)
         .map(this::extractSessionId)
@@ -44,8 +46,7 @@ public class PgPageDatasource implements PageDatasource {
 
   private static final String INSERT_PAGE_RAW_SQL = "INSERT INTO rec.page (id, uid, session_id, organization, doctype, url, referrer, height, width, screen_height, screen_width, compiled_timestamp) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
 
-  public Uni<PageSessionDTO> insertPage(UUID pageId, UUID uid, UUID sessionId,
-      Page page) {
+  public Uni<PageIdentity> insertPage(UUID pageId, UUID uid, UUID sessionId, Page page) {
     Tuple values = Tuple.newInstance(io.vertx.sqlclient.Tuple.of(
         pageId,
         uid,
@@ -62,10 +63,26 @@ public class PgPageDatasource implements PageDatasource {
     ));
 
     return pgPool.preparedQuery(INSERT_PAGE_RAW_SQL, values)
-        .map(x -> PageSessionDTO.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
-        .onFailure().invoke(throwable -> {
+        .map(rowSet -> PageIdentity.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
+        .onFailure()
+        .invoke(throwable -> {
           log.error("Failed to insertPage", throwable);
           throw new DatabaseException();
         });
   }
+
+  private static final String SELECT_ACTIVE_PAGE_COUNT = "SELECT COUNT(*) FROM rec.page WHERE page_end IS NULL;";
+
+
+  @Override
+  public Uni<Integer> activePageCount() {
+    return pgPool.preparedQuery(SELECT_ACTIVE_PAGE_COUNT)
+        .map(rowSet -> rowSet.iterator().next().getInteger("count"))
+        .onFailure()
+        .invoke(throwable -> {
+          log.error("Failed to COUNT(*) active pages", throwable);
+          throw new DatabaseException();
+        });
+  }
+
 }

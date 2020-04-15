@@ -23,8 +23,7 @@ public class SameJSON extends TypeSafeDiagnosingMatcher<String> {
   @Override
   protected boolean matchesSafely(String actual, Description mismatchDescription) {
     try {
-      JSONAssert
-          .assertEquals(new JSONObject(actual), new JSONObject(this.expected), this.compareMode);
+      assertEquals(expected, actual, this.compareMode);
       return true;
     } catch (JSONException e) {
       StringWriter out = new StringWriter();
@@ -47,6 +46,15 @@ public class SameJSON extends TypeSafeDiagnosingMatcher<String> {
 
   public static Matcher<String> sameJson(String expected, JSONCompareMode compareMode) {
     return new SameJSON(expected, compareMode);
+  }
+
+  public static void assertEquals(String expected, String actual, JSONCompareMode compareMode)
+      throws JSONException {
+    JSONAssert.assertEquals(new JSONObject(expected), new JSONObject(actual), compareMode);
+  }
+
+  public static void assertEquals(String expected, String actual) throws JSONException {
+    assertEquals(expected, actual, JSONCompareMode.STRICT);
   }
 
 }

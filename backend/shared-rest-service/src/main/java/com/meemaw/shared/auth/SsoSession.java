@@ -16,6 +16,9 @@ public class SsoSession {
   // Invalidate session after 14 days of inactivity
   public static final int MAX_IDLE = SECONDS_IN_DAY * 14;
 
+  // Number of characters in cookie
+  public static final int SIZE = 50;
+
 
   public static NewCookie cookie(String sessionId) {
     return newCookie(sessionId, TTL);
@@ -37,7 +40,7 @@ public class SsoSession {
   }
 
   public static String newIdentifier() {
-    return RandomStringUtils.randomAlphanumeric(50);
+    return RandomStringUtils.randomAlphanumeric(SIZE);
   }
 
 }

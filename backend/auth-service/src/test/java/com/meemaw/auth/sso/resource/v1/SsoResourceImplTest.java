@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.auth.signup.resource.v1.SignupResource;
 import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
 import com.meemaw.auth.user.datasource.UserDatasource;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.rest.response.DataResponse;
 import com.meemaw.test.testconainers.pg.Postgres;

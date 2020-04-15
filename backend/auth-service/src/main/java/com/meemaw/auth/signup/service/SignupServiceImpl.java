@@ -6,7 +6,7 @@ import com.meemaw.auth.signup.model.SignupRequest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
 import com.meemaw.auth.user.datasource.UserDatasource;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import com.meemaw.shared.auth.UserRole;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.shared.rest.response.Boom;

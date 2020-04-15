@@ -2,7 +2,7 @@ package com.meemaw.auth.signup.service;
 
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.signup.model.dto.SignupRequestDTO;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 

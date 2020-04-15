@@ -1,7 +1,7 @@
 package com.meemaw.auth.password.service;
 
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import io.vertx.axle.sqlclient.Transaction;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;

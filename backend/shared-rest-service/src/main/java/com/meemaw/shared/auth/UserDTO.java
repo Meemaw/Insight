@@ -1,6 +1,5 @@
-package com.meemaw.auth.user.model;
+package com.meemaw.shared.auth;
 
-import com.meemaw.shared.auth.UserRole;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.Value;
 @Value
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class UserDTO {
+public class UserDTO implements AuthUser {
 
   UUID id;
   String email;

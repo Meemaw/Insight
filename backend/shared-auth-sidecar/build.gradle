@@ -5,7 +5,8 @@ plugins {
 
 dependencies {
     api enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    api 'io.smallrye.reactive:smallrye-mutiny-vertx-web-client'
     api project(":shared-rest-service")
-    implementation 'io.smallrye.reactive:smallrye-axle-web-client'
+
     testImplementation project(":shared-testing-utils")
 }

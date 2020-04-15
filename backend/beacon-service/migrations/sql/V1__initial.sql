@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
 
 CREATE SCHEMA IF NOT EXISTS rec;
 
@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS rec.page
     screen_width       SMALLINT    NOT NULL,
     compiled_timestamp INTEGER     NOT NULL,
     page_start         TIMESTAMPTZ NOT NULL DEFAULT now(),
+    page_end           TIMESTAMPTZ,
 
     PRIMARY KEY (id, uid, session_id, organization, page_start)
 );

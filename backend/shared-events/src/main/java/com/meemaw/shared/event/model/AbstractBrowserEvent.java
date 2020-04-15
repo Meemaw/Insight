@@ -1,5 +1,6 @@
 package com.meemaw.shared.event.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -7,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.ToString;
 
 
-@Getter
 @ToString
 @JsonTypeInfo(
     use = Id.NAME,
@@ -29,12 +30,15 @@ import lombok.ToString;
     @Type(value = BrowserLoadEvent.class, name = BrowserEventTypeConstants.LOAD),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AbstractBrowserEvent {
+public abstract class AbstractBrowserEvent extends Recorded {
 
-  @JsonProperty("t")
-  int timestamp;
-
+  @Getter
   @JsonProperty("a")
   List<Object> args;
+
+  @JsonIgnore
+  public IdentifiedBrowserEventWrapper identified(UUID pageId) {
+    return IdentifiedBrowserEventWrapper.builder().event(this).pageId(pageId).build();
+  }
 
 }

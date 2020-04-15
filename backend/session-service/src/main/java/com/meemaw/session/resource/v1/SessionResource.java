@@ -25,6 +25,6 @@ public interface SessionResource {
 
   @GET
   @CookieAuth
-  CompletionStage<Response> list();
+  CompletionStage<Response> count();
 
 }

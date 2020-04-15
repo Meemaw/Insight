@@ -3,7 +3,7 @@ package com.meemaw.auth.sso.model;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import com.meemaw.shared.auth.AuthUser;
 import com.meemaw.shared.auth.UserRole;
 import java.io.IOException;

@@ -48,11 +48,17 @@ public abstract class AbstractCookieAuthDynamicFeature implements DynamicFeature
       Map<String, Cookie> cookies = ctx.getCookies();
       Cookie ssoCookie = cookies.get(SsoSession.COOKIE_NAME);
       if (ssoCookie == null) {
-        log.info("Missing SessionId");
+        log.debug("Missing SessionId");
         throw Boom.status(Status.UNAUTHORIZED).exception();
       }
 
-      Optional<T> maybeUser = findSession(ssoCookie.getValue()).toCompletableFuture().join();
+      String sessionId = ssoCookie.getValue();
+      if (sessionId.length() != SsoSession.SIZE) {
+        log.debug("Invalid SessionId size {}", sessionId);
+        throw Boom.status(Status.UNAUTHORIZED).exception();
+      }
+
+      Optional<T> maybeUser = findSession(sessionId).toCompletableFuture().join();
       T authUser = maybeUser.orElseThrow(() -> Boom.status(Status.UNAUTHORIZED).exception());
       boolean isSecure = ctx.getUriInfo().getAbsolutePath().toString().startsWith("https");
       ctx.setSecurityContext(new InsightSecurityContext(authUser, isSecure));

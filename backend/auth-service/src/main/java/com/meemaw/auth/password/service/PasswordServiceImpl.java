@@ -6,7 +6,7 @@ import com.meemaw.auth.password.model.PasswordResetRequest;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.signup.datasource.SignupDatasource;
 import com.meemaw.auth.user.datasource.UserDatasource;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import com.meemaw.auth.user.model.UserWithHashedPasswordDTO;
 import com.meemaw.shared.rest.exception.BoomException;
 import com.meemaw.shared.rest.exception.DatabaseException;

@@ -1,7 +1,7 @@
 package com.meemaw.auth.sso.datasource;
 
 import com.meemaw.auth.sso.model.SsoUser;
-import com.meemaw.auth.user.model.UserDTO;
+import com.meemaw.shared.auth.UserDTO;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 

@@ -22,7 +22,9 @@ public class SessionResourceImpl implements SessionResource {
   }
 
   @Override
-  public CompletionStage<Response> list() {
-    return CompletableFuture.completedFuture(Response.ok().status(200).build());
+  public CompletionStage<Response> count() {
+    return pageService.activePageCount()
+        .subscribeAsCompletionStage()
+        .thenApply(DataResponse::ok);
   }
 }

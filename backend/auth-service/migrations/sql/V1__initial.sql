@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
 
 CREATE SCHEMA IF NOT EXISTS auth;
 
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS auth.org
 
 ALTER TABLE auth.org
     DROP CONSTRAINT IF EXISTS org_id_len;
+
 ALTER TABLE auth.org
     ADD CONSTRAINT org_id_len CHECK (length(auth.org.id) = 6);
 
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS auth.user
 
 ALTER TABLE auth.user
     DROP CONSTRAINT IF EXISTS user_email_len;
+
 ALTER TABLE auth.user
     ADD CONSTRAINT user_email_len CHECK (length(auth.user.email) < 255);
 

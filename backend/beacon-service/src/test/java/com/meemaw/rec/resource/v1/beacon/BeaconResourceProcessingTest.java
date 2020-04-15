@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -69,7 +71,9 @@ public class BeaconResourceProcessingTest {
     ));
 
     return pgPool.preparedQuery(INSERT_PAGE_RAW_SQL, values)
-        .onItem().ignore().andContinueWithNull()
+        .onItem()
+        .ignore()
+        .andContinueWithNull()
         .onFailure().invoke(throwable -> {
           throw new DatabaseException();
         });
@@ -103,7 +107,8 @@ public class BeaconResourceProcessingTest {
 
   @ParameterizedTest
   @ValueSource(strings = {"application/json", "text/plain"})
-  public void shouldProcessSmallBeacon(String contentType) throws IOException, URISyntaxException {
+  public void shouldProcessMultipleSmallBeacons(String contentType)
+      throws IOException, URISyntaxException {
     UUID sessionID = UUID.randomUUID();
     UUID uid = UUID.randomUUID();
     UUID pageID = UUID.randomUUID();
@@ -112,6 +117,37 @@ public class BeaconResourceProcessingTest {
 
     String payload = Files.readString(Path.of(getClass().getResource(
         "/beacon/small.json").toURI()));
+
+    for (int i = 0; i < 100; i++) {
+      given()
+          .when()
+          .contentType(contentType)
+          .queryParam("SessionID", sessionID)
+          .queryParam("UserID", uid)
+          .queryParam("PageID", pageID)
+          .body(payload)
+          .post(BeaconResource.PATH)
+          .then()
+          .statusCode(204);
+
+      assertEquals(i + 1, events.size());
+    }
+  }
+
+  private static final String GET_PAGE_END_RAW_SQL = "SELECT page_end FROM rec.page WHERE id = $1;";
+
+  @ParameterizedTest
+  @ValueSource(strings = {"application/json", "text/plain"})
+  public void shouldEndPageOnUnloadEvent(String contentType)
+      throws IOException, URISyntaxException {
+    UUID sessionID = UUID.randomUUID();
+    UUID uid = UUID.randomUUID();
+    UUID pageID = UUID.randomUUID();
+
+    insertPage(pageID, uid, sessionID).await().indefinitely();
+
+    String payload = Files.readString(Path.of(getClass().getResource(
+        "/beacon/withUnloadEvent.json").toURI()));
 
     given()
         .when()
@@ -124,6 +160,14 @@ public class BeaconResourceProcessingTest {
         .then()
         .statusCode(204);
 
-    assertEquals(1, events.size());
+    assertEquals(2, events.size());
+
+    Instant pageEnd = getPageEnd(pageID).await().indefinitely();
+    assertEquals(Duration.between(pageEnd, Instant.now()).toSeconds(), 0);
+  }
+
+  private Uni<Instant> getPageEnd(UUID pageId) {
+    return pgPool.preparedQuery(GET_PAGE_END_RAW_SQL, Tuple.of(pageId))
+        .map(rowSet -> rowSet.iterator().next().getOffsetDateTime("page_end").toInstant());
   }
 }
