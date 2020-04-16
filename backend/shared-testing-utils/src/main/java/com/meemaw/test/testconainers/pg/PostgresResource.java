@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class PostgresResource implements QuarkusTestResourceLifecycleManager {
 
-  private static PostgresSQLTestContainer POSTGRES = PostgresSQLTestContainer.newInstance();
+  private static final PostgresSQLTestContainer POSTGRES = PostgresSQLTestContainer.newInstance();
 
   @Override
   public Map<String, String> start() {

@@ -9,8 +9,7 @@ public class JacksonMapper {
 
   public static ObjectMapper get() {
     if (INSTANCE == null) {
-      INSTANCE = JacksonObjectMapperCustomizer
-          .configure(new com.fasterxml.jackson.databind.ObjectMapper());
+      INSTANCE = JacksonObjectMapperCustomizer.configure(new ObjectMapper());
     }
     return INSTANCE;
   }

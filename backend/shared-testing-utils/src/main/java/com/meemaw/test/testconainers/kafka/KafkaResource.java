@@ -7,7 +7,7 @@ import org.testcontainers.containers.KafkaContainer;
 
 public class KafkaResource implements QuarkusTestResourceLifecycleManager {
 
-  private static final KafkaContainer KAFKA = new KafkaContainer();
+  private static final KafkaTestContainer KAFKA = new KafkaTestContainer();
 
   @Override
   public Map<String, String> start() {

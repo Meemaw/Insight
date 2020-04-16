@@ -2,7 +2,6 @@ package com.meemaw.shared.auth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.meemaw.shared.auth.SsoSession;
 import org.junit.jupiter.api.Test;
 
 

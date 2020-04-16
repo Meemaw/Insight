@@ -1,0 +1,11 @@
+dependencies {
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.2'
+    implementation 'org.apache.kafka:kafka-clients:2.5.0'
+    implementation project(":shared-events")
+
+    testImplementation project(':shared-testing-utils')
+}
+
+test {
+    useJUnitPlatform()
+}
