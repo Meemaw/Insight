@@ -16,13 +16,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 @QuarkusTest
 @Tag("integration")
-public class BeaconResourceValidationTest {
+public class BeaconBeatResourceValidationTest {
 
   @ParameterizedTest
   @ValueSource(strings = {"application/json", "text/plain"})
   public void postBeacon_shouldThrowError_whenEmptyPayload(String contentType) {
     given()
-        .when().contentType(contentType).post(BeaconResource.PATH)
+        .when().contentType(contentType).post(BeaconResource.PATH + "/beat")
         .then()
         .statusCode(422)
         .body(sameJson(
@@ -33,7 +33,7 @@ public class BeaconResourceValidationTest {
   @ValueSource(strings = {"application/json", "text/plain"})
   public void postBeacon_shouldThrowError_whenEmptyJson(String contentType) {
     given()
-        .when().contentType(contentType).body("{}").post(BeaconResource.PATH)
+        .when().contentType(contentType).body("{}").post(BeaconResource.PATH + "/beat")
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -48,7 +48,7 @@ public class BeaconResourceValidationTest {
         "/beacon/initial.json").toURI()));
 
     given()
-        .when().contentType(contentType).body(payload).post(BeaconResource.PATH)
+        .when().contentType(contentType).body(payload).post(BeaconResource.PATH + "/beat")
         .then()
         .statusCode(400)
         .body(sameJson(
@@ -63,7 +63,7 @@ public class BeaconResourceValidationTest {
         "/beacon/noEvents.json").toURI()));
 
     given()
-        .when().contentType(contentType).body(payload).post(BeaconResource.PATH)
+        .when().contentType(contentType).body(payload).post(BeaconResource.PATH + "/beat")
         .then()
         .statusCode(400)
         .body(sameJson(

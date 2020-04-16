@@ -23,30 +23,23 @@ import org.junit.jupiter.api.Test;
 public class SessionSocketEventTest extends AbstractSessionSocketTest {
 
   @Inject
-  @Channel(EventsChannel.NAME)
+  @Channel(EventsChannel.UNLOAD)
   Emitter<AbstractBrowserEvent> emitter;
 
   @Inject
   ObjectMapper objectMapper;
 
   @Test
-  public void eventMessageReception() throws Exception {
+  public void unloadEventMessageReception() throws Exception {
     try (Session session = connect()) {
       assertEquals(String.format("OPEN %s", session.getId()), MESSAGES.poll(10, TimeUnit.SECONDS));
-
-      // load event
-      String loadEventPayload = "{\"t\": 1234, \"e\": \"8\", \"a\": [\"http://localhost:8080\"]}";
-      AbstractBrowserEvent loadEvent = objectMapper
-          .readValue(loadEventPayload, AbstractBrowserEvent.class);
-      emitter.send(loadEvent);
-      SameJSON.assertEquals(loadEventPayload, MESSAGES.poll(10, TimeUnit.SECONDS));
 
       // unload event
       String unloadEventPayload = "{\"t\": 1234, \"e\": \"1\", \"a\": [\"http://localhost:8080\"]}";
       AbstractBrowserEvent unloadEvent = objectMapper
           .readValue(unloadEventPayload, AbstractBrowserEvent.class);
       emitter.send(unloadEvent);
-      SameJSON.assertEquals(unloadEventPayload, MESSAGES.poll(10, TimeUnit.SECONDS));
+      assertEquals("PAGE END", MESSAGES.poll(10, TimeUnit.SECONDS));
     }
   }
 

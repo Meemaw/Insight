@@ -1,4 +1,4 @@
-package com.meemaw.rec.beacon.datasource;
+package com.meemaw.rec.page.datasource;
 
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.pgclient.PgPool;
@@ -26,6 +26,7 @@ public class PgPageDatasource implements PageDatasource {
         .map(row -> row.iterator().hasNext());
   }
 
+  // TODO: move this to session service
   private static final String PAGE_END_RAW_SQL = "UPDATE rec.page SET page_end = CURRENT_TIMESTAMP WHERE id = $1;";
 
   @Override

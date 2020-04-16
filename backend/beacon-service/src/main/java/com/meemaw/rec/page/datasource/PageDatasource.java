@@ -1,4 +1,4 @@
-package com.meemaw.rec.beacon.datasource;
+package com.meemaw.rec.page.datasource;
 
 import io.smallrye.mutiny.Uni;
 import java.time.Instant;
@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PageDatasource {
+
 
   /**
    * @param sessionID

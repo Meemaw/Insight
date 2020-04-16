@@ -16,6 +16,7 @@ public interface BeaconResource {
 
   @POST
   @Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
+  @Path("/beat")
   CompletionStage<Response> textBeacon(
       @QueryParam("SessionID") UUID sessionID,
       @QueryParam("UserID") UUID userID,

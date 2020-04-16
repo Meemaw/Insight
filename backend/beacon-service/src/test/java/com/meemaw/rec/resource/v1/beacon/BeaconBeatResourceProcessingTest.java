@@ -2,10 +2,12 @@ package com.meemaw.rec.resource.v1.beacon;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.meemaw.rec.beacon.resource.v1.BeaconResource;
 import com.meemaw.shared.event.kafka.EventsChannel;
 import com.meemaw.shared.event.model.AbstractBrowserEvent;
+import com.meemaw.shared.event.model.AbstractBrowserEventBatch;
 import com.meemaw.shared.rest.exception.DatabaseException;
 import com.meemaw.test.testconainers.kafka.KafkaResource;
 import com.meemaw.test.testconainers.pg.Postgres;
@@ -35,21 +37,29 @@ import org.junit.jupiter.params.provider.ValueSource;
 @QuarkusTestResource(KafkaResource.class)
 @QuarkusTest
 @Tag("integration")
-public class BeaconResourceProcessingTest {
+public class BeaconBeatResourceProcessingTest {
 
-  private static List<AbstractBrowserEvent> events;
+  private static List<AbstractBrowserEventBatch> events;
+  private static List<AbstractBrowserEvent> unloadEvents;
 
   @Inject
   PgPool pgPool;
 
-  @Incoming(EventsChannel.NAME)
-  public void process(AbstractBrowserEvent event) {
-    events.add(event);
+  @Incoming(EventsChannel.ALL)
+  public void process(AbstractBrowserEventBatch batch) {
+    events.add(batch);
   }
+
+  @Incoming(EventsChannel.UNLOAD)
+  public void processUnloadEvent(AbstractBrowserEvent event) {
+    unloadEvents.add(event);
+  }
+
 
   @BeforeEach
   public void init() {
     events = new ArrayList<>();
+    unloadEvents = new ArrayList<>();
   }
 
   private static final String INSERT_PAGE_RAW_SQL = "INSERT INTO rec.page (id, uid, session_id, organization, doctype, url, referrer, height, width, screen_height, screen_width, compiled_timestamp) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
@@ -98,11 +108,13 @@ public class BeaconResourceProcessingTest {
         .queryParam("UserID", uid)
         .queryParam("PageID", pageID)
         .body(payload)
-        .post(BeaconResource.PATH)
+        .post(BeaconResource.PATH + "/beat")
         .then()
         .statusCode(204);
 
-    assertEquals(382, events.size());
+    assertEquals(382, events.get(0).getEvents().size());
+    assertEquals(pageID, events.get(0).getPageId());
+    assertEquals(0, unloadEvents.size());
   }
 
   @ParameterizedTest
@@ -126,12 +138,16 @@ public class BeaconResourceProcessingTest {
           .queryParam("UserID", uid)
           .queryParam("PageID", pageID)
           .body(payload)
-          .post(BeaconResource.PATH)
+          .post(BeaconResource.PATH + "/beat")
           .then()
           .statusCode(204);
 
       assertEquals(i + 1, events.size());
+      assertEquals(1, events.get(i).getEvents().size());
+      assertEquals(pageID, events.get(i).getPageId());
     }
+
+    assertEquals(0, unloadEvents.size());
   }
 
   private static final String GET_PAGE_END_RAW_SQL = "SELECT page_end FROM rec.page WHERE id = $1;";
@@ -156,14 +172,18 @@ public class BeaconResourceProcessingTest {
         .queryParam("UserID", uid)
         .queryParam("PageID", pageID)
         .body(payload)
-        .post(BeaconResource.PATH)
+        .post(BeaconResource.PATH + "/beat")
         .then()
         .statusCode(204);
 
-    assertEquals(2, events.size());
+    assertEquals(pageID, events.get(0).getPageId());
+    assertEquals(1, events.size());
+    assertEquals(2, events.get(0).getEvents().size());
+    assertEquals(1, unloadEvents.size());
 
     Instant pageEnd = getPageEnd(pageID).await().indefinitely();
-    assertEquals(Duration.between(pageEnd, Instant.now()).toSeconds(), 0);
+    // was in last second
+    assertTrue(Math.abs(Duration.between(Instant.now(), pageEnd).toMillis()) < 1000);
   }
 
   private Uni<Instant> getPageEnd(UUID pageId) {

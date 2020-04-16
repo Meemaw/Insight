@@ -19,6 +19,7 @@ public class PageService {
 
   public Uni<PageIdentity> process(Page page) {
     UUID pageId = UUID.randomUUID();
+
     UUID uid = Optional.ofNullable(page.getUid()).orElseGet(UUID::randomUUID);
     String org = page.getOrganization();
 

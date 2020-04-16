@@ -22,7 +22,7 @@ class Backend implements Connected {
   private beaconSeq: number;
 
   constructor(recordingApiBaseURL: string, sessionApiBaseURL: string) {
-    this.beaconURL = `${recordingApiBaseURL}/v1/beacon`;
+    this.beaconURL = `${recordingApiBaseURL}/v1/beacon/beat`;
     this.pageURL = `${sessionApiBaseURL}/v1/sessions`;
     this.beaconSeq = 0;
 
