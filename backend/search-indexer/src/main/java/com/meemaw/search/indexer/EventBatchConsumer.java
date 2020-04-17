@@ -1,18 +1,24 @@
 package com.meemaw.search.indexer;
 
+import com.meemaw.search.indexer.logging.OffsetLoggingCallbackImpl;
 import com.meemaw.shared.event.kafka.EventsChannel;
 import com.meemaw.shared.event.kafka.serialization.BrowserEventBatchDeserializer;
 import com.meemaw.shared.event.model.AbstractBrowserEventBatch;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Set;
+import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-@Slf4j
+@Log4j2
 public class EventBatchConsumer {
 
   private static final String GROUP_ID = "search-indexer";
@@ -20,6 +26,7 @@ public class EventBatchConsumer {
 
   private final Duration poolDuration;
   private final KafkaConsumer<String, AbstractBrowserEventBatch> consumer;
+  private final OffsetLoggingCallbackImpl offsetLoggingCallback;
 
   private KafkaConsumer<String, AbstractBrowserEventBatch> configureConsumer(
       String bootstrapServers) {
@@ -30,8 +37,9 @@ public class EventBatchConsumer {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
         BrowserEventBatchDeserializer.class.getName());
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
     KafkaConsumer<String, AbstractBrowserEventBatch> consumer = new KafkaConsumer<>(props);
-    consumer.subscribe(Collections.singletonList(EventsChannel.ALL));
+    consumer.subscribe(Collections.singletonList(EventsChannel.ALL), offsetLoggingCallback);
     return consumer;
   }
 
@@ -41,6 +49,7 @@ public class EventBatchConsumer {
 
   private EventBatchConsumer(Duration poolDuration, String bootstrapServers) {
     this.poolDuration = poolDuration;
+    this.offsetLoggingCallback = new OffsetLoggingCallbackImpl();
     this.consumer = configureConsumer(bootstrapServers);
   }
 
@@ -48,12 +57,34 @@ public class EventBatchConsumer {
     return consumer.poll(poolDuration);
   }
 
-  public void commit() {
-    consumer.commitAsync((meta, ex) -> {
-      if (ex != null) {
-        log.error("Something went wrong while committing offset", ex);
-      }
-    });
+  public void commit(Set<TopicPartition> partitions) {
+    Map<TopicPartition, OffsetAndMetadata> offsets = getOffsets(partitions);
+    log.info("Committing offsets {}", offsets);
+    consumer.commitAsync(offsets, offsetLoggingCallback);
+  }
+
+  public void shutdown() {
+    offsetLoggingCallback.getPartitionOffsetMap()
+        .forEach((topicPartition, offset)
+            -> log.info("Offset position during the shutdown: partition : {}, offset : {}",
+            topicPartition.partition(),
+            offset.offset()));
+    consumer.close();
+  }
+
+  public Map<TopicPartition, OffsetAndMetadata> getOffsets(Set<TopicPartition> partitions) {
+    Map<TopicPartition, OffsetAndMetadata> nextCommitableOffset = new HashMap<>(partitions.size());
+    for (TopicPartition topicPartition : partitions) {
+      long topicPosition = consumer.position(topicPartition);
+      nextCommitableOffset.put(topicPartition, new OffsetAndMetadata(topicPosition));
+    }
+    return nextCommitableOffset;
+  }
+
+
+  public Map<TopicPartition, OffsetAndMetadata> getOffsets() {
+    Set<TopicPartition> partitions = consumer.assignment();
+    return getOffsets(partitions);
   }
 
 }

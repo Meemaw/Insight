@@ -1,7 +1,9 @@
 package com.meemaw.search.indexer;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.HttpHost;
 
+@Log4j2
 public class SearchIndexerRunner {
 
   public static void main(String[] args) {
@@ -10,5 +12,7 @@ public class SearchIndexerRunner {
 
     SearchIndexer searchIndexer = new SearchIndexer(kafkaBootstrapServers, elasticsearchHost);
     searchIndexer.start();
+
+    Runtime.getRuntime().addShutdownHook(new Thread(searchIndexer::onShutdown));
   }
 }
