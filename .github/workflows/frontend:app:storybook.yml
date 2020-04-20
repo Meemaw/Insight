@@ -3,6 +3,7 @@ on:
     branches: [master, add-nextjs-app]
     paths:
       - '.github/workflows/frontend:app:storybook.yml'
+      - 'frontend/shared/storybook/**'
       - 'frontend/app/**'
       - 'jest.config.js'
       - 'lerna.json'
@@ -14,7 +15,7 @@ env:
   CI: true
 
 jobs:
-  deploy-storybook:
+  pr-deploy-storybook:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -32,6 +33,7 @@ jobs:
       - name: Install & build 🏗️
         run: |
           yarn install --frozen-lockfile
+          yarn workspace @insight/storybook build
           yarn workspace @insight/app storybook:build
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
