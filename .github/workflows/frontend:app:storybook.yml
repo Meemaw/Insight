@@ -47,5 +47,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: 'Preview of app Storybook available at https://meemaw.github.io/Insight/app:storybook:${{ env.GITHUB_HEAD_REF_SLUG }}! 🚀'
+          msg: 'Storybook preview of frontend/app available at https://meemaw.github.io/Insight/app:storybook:${{ env.GITHUB_HEAD_REF_SLUG }}! 🚀'
           check_for_duplicate_msg: false
