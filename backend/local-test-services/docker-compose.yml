@@ -1,20 +1,20 @@
 version: '3.7'
 
 services:
-  auth-service:
+  auth-api:
     build:
       context: ..
-      dockerfile: auth-service/docker/Dockerfile.jvm
+      dockerfile: auth/api/docker/Dockerfile.jvm
     ports:
       - '${AUTH_SERVICE_PORT:-8080}:8080'
     environment:
       - POSTGRES_HOST=db
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     depends_on:
-      - auth-service-migrations
-  auth-service-migrations:
+      - auth-api-migrations
+  auth-api-migrations:
     build:
-      context: ../auth-service/migrations
+      context: ../auth/api/migrations
       dockerfile: Dockerfile
     depends_on:
       - db
@@ -24,18 +24,18 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
 
-  beacon-service:
+  beacon-api:
     build:
       context: ..
-      dockerfile: beacon-service/docker/Dockerfile.jvm
+      dockerfile: beacon/api/docker/Dockerfile.jvm
     ports:
       - '${BEACON_SERVICE_PORT:-8081}:8080'
     depends_on:
-      - beacon-service-migrations
+      - beacon-api-migrations
       - kafka
-  beacon-service-migrations:
+  beacon-api-migrations:
     build:
-      context: ../beacon-service/migrations
+      context: ../beacon/api/migrations
       dockerfile: Dockerfile
     depends_on:
       - db
@@ -45,9 +45,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
 
-  session-service:
+  session-api:
     build:
-      context: ../session-service/migrations
+      context: ../session/api/migrations
       dockerfile: Dockerfile
     ports:
       - '${SESSION_SERVICE_PORT:-8082}:8080'
