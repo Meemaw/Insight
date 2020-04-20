@@ -1,6 +1,6 @@
 on:
   pull_request:
-    branches: [master]
+    branches: [master, add-nextjs-app]
     paths:
       - '.github/workflows/frontend:app:storybook.yml'
       - 'frontend/app/**'
@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install & build
+      - name: Install & build 🏗️
         run: |
           yarn install --frozen-lockfile
           yarn workspace @insight/app storybook:build
@@ -40,7 +40,7 @@ jobs:
           BRANCH: gh-pages
           FOLDER: frontend/app/storybook-static
           TARGET_FOLDER: ${{ env.GITHUB_HEAD_REF_SLUG }}
-      - name: Comment PR
+      - name: Comment PR 💬
         uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
