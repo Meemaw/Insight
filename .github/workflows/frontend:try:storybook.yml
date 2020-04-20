@@ -2,9 +2,9 @@ on:
   pull_request:
     branches: [master, add-nextjs-app]
     paths:
-      - '.github/workflows/frontend:app:storybook.yml'
+      - '.github/workflows/frontend:try:storybook.yml'
       - 'frontend/shared/storybook/**'
-      - 'frontend/app/**'
+      - 'frontend/try/**'
       - 'jest.config.js'
       - 'lerna.json'
       - 'package.json'
@@ -34,18 +34,18 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn workspace @insight/storybook build
-          yarn workspace @insight/app storybook:build
+          yarn workspace @insight/try storybook:build
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: frontend/app/storybook-static
-          TARGET_FOLDER: app:storybook:${{ env.GITHUB_HEAD_REF_SLUG }}
+          FOLDER: frontend/try/storybook-static
+          TARGET_FOLDER: try:storybook:${{ env.GITHUB_HEAD_REF_SLUG }}
       - name: Comment PR 💬
         uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: 'Preview of app Storybook available at https://meemaw.github.io/Insight/app:storybook:${{ env.GITHUB_HEAD_REF_SLUG }}! 🚀'
+          msg: 'Preview of app Storybook available at https://meemaw.github.io/Insight/try:storybook:${{ env.GITHUB_HEAD_REF_SLUG }}! 🚀'
           check_for_duplicate_msg: false
