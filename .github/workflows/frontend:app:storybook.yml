@@ -1,6 +1,6 @@
 on:
   pull_request:
-    branches: [master, add-nextjs-app]
+    branches: [master]
     paths:
       - '.github/workflows/frontend:app:storybook.yml'
       - 'frontend/shared/storybook/**'
