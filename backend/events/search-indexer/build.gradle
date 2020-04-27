@@ -6,7 +6,7 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.13.1'
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.2'
     implementation 'org.apache.kafka:kafka-clients:2.5.0'
-    implementation project(":shared:events")
+    implementation project(":events:model")
 
     testImplementation project(':shared:testing-utils')
 }
@@ -17,7 +17,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'com.meemaw.search.indexer.SearchIndexerRunner'
+        attributes 'Main-Class': 'com.meemaw.search.search-indexer.SearchIndexerRunner'
         // https://stackoverflow.com/questions/53049346/is-log4j2-compatible-with-java-11
         attributes 'Multi-Release': true
     }
