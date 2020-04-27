@@ -1,5 +1,15 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
+  plugins: [
+    'react',
+    'prettier',
+    'jest',
+    'react-hooks',
+    'import',
+    'testing-library',
+    'lodash',
+    'testcafe',
+  ],
   extends: [
     'eslint:recommended',
     'airbnb',
@@ -11,16 +21,6 @@ module.exports = {
     'plugin:testcafe/recommended',
     'plugin:@typescript-eslint/recommended',
   ],
-  plugins: [
-    'react',
-    'prettier',
-    'jest',
-    'react-hooks',
-    'import',
-    'testing-library',
-    'lodash',
-    'testcafe',
-  ],
   env: {
     browser: true,
     jest: true,
@@ -28,6 +28,7 @@ module.exports = {
     es6: true,
   },
   rules: {
+    'no-plusplus': ['off'],
     'react/prop-types': ['off'],
     'react/jsx-props-no-spreading': ['off'],
     'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],

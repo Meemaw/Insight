@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/no-danger */
 import React from 'react';
 import Document, {
   Html,
@@ -6,33 +8,28 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document';
-import { ServerStyleSheet } from 'styled-components';
+import { Provider as StyletronProvider } from 'styletron-react';
+import {
+  styletron,
+  STYLETRON_HYDRATE_CLASSNAME,
+} from 'shared/styles/styletron';
+import { Server, Sheet } from 'styletron-engine-atomic';
 
-class InsightDocument extends Document {
+type Props = {
+  stylesheets: Sheet[];
+};
+
+class InsightDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
-    const sheet = new ServerStyleSheet();
-    const originalRenderPage = ctx.renderPage;
-
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            sheet.collectStyles(<App {...props} />),
-        });
-
-      const initialProps = await Document.getInitialProps(ctx);
-      return {
-        ...initialProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {sheet.getStyleElement()}
-          </>
-        ),
-      };
-    } finally {
-      sheet.seal();
-    }
+    const page = ctx.renderPage({
+      enhanceApp: (App) => (props) => (
+        <StyletronProvider value={styletron}>
+          <App {...props} />
+        </StyletronProvider>
+      ),
+    });
+    const stylesheets = (styletron as Server).getStylesheets() || [];
+    return { ...page, stylesheets };
   }
 
   getInsightScript = () => {
@@ -44,7 +41,7 @@ class InsightDocument extends Document {
       const n = t.createElement(e);
       n.async = true;
       n.crossOrigin = 'anonymous';
-      n.src = 'https://d2c0kshu2rj5p.cloudfront.net/s/insight.js';
+      n.src = 'https://d1l87tz7sw1x04.cloudfront.net/s/insight.js';
       const o = t.getElementsByTagName(e)[0];
       o.parentNode.insertBefore(n, o);
     })(window, document, 'script');
@@ -63,12 +60,18 @@ class InsightDocument extends Document {
               }
             `}
           </style>
-          <link
-            href="https://unpkg.com/@blueprintjs/core@3.24.0/lib/css/blueprint.css"
-            rel="stylesheet"
-          />
+
+          {this.props.stylesheets.map((sheet, i) => (
+            <style
+              className={STYLETRON_HYDRATE_CLASSNAME}
+              dangerouslySetInnerHTML={{ __html: sheet.css }}
+              media={sheet.attrs.media}
+              data-hydrate={sheet.attrs['data-hydrate']}
+              key={i}
+            />
+          ))}
+
           <script
-            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: this.getInsightScript() }}
           />
         </Head>

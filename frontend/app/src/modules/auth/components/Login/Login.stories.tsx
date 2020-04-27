@@ -1,53 +1,39 @@
 import React from 'react';
-import { fullHeightDecorator, configureStory } from '@insight/storybook';
+import { configureStory } from '@insight/storybook';
 import SsoApi from 'api/sso';
+import { mockApiError } from 'test/utils/error';
 
 import Login from './Login';
 
 export default {
   title: 'Auth|Login',
-  decorators: [fullHeightDecorator],
 };
 
 export const Base = () => {
-  return <Login dest={encodeURIComponent('/')} />;
+  return <Login />;
 };
 Base.story = configureStory({
   setupMocks: (sandbox) => {
-    return sandbox.stub(SsoApi, 'login').callsFake((_) => {
-      const response = { data: true };
-      return new Promise((resolve) => setTimeout(() => resolve(response), 250));
+    return sandbox.stub(SsoApi, 'login').callsFake(() => {
+      return new Promise((resolve) => setTimeout(resolve, 10));
     });
   },
 });
 
-export const CustomDest = () => {
-  return <Login dest={encodeURIComponent('/settings/general')} />;
+export const InvalidPassword = () => {
+  return <Login />;
 };
-CustomDest.story = configureStory({
+InvalidPassword.story = configureStory({
   setupMocks: (sandbox) => {
-    return sandbox.stub(SsoApi, 'login').callsFake((_) => {
-      const response = { data: true };
-      return new Promise((resolve) => setTimeout(() => resolve(response), 250));
-    });
-  },
-});
-
-export const WithError = () => {
-  return <Login dest={encodeURIComponent('/')} />;
-};
-WithError.story = configureStory({
-  setupMocks: (sandbox) => {
-    return sandbox.stub(SsoApi, 'login').callsFake((_) => {
-      const error = new Error('APIError');
-      Object.assign(error, {
-        response: {
-          json: () => ({ error: { message: 'Something went wrong' } }),
-        },
+    return sandbox.stub(SsoApi, 'login').callsFake(() => {
+      const error = mockApiError({
+        statusCode: 400,
+        reason: 'Bad Request',
+        message: 'Invalid email or password',
       });
 
       return new Promise((_resolve, reject) =>
-        setTimeout(() => reject(error), 250)
+        setTimeout(() => reject(error), 10)
       );
     });
   },
