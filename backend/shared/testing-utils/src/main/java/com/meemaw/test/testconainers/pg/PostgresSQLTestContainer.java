@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+@Slf4j
 public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTestContainer> {
 
   private static final String DOCKER_TAG = "postgres:11.6";
@@ -55,11 +57,11 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
   public void applyMigrations() {
     String projectPath = System.getProperty("user.dir");
     Path migrationsSqlPath = Paths.get(projectPath, "migrations", "sql");
-    System.out.println("Applying migrations from: " + migrationsSqlPath.toAbsolutePath());
+    log.info("Applying migrations from {}", migrationsSqlPath.toAbsolutePath());
 
     try {
       Files.walk(migrationsSqlPath).filter(path -> !Files.isDirectory(path)).forEach(path -> {
-        System.out.println("Applying: " + path);
+        log.info("Applying migration {}", path);
         try {
           client()
               .query(Files.readString(path))
@@ -67,11 +69,13 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
               .indefinitely();
 
         } catch (IOException ex) {
-          System.out.println("Failed to apply migration: " + ex.toString());
+          log.error("Failed to apply migration {}", migrationsSqlPath, ex);
           throw new RuntimeException(ex);
         }
       });
     } catch (IOException ex) {
+      log.error("Something went wrong while applying migrations from {}",
+          migrationsSqlPath.toAbsolutePath(), ex);
       throw new RuntimeException(ex);
     }
   }
