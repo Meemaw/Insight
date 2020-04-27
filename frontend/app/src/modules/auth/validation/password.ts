@@ -1,5 +1,9 @@
-import * as Yup from 'yup';
+export const PASSWORD_MIN_LENGTH = 8;
 
-export const passwordSchema = Yup.string()
-  .min(8, 'Password should be at least 8 characters long.')
-  .required('Required.');
+export const PASSWORD_VALIDATION = {
+  required: 'Required',
+  minLength: {
+    value: PASSWORD_MIN_LENGTH,
+    message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`,
+  },
+};

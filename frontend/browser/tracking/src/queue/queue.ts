@@ -16,6 +16,10 @@ class EventQueue {
     this.enqueueAt(this._context.now(), kind, args);
   };
 
+  public drainEvents = (): BrowserEvent[] => {
+    return this._rawQueue.splice(0, this._rawQueue.length);
+  };
+
   public events = (): BrowserEvent[] => {
     return this._rawQueue;
   };
@@ -25,7 +29,7 @@ class EventQueue {
     kind: EventType,
     args: BrowserEventArgument[]
   ) => {
-    this._rawQueue.push({ when, kind, args });
+    this._rawQueue.push({ t: when, e: kind, a: args });
   };
 }
 

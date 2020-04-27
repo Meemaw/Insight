@@ -7,6 +7,13 @@ resource "aws_s3_bucket" "static" {
   region = var.region
   acl    = "private"
 
+  cors_rule {
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    allowed_headers = ["*"]
+    max_age_seconds = 3000
+  }
+
 
   tags = {
     environment = var.environment
@@ -26,7 +33,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
   wait_for_deployment = false
-  comment             = "Managed by Terraform"
+  comment             = "${var.bucket_name} (Managed by Terraform)"
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]

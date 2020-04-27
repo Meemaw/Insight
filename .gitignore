@@ -58,3 +58,6 @@ artifacts
 
 # Storybook
 storybook-static
+
+# cli
+cli

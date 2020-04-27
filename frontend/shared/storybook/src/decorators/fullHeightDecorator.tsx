@@ -1,20 +1,22 @@
 import React from 'react';
 import { StoryFn, StoryContext } from '@storybook/addons';
-import { createGlobalStyle } from 'styled-components';
-
-const FullHeightGlobalStyles = createGlobalStyle`
-  html,
-  body,
-  #root {
-    height: 100%;
-    margin: 0px;
-  }
-`;
 
 function fullHeightDecorator<T>(storyFn: StoryFn<T>, context: StoryContext) {
   return (
     <>
-      <FullHeightGlobalStyles />
+      <style
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: `
+            html, body, #root, #root > div:first-child { height: 100%; }
+            .sb-show-main { margin: 0px; }
+            #root > div:first-child {
+              display: flex;
+              flex-direction: column;
+            }
+        `,
+        }}
+      />
       {storyFn(context)}
     </>
   );
