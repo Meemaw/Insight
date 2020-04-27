@@ -26,6 +26,11 @@ jobs:
           arguments: test jacocoTestReport
           build-root-directory: backend
           wrapper-directory: backend
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: artifacts
+          path: backend/**/build/reports/**
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
