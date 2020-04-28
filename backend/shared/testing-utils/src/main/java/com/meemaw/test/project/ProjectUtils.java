@@ -14,17 +14,16 @@ public class ProjectUtils {
     return System.getProperty("user.dir");
   }
 
-  public static File rootFile() {
+  private static File root() {
     return new File(getUserDirectory().split(BACKEND)[0]);
   }
 
-  private static Path backend() {
-    String projectRoot = rootFile().toString();
-    return Paths.get(projectRoot, BACKEND).toAbsolutePath();
+  public static Path backendPath() {
+    return Paths.get(root().toString(), BACKEND).toAbsolutePath();
   }
 
   public static Path getFromBackend(String... args) {
-    return Paths.get(ProjectUtils.backend().toString(), args);
+    return Paths.get(ProjectUtils.backendPath().toString(), args);
   }
 
   public static Path getFromModule(String... args) {

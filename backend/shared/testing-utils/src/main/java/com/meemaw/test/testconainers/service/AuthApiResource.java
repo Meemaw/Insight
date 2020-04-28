@@ -1,7 +1,6 @@
 package com.meemaw.test.testconainers.service;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AuthApiResource implements QuarkusTestResourceLifecycleManager {
@@ -14,11 +13,12 @@ public class AuthApiResource implements QuarkusTestResourceLifecycleManager {
 
   @Override
   public Map<String, String> start() {
-    System.out.println("Starting auth api!");
-    getInstance().withLogConsumer(System.out::println).start();
     getInstance().start();
-    System.out.println("Started auth api!");
-    return new HashMap<>();
+    return Map.of(
+        "service.auth.host",
+        getInstance().getContainerIpAddress(),
+        "service.auth.port",
+        String.valueOf(getInstance().getPort()));
   }
 
   @Override

@@ -48,9 +48,12 @@ public class PostgresSQLTestContainer extends PostgreSQLContainer<PostgresSQLTes
     return PgPool.pool(connectOptions, poolOptions);
   }
 
+  public int getPort() {
+    return getMappedPort(PORT);
+  }
 
   public String getDatasourceURL() {
-    int mappedPort = getMappedPort(PORT);
+    int mappedPort = getPort();
     return String.format("vertx-reactive:postgresql://%s:%d/%s", HOST, mappedPort, DATABASE_NAME);
   }
 
