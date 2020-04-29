@@ -2,6 +2,7 @@ on:
   push:
     paths:
       - '.github/workflows/frontend:browser:tracking.yml'
+      - 'backend/**'
       - 'frontend/browser/tracking/**'
       - 'jest.config.js'
       - 'lerna.json'
@@ -46,13 +47,15 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           xvfb-run --auto-servernum yarn workspace @insight/browser-tracking test --coverage
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: artifacts
+          path: frontend/browser/tracking/artifacts
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: frontend:browser:tracking
-      - name: build
-        run: |
-          yarn workspace @insight/browser-tracking build
       - name: Prepare files for deployment
         run: |
           mv frontend/browser/tracking/dist/insight.js.gz frontend/browser/tracking/dist/insight.js
