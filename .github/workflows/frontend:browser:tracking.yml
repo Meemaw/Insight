@@ -14,6 +14,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
+  ARTIFACTS_PATH: frontend/browser/tracking/artifacts/
 
 jobs:
   build:
@@ -37,6 +38,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libgbm-dev xvfb
+      - name: backend | docker-compose up
+        run: |
+          mkdir -p $ARTIFACTS_PATH
+          docker-compose -f backend/local-test-services/docker-compose.yml up session-api 2>&1 | tee $ARTIFACTS_PATH/docker.log &
       - name: Install dependencies  and run tests
         run: |
           yarn install --frozen-lockfile
