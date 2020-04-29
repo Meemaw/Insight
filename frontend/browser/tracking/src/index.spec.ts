@@ -27,6 +27,7 @@ describe('tracking', () => {
   let server: Server;
 
   beforeAll(() => {
+    jest.setTimeout(30000);
     const pagePath = path.join(process.cwd(), 'templates', 'index.html');
     const pageContents = String(fs.readFileSync(pagePath));
     server = createServer((_req, res) => {
