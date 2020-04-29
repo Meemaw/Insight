@@ -11,7 +11,7 @@ import playwright from 'playwright';
 const SERVE_PORT = 5000;
 const I_ORG = 'test-1';
 const I_HOST = `localhost:${SERVE_PORT}`;
-const beaconServiceBaseURL = 'http://localhost:8081';
+// const beaconServiceBaseURL = 'http://localhost:8081';
 const sessionServiceBaseURL = 'http://localhost:8082';
 
 // TODO: resuse shared types
@@ -87,7 +87,7 @@ describe('tracking script', () => {
       expect(pageRequest.resourceType()).toEqual('fetch');
 
       const {
-        data: { sessionId, uid, pageId },
+        data: { sessionId, uid },
       } = await parsePageResponse(pageResponse);
 
       const { cookie, localStorage } = await page.evaluate(() => {
@@ -108,6 +108,7 @@ describe('tracking script', () => {
 
       await page.click('button[data-testid="first-button"]');
 
+      /*
       const beaconResponse = await page.waitForResponse(
         (resp: playwright.Response) =>
           resp.url() ===
@@ -135,6 +136,8 @@ describe('tracking script', () => {
       expect(beaconRequest.method()).toEqual('POST');
       expect(beaconRequestHeaders['content-type']).toEqual('application/json');
       expect(beaconRequest.resourceType()).toEqual('fetch');
+
+      */
 
       await browser.close();
     });
