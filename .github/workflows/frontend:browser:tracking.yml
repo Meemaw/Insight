@@ -39,10 +39,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install required packages
+      - uses: microsoft/playwright-github-action@v1
+      - name: Install xvfb
         run: |
-          sudo apt-get update
-          sudo apt-get install libgbm-dev xvfb
+          sudo apt-get install xvfb
       - name: Install dependencies  and run tests
         run: |
           yarn install --frozen-lockfile
