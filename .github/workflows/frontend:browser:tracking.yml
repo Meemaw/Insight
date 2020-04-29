@@ -33,10 +33,14 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgbm-dev xvfb
       - name: Install dependencies  and run tests
         run: |
           yarn install --frozen-lockfile
-          yarn workspace @insight/browser-tracking test --coverage
+          xvfb-run --auto-servernum yarn workspace @insight/browser-tracking test --coverage
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
