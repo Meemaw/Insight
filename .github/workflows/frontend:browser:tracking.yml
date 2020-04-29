@@ -23,6 +23,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+      - name: backend | docker-compose up
+        run: |
+          mkdir -p $ARTIFACTS_PATH
+          docker-compose -f backend/local-test-services/docker-compose.yml up session-api 2>&1 | tee $ARTIFACTS_PATH/docker.log &
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
@@ -39,14 +43,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libgbm-dev xvfb
-      - name: backend | docker-compose up
-        run: |
-          mkdir -p $ARTIFACTS_PATH
-          docker-compose -f backend/local-test-services/docker-compose.yml up session-api 2>&1 | tee $ARTIFACTS_PATH/docker.log &
       - name: Install dependencies  and run tests
         run: |
           yarn install --frozen-lockfile
-          node_modules/wait-on/bin/wait-on http-get://localhost:8082/health/ready --timeout 120000
+          node_modules/wait-on/bin/wait-on http-get://localhost:8082/health/ready --timeout 60000
           xvfb-run --auto-servernum yarn workspace @insight/browser-tracking test --coverage --forceExit
       - uses: actions/upload-artifact@v1
         if: failure()
