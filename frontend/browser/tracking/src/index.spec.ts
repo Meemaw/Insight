@@ -57,7 +57,9 @@ describe('tracking script', () => {
     server = createServer((_req, res) => {
       res.write(pageContents);
       res.end();
-    }).listen(SERVE_PORT, () => console.log('Server up'));
+    }).listen(SERVE_PORT, () =>
+      console.log(`Server running on port ${SERVE_PORT}...`)
+    );
   });
 
   afterAll(() => {
@@ -104,15 +106,31 @@ describe('tracking script', () => {
         JSON.stringify({ [storageKey]: encodedIdentity })
       );
 
+      await page.click('button[data-testid="first-button"]');
+
       const beaconResponse = await page.waitForResponse(
         (resp: playwright.Response) =>
           resp.url() ===
-          `${beaconServiceBaseURL}/v1/beacon/beat?OrgID=${I_ORG}&SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}`,
-        { timeout: 30000 }
+          `${beaconServiceBaseURL}/v1/beacon/beat?OrgID=${I_ORG}&SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}`
       );
 
       const beaconRequest = beaconResponse.request();
       const beaconRequestHeaders = responseRequestHeaders(beaconResponse);
+
+      const postData = JSON.parse(beaconRequest.postData() || '') as {
+        e: { t: number; e: number; a: (string | number)[] }[];
+        s: number;
+      };
+
+      // MOUSEMOVE event
+      expect(postData.e.find((e) => e.e === 5)?.a).toEqual([
+        61,
+        60,
+        '<BUTTON',
+        ':data-testid',
+        'first-button',
+      ]);
+      expect(postData.s).toEqual(1);
       expect(beaconResponse.status()).toEqual(204);
       expect(beaconRequest.method()).toEqual('POST');
       expect(beaconRequestHeaders['content-type']).toEqual('application/json');
