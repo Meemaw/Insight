@@ -11,6 +11,8 @@ import playwright from 'playwright';
 const SERVE_PORT = 5000;
 const I_ORG = 'test-1';
 const I_HOST = `localhost:${SERVE_PORT}`;
+const beaconServiceBaseURL = 'http://localhost:8081';
+const sessionServiceBaseURL = 'http://localhost:8082';
 
 // TODO: resuse shared types
 type PageResponse = {
@@ -45,7 +47,7 @@ describe('tracking script', () => {
   let server: Server;
 
   beforeAll(() => {
-    jest.setTimeout(30000);
+    jest.setTimeout(60000);
     const pagePath = path.join(process.cwd(), 'templates', 'index.html');
     const pageContents = String(fs.readFileSync(pagePath));
     server = createServer((_req, res) => {
@@ -66,12 +68,12 @@ describe('tracking script', () => {
 
       await setupPage(page);
 
-      const response = await page.waitForResponse(
+      const pageResponse = await page.waitForResponse(
         async (resp: playwright.Response) => {
           const request = resp.request();
           const headers = request.headers() as Record<string, string>;
           return (
-            resp.url() === 'http://localhost:8082/v1/sessions' &&
+            resp.url() === `${sessionServiceBaseURL}/v1/sessions` &&
             resp.status() === 200 &&
             request.method() === 'POST' &&
             headers['content-type'] === 'application/json' &&
@@ -81,8 +83,8 @@ describe('tracking script', () => {
       );
 
       const {
-        data: { sessionId, uid },
-      } = await parsePageResponse(response);
+        data: { sessionId, uid, pageId },
+      } = await parsePageResponse(pageResponse);
 
       const { cookie, localStorage } = await page.evaluate(() => {
         return {
@@ -99,6 +101,27 @@ describe('tracking script', () => {
       expect(localStorage).toEqual(
         JSON.stringify({ [storageKey]: encodedIdentity })
       );
+
+      const beaconResponse = await page.waitForResponse(
+        async (resp: playwright.Response) => {
+          const request = resp.request();
+          const headers = request.headers() as Record<string, string>;
+
+          console.log(request);
+
+          return (
+            resp.url() ===
+              `${beaconServiceBaseURL}/v1/beacon/beat?OrgID=${I_ORG}&SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}` &&
+            resp.status() === 200 &&
+            request.method() === 'POST' &&
+            headers['content-type'] === 'application/json' &&
+            request.resourceType() === 'fetch'
+          );
+        },
+        { timeout: 30000 }
+      );
+
+      console.log(String(await beaconResponse.body()));
 
       await browser.close();
     });
