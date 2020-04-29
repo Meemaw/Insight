@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable no-underscore-dangle */
 import path from 'path';
 import { createServer, Server } from 'http';
 import fs from 'fs';
 
-import playwright from 'playwright';
+import { chromium, Response, Page } from 'playwright';
 
 const SERVE_PORT = 5000;
 const I_ORG = 'test-1';
@@ -19,15 +17,15 @@ type PageResponse = {
   data: { uid: string; sessionId: string; pageId: string };
 };
 
-const parsePageResponse = (response: playwright.Response) => {
+const parsePageResponse = (response: Response) => {
   return response.body().then<PageResponse>((b) => JSON.parse(String(b)));
 };
 
-const responseRequestHeaders = (response: playwright.Response) => {
+const responseRequestHeaders = (response: Response) => {
   return response.request().headers() as Record<string, string>;
 };
 
-const setupPage = async (page: playwright.Page) => {
+const setupPage = async (page: Page) => {
   await page.goto(`http://${I_HOST}`);
   await page.evaluate(
     ({ orgID, host }) => {
@@ -42,7 +40,7 @@ const setupPage = async (page: playwright.Page) => {
 };
 
 const BROWSERS = [
-  { name: 'chromium', instance: playwright.chromium },
+  { name: 'chromium', instance: chromium },
   // Make it work in CI { name: 'firefox', instance: playwright.firefox },
   // Make it work in CI { name: 'webkit', instance: playwright.webkit },
 ];
@@ -58,6 +56,7 @@ describe('tracking script', () => {
       res.write(pageContents);
       res.end();
     }).listen(SERVE_PORT, () =>
+      // eslint-disable-next-line no-console
       console.log(`Server running on port ${SERVE_PORT}...`)
     );
   });
@@ -75,7 +74,7 @@ describe('tracking script', () => {
       await setupPage(page);
 
       const pageResponse = await page.waitForResponse(
-        (resp: playwright.Response) =>
+        (resp: Response) =>
           resp.url() === `${sessionServiceBaseURL}/v1/sessions`
       );
 
