@@ -23,6 +23,10 @@ const parsePageResponse = (response: playwright.Response) => {
   return response.body().then<PageResponse>((b) => JSON.parse(String(b)));
 };
 
+const responseRequestHeaders = (response: playwright.Response) => {
+  return response.request().headers() as Record<string, string>;
+};
+
 const setupPage = async (page: playwright.Page) => {
   await page.goto(`http://${I_HOST}`);
   await page.evaluate(
@@ -69,18 +73,16 @@ describe('tracking script', () => {
       await setupPage(page);
 
       const pageResponse = await page.waitForResponse(
-        async (resp: playwright.Response) => {
-          const request = resp.request();
-          const headers = request.headers() as Record<string, string>;
-          return (
-            resp.url() === `${sessionServiceBaseURL}/v1/sessions` &&
-            resp.status() === 200 &&
-            request.method() === 'POST' &&
-            headers['content-type'] === 'application/json' &&
-            request.resourceType() === 'fetch'
-          );
-        }
+        (resp: playwright.Response) =>
+          resp.url() === `${sessionServiceBaseURL}/v1/sessions`
       );
+
+      const pageRequest = pageResponse.request();
+      const pageRequestHeaders = responseRequestHeaders(pageResponse);
+      expect(pageResponse.status()).toEqual(200);
+      expect(pageRequest.method()).toEqual('POST');
+      expect(pageRequestHeaders['content-type']).toEqual('application/json');
+      expect(pageRequest.resourceType()).toEqual('fetch');
 
       const {
         data: { sessionId, uid, pageId },
@@ -103,25 +105,18 @@ describe('tracking script', () => {
       );
 
       const beaconResponse = await page.waitForResponse(
-        async (resp: playwright.Response) => {
-          const request = resp.request();
-          const headers = request.headers() as Record<string, string>;
-
-          console.log(request);
-
-          return (
-            resp.url() ===
-              `${beaconServiceBaseURL}/v1/beacon/beat?OrgID=${I_ORG}&SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}` &&
-            resp.status() === 200 &&
-            request.method() === 'POST' &&
-            headers['content-type'] === 'application/json' &&
-            request.resourceType() === 'fetch'
-          );
-        },
+        (resp: playwright.Response) =>
+          resp.url() ===
+          `${beaconServiceBaseURL}/v1/beacon/beat?OrgID=${I_ORG}&SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}`,
         { timeout: 30000 }
       );
 
-      console.log(String(await beaconResponse.body()));
+      const beaconRequest = beaconResponse.request();
+      const beaconRequestHeaders = responseRequestHeaders(beaconResponse);
+      expect(beaconResponse.status()).toEqual(204);
+      expect(beaconRequest.method()).toEqual('POST');
+      expect(beaconRequestHeaders['content-type']).toEqual('application/json');
+      expect(beaconRequest.resourceType()).toEqual('fetch');
 
       await browser.close();
     });
