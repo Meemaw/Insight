@@ -22,7 +22,9 @@
     "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
     "prettier": "prettier -l 'src/**/*'"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@insight/types": "0.0.0-development"
+  },
   "dependencies": {
     "@storybook/addon-actions": "^5.3.18",
     "@storybook/addon-knobs": "^5.3.18",
