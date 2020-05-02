@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 export const setupEnvironment = () => {
   const originalConsoleWarn = console.warn;
 
