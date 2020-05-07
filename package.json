@@ -39,17 +39,17 @@
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.1.0",
     "husky": "^4.2.5",
-    "jest": "^26.0.0",
+    "jest": "^26.0.1",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "lerna": "^3.20.2",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "sinon": "^9.0.2",
     "testcafe": "^1.8.4",
-    "ts-jest": "^25.4.0",
+    "ts-jest": "^25.5.0",
     "tsdx": "^0.13.2",
     "typescript": "^3.8.3",
-    "wait-on": "^4.0.2"
+    "wait-on": "^5.0.0"
   },
   "husky": {
     "hooks": {
