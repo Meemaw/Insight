@@ -20,14 +20,10 @@ public class PostgresExtension implements BeforeAllCallback {
 
   @Override
   public void beforeAll(ExtensionContext context) {
-    System.out.println("beforeAll");
     start(POSTGRES).forEach(System::setProperty);
-    System.out.println(System.getProperties());
-
   }
 
   public static void stop() {
-    System.out.println("STOPPING!");
     POSTGRES.stop();
   }
 
@@ -37,7 +33,6 @@ public class PostgresExtension implements BeforeAllCallback {
 
   public static Map<String, String> start(PostgresTestContainer postgres) {
     if (!POSTGRES.isRunning()) {
-      System.out.println("STARTING");
       postgres.start();
       postgres.applyMigrations();
     }
