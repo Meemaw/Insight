@@ -12,7 +12,6 @@ import com.meemaw.shared.auth.SsoSession;
 import com.meemaw.shared.rest.response.DataResponse;
 import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import com.meemaw.test.testconainers.service.AuthApiTestResource;
-
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
@@ -174,7 +173,6 @@ public class SessionResourceTest {
   }
 
 
-  // TODO: this test requires auth service to be running
   @Test
   public void countPages_shouldThrowError_whenInvalidSessionId() {
     given()
