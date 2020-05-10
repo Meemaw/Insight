@@ -6,7 +6,9 @@
   },
   "java.checkstyle.configuration": "${workspaceFolder}/backend/.checkstyle.xml",
   "java.checkstyle.version": "8.32",
-  "editor.formatOnSave": false,
+  "[java]": {
+    "editor.formatOnSave": false
+  },
   "emeraldwalk.runonsave": {
     "commands": [
       {
