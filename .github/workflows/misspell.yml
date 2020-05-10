@@ -10,3 +10,4 @@ jobs:
       - uses: reviewdog/action-misspell@v1
         with:
           locale: 'US'
+          exclude: yarn.lock
