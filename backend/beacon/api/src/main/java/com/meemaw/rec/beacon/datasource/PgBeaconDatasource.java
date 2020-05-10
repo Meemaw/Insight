@@ -23,7 +23,7 @@ public class PgBeaconDatasource implements BeaconDatasource {
   @Inject
   ObjectMapper objectMapper;
 
-  private static final String INSERT_BEACON_RAW_SQL = "INSERT INTO rec.beacon (timestamp, sequence, events) VALUES($1, $2, $3)";
+  private static final String INSERT_BEACON_RAW_SQL = "INSERT INTO beacon.beacon (timestamp, sequence, events) VALUES($1, $2, $3)";
 
   @Override
   public Uni<Void> store(Beacon beacon) {

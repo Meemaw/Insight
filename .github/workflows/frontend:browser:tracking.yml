@@ -26,8 +26,7 @@ jobs:
       - name: backend | docker-compose up
         run: |
           mkdir -p $ARTIFACTS_PATH
-          docker-compose -f backend/local-test-services/docker-compose.yml up beacon-api session-api 2>&1 | tee $ARTIFACTS_PATH/docker-compose-up.log &
-          docker-compose -f backend/local-test-services/docker-compose.yml logs  --no-color --follow 2>&1 | tee $ARTIFACTS_PATH/docker.log &
+          docker-compose -f backend/local-test-services/docker-compose.yml up beacon-api session-api 2>&1 | tee $ARTIFACTS_PATH/docker.log &
       - uses: actions/setup-node@v1
         with:
           node-version: '13.x'
