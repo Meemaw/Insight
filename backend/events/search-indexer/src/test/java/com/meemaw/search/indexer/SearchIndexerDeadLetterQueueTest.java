@@ -7,6 +7,8 @@ import com.meemaw.events.model.internal.AbstractBrowserEvent;
 import com.meemaw.events.stream.EventsStream;
 import com.meemaw.test.testconainers.kafka.Kafka;
 import java.time.Duration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +19,19 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 @Kafka
 @Slf4j
 public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest {
+
+  private static final List<SearchIndexer> searchIndexers = new LinkedList<>();
+
+  @AfterEach
+  public void cleanup() {
+    searchIndexers.forEach(SearchIndexer::shutdown);
+  }
 
   @Test
   public void shouldWriteToDlqAfterRetryQuotaExceeded() {
@@ -37,7 +47,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
     RestHighLevelClient client =
         new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 10000, "http")));
 
-    spawnIndexer(bootstrapServers(), client);
+    searchIndexers.add(spawnIndexer(bootstrapServers(), client));
 
     // Configure DQL consumer
     KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> deadLetterQueueConsumer =
@@ -46,7 +56,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
     AtomicInteger numConsumedDeadLetterQueueEvents = new AtomicInteger(0);
 
     with()
-        .atMost(10, TimeUnit.SECONDS)
+        .atMost(15, TimeUnit.SECONDS)
         .until(
             () -> {
               ConsumerRecords<String, UserEvent<AbstractBrowserEvent>> records =
@@ -55,5 +65,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
               log.info("Num events in dead letter queue: {}", count);
               return count == numRecords;
             });
+
+    producer.close();
   }
 }

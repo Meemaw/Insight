@@ -43,21 +43,19 @@ public abstract class AbstractSearchIndexerTest {
   protected static final SearchRequest SEARCH_REQUEST =
       new SearchRequest().indices(EventIndex.NAME);
 
-  protected void spawnIndexer(String bootstrapServers, RestHighLevelClient client) {
-    CompletableFuture.runAsync(
-        () -> {
-          SearchIndexer searchIndexer =
-              new SearchIndexer(RETRY_QUEUE, DEAD_LETTER_QUEUE, bootstrapServers, client);
-          searchIndexer.start();
-        });
+  protected SearchIndexer spawnIndexer(String bootstrapServers, RestHighLevelClient client) {
+    SearchIndexer searchIndexer = new SearchIndexer(RETRY_QUEUE, DEAD_LETTER_QUEUE,
+        bootstrapServers, client);
+    CompletableFuture.runAsync(searchIndexer::start);
+    return searchIndexer;
   }
 
-  protected void spawnIndexer(String bootstrapServers, HttpHost... hosts) {
-    spawnIndexer(bootstrapServers, new RestHighLevelClient(RestClient.builder(hosts)));
+  protected SearchIndexer spawnIndexer(String bootstrapServers, HttpHost... hosts) {
+    return spawnIndexer(bootstrapServers, new RestHighLevelClient(RestClient.builder(hosts)));
   }
 
-  protected void spawnIndexer() {
-    spawnIndexer(
+  protected SearchIndexer spawnIndexer() {
+    return spawnIndexer(
         KafkaExtension.getInstance().getBootstrapServers(),
         ElasticsearchExtension.getInstance().getHttpHost());
   }
@@ -89,7 +87,8 @@ public abstract class AbstractSearchIndexerTest {
             Path.of(Objects.requireNonNull(getClass().getClassLoader().getResource(path)).toURI()));
 
     Collection<UserEvent<AbstractBrowserEvent>> batch =
-        JacksonMapper.get().readValue(payload, new TypeReference<>() {});
+        JacksonMapper.get().readValue(payload, new TypeReference<>() {
+        });
 
     return kafkaRecords(batch);
   }

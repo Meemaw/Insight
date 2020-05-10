@@ -37,13 +37,14 @@ public class SearchIndexer {
             new BrowserEventElasticsearchBatchProcessor(client));
   }
 
-  private void shutdown() {
+  public void shutdown() {
+    log.info("Shutting down ...");
     processor.shutdown();
   }
 
   public void start() {
     Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
-    log.info("Starting search indexer");
+    log.info("Starting search indexer ...");
     processor.start();
   }
 

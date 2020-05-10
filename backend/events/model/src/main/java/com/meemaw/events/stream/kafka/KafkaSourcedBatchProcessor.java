@@ -34,6 +34,7 @@ public class KafkaSourcedBatchProcessor<K, V> {
       log.error("Unexpected exception", ex);
     } finally {
       consumer.close();
+      processor.close();
     }
   }
 

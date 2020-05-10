@@ -115,11 +115,13 @@ public abstract class ElasticsearchBatchProcessor<V> implements BatchProcessor<V
 
   @Override
   public void close() {
+    log.info("Closing ...");
     processor.close();
   }
 
   @Override
   public void flush() {
+    log.info("Flushing ...");
     processor.flush();
   }
 }
