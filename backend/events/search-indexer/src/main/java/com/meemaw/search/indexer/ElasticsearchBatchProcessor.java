@@ -79,6 +79,7 @@ public abstract class ElasticsearchBatchProcessor<V> implements BatchProcessor<V
             }
 
             if (failures.size() > 0) {
+              log.info("onFailure.execute count: {}", failures.size(), cause);
               onFailure.execute(failures, cause);
             }
           }
