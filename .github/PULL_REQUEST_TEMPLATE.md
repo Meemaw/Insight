@@ -1,4 +1,4 @@
-**What iss thatt or more typoos**:
+**What**:
 
 <!-- Why are these changes necessary? -->
 
