@@ -1,4 +1,4 @@
-**What**:
+**What iss thatt or more typoos**:
 
 <!-- Why are these changes necessary? -->
 
@@ -8,7 +8,7 @@
 
 **How**:
 
-<!-- Have you done all of these thingss?  -->
+<!-- Have you done all of these things?  -->
 
 **Checklist**:
 
