@@ -51,7 +51,7 @@ public class SessionResourceValidationTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"doctype\":\"may not be null\",\"orgId\":\"may not be null\",\"url\":\"may not be null\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"doctype\":\"may not be null\",\"orgId\":\"Organization ID is required\",\"url\":\"may not be null\"}}}"));
   }
 
   @Test
