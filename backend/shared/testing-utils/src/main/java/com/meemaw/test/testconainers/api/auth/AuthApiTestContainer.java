@@ -1,6 +1,8 @@
 package com.meemaw.test.testconainers.api.auth;
 
 import com.meemaw.test.project.ProjectUtils;
+import com.meemaw.test.testconainers.api.Api;
+import com.meemaw.test.testconainers.pg.PostgresTestExtension;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -18,6 +20,15 @@ public class AuthApiTestContainer extends GenericContainer<AuthApiTestContainer>
     super(dockerImage());
   }
 
+  @Override
+  public void start() {
+    PostgresTestExtension.start();
+    PostgresTestExtension.getInstance().applyMigrations(Api.AUTH.migrations().orElseThrow());
+    withEnv("POSTGRES_HOST", PostgresTestExtension.getInstance().getHost());
+    super.start();
+  }
+
+  /** @return */
   public static AuthApiTestContainer newInstance() {
     return new AuthApiTestContainer()
         .withExposedPorts(PORT)
@@ -27,7 +38,7 @@ public class AuthApiTestContainer extends GenericContainer<AuthApiTestContainer>
 
   // TODO: use testcontainers for this
   private static String dockerImage() {
-    Path dockerfile = ProjectUtils.getFromBackend("auth", "api", "docker", "Dockerfile.jvm");
+    Path dockerfile = Api.AUTH.dockerfile();
     Path context = ProjectUtils.backendPath();
     String imageName = "auth-api-test";
 
