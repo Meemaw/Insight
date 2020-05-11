@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo $1                           # Unquoted variables
+find . -name *.ogg                # Unquoted find/grep patterns
+
 echo "Instaling minikube ..."
 brew install minikube
 
