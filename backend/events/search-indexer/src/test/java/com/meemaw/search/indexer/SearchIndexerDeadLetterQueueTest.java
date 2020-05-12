@@ -4,9 +4,8 @@ import static org.awaitility.Awaitility.with;
 
 import com.meemaw.events.model.external.UserEvent;
 import com.meemaw.events.model.internal.AbstractBrowserEvent;
+import com.meemaw.test.testconainers.kafka.Kafka;
 import java.time.Duration;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +19,9 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+@Kafka
 @Slf4j
 public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest {
-
-  private static final List<SearchIndexer> searchIndexers = new LinkedList<>();
 
   @AfterEach
   public void cleanup() {
@@ -44,7 +42,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
     RestHighLevelClient client =
         new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 10000, "http")));
 
-    searchIndexers.add(spawnIndexer(client));
+    spawnIndexer(client);
 
     // Configure DQL consumer
     KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> deadLetterQueueConsumer =
@@ -64,5 +62,6 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
             });
 
     producer.close();
+    deadLetterQueueConsumer.close();
   }
 }
