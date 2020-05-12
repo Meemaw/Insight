@@ -6,7 +6,7 @@ import com.meemaw.events.model.external.serialization.UserEventSerializer;
 import com.meemaw.events.model.internal.AbstractBrowserEvent;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.elasticsearch.ElasticsearchTestExtension;
-import com.meemaw.test.testconainers.kafka.KafkaTestExtension;
+import com.meemaw.test.testconainers.kafka.KafkaTestContainer;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -36,6 +36,13 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 @Slf4j
 public abstract class AbstractSearchIndexerTest {
 
+  static final KafkaTestContainer KAFKA;
+
+  static {
+    KAFKA = KafkaTestContainer.newInstance();
+    KAFKA.start();
+  }
+
   protected static final String SOURCE_TOPIC_NAME = "test-events";
   protected static final String RETRY_TOPIC_NAME = "test-events-0";
   protected static final String DEAD_LETTER_TOPIC_NAME = "test-events-dql";
@@ -43,29 +50,29 @@ public abstract class AbstractSearchIndexerTest {
   protected static final SearchRequest SEARCH_REQUEST =
       new SearchRequest().indices(EventIndex.NAME);
 
-  protected SearchIndexer spawnIndexer(String bootstrapServers, RestHighLevelClient client) {
+  protected SearchIndexer spawnIndexer(RestHighLevelClient client) {
     SearchIndexer searchIndexer =
         new SearchIndexer(
-            SOURCE_TOPIC_NAME, RETRY_TOPIC_NAME, DEAD_LETTER_TOPIC_NAME, bootstrapServers, client);
+            SOURCE_TOPIC_NAME,
+            RETRY_TOPIC_NAME,
+            DEAD_LETTER_TOPIC_NAME,
+            KAFKA.getBootstrapServers(),
+            client);
     CompletableFuture.runAsync(searchIndexer::start);
     return searchIndexer;
   }
 
-  protected SearchIndexer spawnIndexer(String bootstrapServers, HttpHost... hosts) {
-    return spawnIndexer(bootstrapServers, new RestHighLevelClient(RestClient.builder(hosts)));
+  protected SearchIndexer spawnIndexer(HttpHost... hosts) {
+    return spawnIndexer(new RestHighLevelClient(RestClient.builder(hosts)));
   }
 
   protected SearchIndexer spawnIndexer() {
-    return spawnIndexer(
-        KafkaTestExtension.getInstance().getBootstrapServers(),
-        ElasticsearchTestExtension.getInstance().getHttpHost());
+    return spawnIndexer(ElasticsearchTestExtension.getInstance().getHttpHost());
   }
 
   protected KafkaProducer<String, UserEvent<AbstractBrowserEvent>> configureProducer() {
     Properties props = new Properties();
-    props.put(
-        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-        KafkaTestExtension.getInstance().getBootstrapServers());
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, UserEventSerializer.class.getName());
     return new KafkaProducer<>(props);
@@ -91,10 +98,6 @@ public abstract class AbstractSearchIndexerTest {
         JacksonMapper.get().readValue(payload, new TypeReference<>() {});
 
     return kafkaRecords(batch);
-  }
-
-  protected String bootstrapServers() {
-    return KafkaTestExtension.getInstance().getBootstrapServers();
   }
 
   protected CreateIndexResponse createIndex(RestHighLevelClient client) throws IOException {
@@ -145,7 +148,7 @@ public abstract class AbstractSearchIndexerTest {
   }
 
   private KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> eventsConsumer(String topicName) {
-    Properties properties = SearchIndexer.consumerProperties(bootstrapServers());
+    Properties properties = SearchIndexer.consumerProperties(KAFKA.getBootstrapServers());
     KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> consumer =
         new KafkaConsumer<>(properties);
     consumer.subscribe(Collections.singletonList(topicName));

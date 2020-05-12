@@ -8,7 +8,6 @@ import com.meemaw.events.model.external.UserEvent;
 import com.meemaw.events.model.internal.AbstractBrowserEvent;
 import com.meemaw.test.testconainers.elasticsearch.Elasticsearch;
 import com.meemaw.test.testconainers.elasticsearch.ElasticsearchTestExtension;
-import com.meemaw.test.testconainers.kafka.Kafka;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Duration;
@@ -31,7 +30,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 @Elasticsearch
-@Kafka
 @Slf4j
 public class SearchIndexerConnectionRecoverTest extends AbstractSearchIndexerTest {
 
@@ -54,7 +52,7 @@ public class SearchIndexerConnectionRecoverTest extends AbstractSearchIndexerTes
 
     writeSmallBatch(producer);
 
-    searchIndexers.add(spawnIndexer(bootstrapServers(), client));
+    searchIndexers.add(spawnIndexer(client));
 
     await()
         .atMost(30, TimeUnit.SECONDS)

@@ -46,7 +46,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
     RestHighLevelClient client =
         new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 10000, "http")));
 
-    searchIndexers.add(spawnIndexer(bootstrapServers(), client));
+    searchIndexers.add(spawnIndexer(client));
 
     // Configure DQL consumer
     KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> deadLetterQueueConsumer =
