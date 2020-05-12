@@ -3,6 +3,7 @@ package com.meemaw.rec.resource.v1.beacon;
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
+import com.meemaw.auth.organization.model.Organization;
 import com.meemaw.rec.beacon.resource.v1.BeaconResource;
 import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import io.quarkus.test.common.QuarkusTestResource;

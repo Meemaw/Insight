@@ -3,8 +3,10 @@ plugins {
 }
 
 dependencies {
-    compileOnly project(":shared:rest-api")
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-resteasy'
+    implementation 'org.apache.commons:commons-text:1.8'
 
-    testImplementation project(":shared:rest-api")
     testImplementation project(":shared:testing-utils")
 }
