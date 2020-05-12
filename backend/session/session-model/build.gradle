@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation project(':auth:auth-model')
     compileOnly project(':shared:rest-api')
 
     testImplementation project(':shared:rest-api')
