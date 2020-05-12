@@ -36,6 +36,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 @Slf4j
 public abstract class AbstractSearchIndexerTest {
 
+  // TODO: try to share the @Kafka instance
   static final KafkaTestContainer KAFKA;
 
   static {

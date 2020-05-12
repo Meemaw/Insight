@@ -4,7 +4,6 @@ import static org.awaitility.Awaitility.with;
 
 import com.meemaw.events.model.external.UserEvent;
 import com.meemaw.events.model.internal.AbstractBrowserEvent;
-import com.meemaw.test.testconainers.kafka.Kafka;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +20,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-@Kafka
 @Slf4j
 public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest {
 
