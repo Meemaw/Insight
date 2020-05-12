@@ -57,7 +57,7 @@ public class SearchIndexerConnectionRecoverTest extends AbstractSearchIndexerTes
     searchIndexers.add(spawnIndexer(bootstrapServers(), client));
 
     await()
-        .atMost(60, TimeUnit.SECONDS)
+        .atMost(30, TimeUnit.SECONDS)
         .until(
             () -> {
               ConsumerRecords<String, UserEvent<AbstractBrowserEvent>> records =
@@ -82,7 +82,7 @@ public class SearchIndexerConnectionRecoverTest extends AbstractSearchIndexerTes
         0, client.search(SEARCH_REQUEST, RequestOptions.DEFAULT).getHits().getTotalHits().value);
 
     with()
-        .atMost(15, TimeUnit.SECONDS)
+        .atMost(30, TimeUnit.SECONDS)
         .until(
             () -> {
               SearchResponse response = client.search(SEARCH_REQUEST, RequestOptions.DEFAULT);

@@ -55,7 +55,7 @@ public class SearchIndexerBatchingTest extends AbstractSearchIndexerTest {
 
     // should index records that were created earlier
     await()
-        .atMost(15, TimeUnit.SECONDS)
+        .atMost(30, TimeUnit.SECONDS)
         .until(
             () -> {
               SearchResponse response = client.search(SEARCH_REQUEST, RequestOptions.DEFAULT);
@@ -88,7 +88,7 @@ public class SearchIndexerBatchingTest extends AbstractSearchIndexerTest {
 
     // should index live events only once
     with()
-        .atMost(15, TimeUnit.SECONDS)
+        .atMost(30, TimeUnit.SECONDS)
         .until(
             () -> {
               SearchResponse response = client.search(SEARCH_REQUEST, RequestOptions.DEFAULT);

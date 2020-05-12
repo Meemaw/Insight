@@ -56,7 +56,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
     AtomicInteger numConsumedDeadLetterQueueEvents = new AtomicInteger(0);
 
     with()
-        .atMost(15, TimeUnit.SECONDS)
+        .atMost(30, TimeUnit.SECONDS)
         .until(
             () -> {
               ConsumerRecords<String, UserEvent<AbstractBrowserEvent>> records =
