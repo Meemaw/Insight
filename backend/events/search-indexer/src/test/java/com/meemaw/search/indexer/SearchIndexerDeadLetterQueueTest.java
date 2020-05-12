@@ -4,7 +4,6 @@ import static org.awaitility.Awaitility.with;
 
 import com.meemaw.events.model.external.UserEvent;
 import com.meemaw.events.model.internal.AbstractBrowserEvent;
-import com.meemaw.events.stream.EventsStream;
 import com.meemaw.test.testconainers.kafka.Kafka;
 import java.time.Duration;
 import java.util.LinkedList;
@@ -40,7 +39,7 @@ public class SearchIndexerDeadLetterQueueTest extends AbstractSearchIndexerTest 
 
     int numRecords = 5;
     for (int i = 0; i < numRecords; i++) {
-      producer.send(new ProducerRecord<>(EventsStream.ALL, null));
+      producer.send(new ProducerRecord<>(SOURCE_TOPIC_NAME, null));
     }
 
     // Configure ElasticSearch: doesn't really matter as we wont send to ElasticSearch

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.meemaw.events.model.external.UserEvent;
 import com.meemaw.events.model.external.serialization.UserEventSerializer;
 import com.meemaw.events.model.internal.AbstractBrowserEvent;
-import com.meemaw.events.stream.EventsStream;
 import com.meemaw.test.rest.mappers.JacksonMapper;
 import com.meemaw.test.testconainers.elasticsearch.ElasticsearchTestExtension;
 import com.meemaw.test.testconainers.kafka.KafkaTestExtension;
@@ -37,15 +36,17 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 @Slf4j
 public abstract class AbstractSearchIndexerTest {
 
-  protected static final String RETRY_QUEUE = "retry-queue-0";
-  protected static final String DEAD_LETTER_QUEUE = "dead-letter-queue";
+  protected static final String SOURCE_TOPIC_NAME = "test-events";
+  protected static final String RETRY_TOPIC_NAME = "test-events-0";
+  protected static final String DEAD_LETTER_TOPIC_NAME = "test-events-dql";
 
   protected static final SearchRequest SEARCH_REQUEST =
       new SearchRequest().indices(EventIndex.NAME);
 
   protected SearchIndexer spawnIndexer(String bootstrapServers, RestHighLevelClient client) {
     SearchIndexer searchIndexer =
-        new SearchIndexer(RETRY_QUEUE, DEAD_LETTER_QUEUE, bootstrapServers, client);
+        new SearchIndexer(
+            SOURCE_TOPIC_NAME, RETRY_TOPIC_NAME, DEAD_LETTER_TOPIC_NAME, bootstrapServers, client);
     CompletableFuture.runAsync(searchIndexer::start);
     return searchIndexer;
   }
@@ -76,7 +77,7 @@ public abstract class AbstractSearchIndexerTest {
         .map(
             event ->
                 new ProducerRecord<String, UserEvent<AbstractBrowserEvent>>(
-                    EventsStream.ALL, event))
+                    SOURCE_TOPIC_NAME, event))
         .collect(Collectors.toList());
   }
 
@@ -152,10 +153,10 @@ public abstract class AbstractSearchIndexerTest {
   }
 
   protected KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> retryQueueConsumer() {
-    return eventsConsumer(RETRY_QUEUE);
+    return eventsConsumer(RETRY_TOPIC_NAME);
   }
 
   protected KafkaConsumer<String, UserEvent<AbstractBrowserEvent>> deadLetterQueueConsumer() {
-    return eventsConsumer(DEAD_LETTER_QUEUE);
+    return eventsConsumer(DEAD_LETTER_TOPIC_NAME);
   }
 }
