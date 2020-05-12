@@ -1,0 +1,10 @@
+plugins {
+    id 'io.quarkus'
+}
+
+dependencies {
+    compileOnly project(":shared:rest-api")
+
+    testImplementation project(":shared:rest-api")
+    testImplementation project(":shared:testing-utils")
+}

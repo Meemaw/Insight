@@ -3,7 +3,6 @@ package com.meemaw.session.resource.v1;
 import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
-import com.meemaw.shared.auth.SsoSession;
 import io.quarkus.test.junit.QuarkusTest;
 import java.util.UUID;
 import javax.ws.rs.core.MediaType;
