@@ -7,7 +7,7 @@ RUN gradle auth:auth-api:quarkusBuild --uber-jar
 
 FROM adoptopenjdk:14-jre-hotspot
 
-COPY --from=build /backend/auth/api/build/api-1.0-runner.jar /usr/app/service-runner.jar
+COPY --from=build /backend/auth/auth-api/build/auth-api-1.0-runner.jar /usr/app/service-runner.jar
 
 WORKDIR /usr/app/
 
