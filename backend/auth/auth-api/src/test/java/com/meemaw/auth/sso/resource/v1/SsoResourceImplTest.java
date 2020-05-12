@@ -11,8 +11,9 @@ import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.auth.user.model.UserDTO;
 import com.meemaw.shared.rest.response.DataResponse;
-import com.meemaw.test.testconainers.pg.Postgres;
+import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import io.quarkus.mailer.MockMailbox;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.Cookie;
 import io.restassured.response.Response;
@@ -22,7 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Postgres
+@QuarkusTestResource(PostgresTestResource.class)
 @QuarkusTest
 @Tag("integration")
 public class SsoResourceImplTest {

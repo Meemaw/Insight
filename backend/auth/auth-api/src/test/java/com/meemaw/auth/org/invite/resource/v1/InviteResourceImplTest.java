@@ -13,9 +13,10 @@ import com.meemaw.auth.org.invite.model.dto.InviteSendDTO;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
 import com.meemaw.auth.user.model.UserRole;
-import com.meemaw.test.testconainers.pg.Postgres;
+import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Postgres
+@QuarkusTestResource(PostgresTestResource.class)
 @QuarkusTest
 @Tag("integration")
 public class InviteResourceImplTest {

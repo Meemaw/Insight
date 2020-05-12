@@ -12,9 +12,10 @@ import com.meemaw.auth.password.resource.v1.PasswordResourceImplTest;
 import com.meemaw.auth.signup.model.dto.SignupRequestCompleteDTO;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResourceImplTest;
-import com.meemaw.test.testconainers.pg.Postgres;
+import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Postgres
+@QuarkusTestResource(PostgresTestResource.class)
 @QuarkusTest
 @Tag("integration")
 public class SignupResourceImplTest {

@@ -11,9 +11,10 @@ import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResource;
-import com.meemaw.test.testconainers.pg.Postgres;
+import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
 import java.util.List;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Postgres
+@QuarkusTestResource(PostgresTestResource.class)
 @QuarkusTest
 @Tag("integration")
 public class PasswordResourceImplTest {
