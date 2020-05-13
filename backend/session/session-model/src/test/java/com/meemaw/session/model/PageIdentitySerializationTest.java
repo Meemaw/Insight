@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class PageIdentitySerializationTest {
 
   @Test
-  public void userDtoSerializationTest() throws JsonProcessingException {
+  public void pageIdentitySerializationTest() throws JsonProcessingException {
     String payload =
         "{\"uid\":\"9babcb5a-2249-4f50-93ee-8634118e684e\",\"sessionId\":\"a895a4f4-aaab-43f1-b617-b7f050c9e054\",\"pageId\":\"842d1623-d6a6-4d49-a16b-98df700467f9\"}";
     PageIdentity deserialized = JacksonMapper.get().readValue(payload, PageIdentity.class);
