@@ -52,6 +52,7 @@ public class BeaconService {
               if (throwable.getCause() instanceof WebApplicationException) {
                 return ((WebApplicationException) (throwable.getCause())).getResponse();
               }
+              log.error("Unexpected exception", throwable);
               throw Boom.serverError().message(throwable.getMessage()).exception();
             })
         .thenApply(
@@ -81,6 +82,8 @@ public class BeaconService {
     MDC.put("uid", uid.toString());
     MDC.put("pageID", pageID.toString());
     MDC.put("sessionID", sessionID.toString());
+    MDC.put("beacon.sequence", String.valueOf(beacon.getSequence()));
+    MDC.put("beacon.timestamp", String.valueOf(beacon.getTimestamp()));
 
     Function<AbstractBrowserEvent, UserEvent<?>> identify =
         (event) ->
@@ -100,6 +103,7 @@ public class BeaconService {
                 throw Boom.badRequest().message("Unlinked beacon").exception();
               }
 
+              log.info("Sending {} beacon events", beacon.getEvents().size());
               List<AbstractBrowserEvent> events = beacon.getEvents();
               List<Uni<Void>> operations =
                   new LinkedList<>() {
