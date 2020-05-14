@@ -1,0 +1,16 @@
+plugins {
+    id 'io.quarkus'
+}
+
+dependencies {
+    implementation 'io.quarkus:quarkus-undertow-websockets'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-reactive-pg-client'
+    implementation 'io.quarkus:quarkus-rest-client'
+    implementation project(":events:model")
+    implementation project(':auth:auth-sidecar')
+    implementation project(':session:session-model')
+    implementation project(':session:session-api-contracts')
+
+    testImplementation project(':shared:testing-utils')
+}

@@ -1,0 +1,11 @@
+plugins {
+    id 'io.quarkus'
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation project(":auth:auth-model")
+
+    testImplementation project(":shared:testing-utils")
+}

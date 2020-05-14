@@ -21,7 +21,12 @@ subprojects {
     }
 
     compileJava {
+        options.encoding = 'UTF-8'
         options.compilerArgs << '-parameters'
+    }
+
+    compileTestJava {
+        options.encoding = 'UTF-8'
     }
 
     apply plugin: 'java'
@@ -38,5 +43,7 @@ subprojects {
 
     test {
         finalizedBy(tasks.jacocoTestReport)
+        systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+        testLogging.showStandardStreams = true
     }
 }

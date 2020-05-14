@@ -6,11 +6,17 @@ import fs from 'fs';
 
 import { CreatePageResponse } from '@insight/types';
 import { chromium, Response, Page } from 'playwright';
+import type { InsightWindow } from 'types';
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface Window extends InsightWindow {}
+}
 
 const SERVE_PORT = 5000;
 const I_ORG = 'test-1';
 const I_HOST = `localhost:${SERVE_PORT}`;
-// const beaconServiceBaseURL = 'http://localhost:8081';
+const beaconServiceBaseURL = 'http://localhost:8081';
 const sessionServiceBaseURL = 'http://localhost:8082';
 
 const parsePageResponse = (response: Response) => {
@@ -82,7 +88,7 @@ describe('tracking script', () => {
       expect(pageRequest.resourceType()).toEqual('fetch');
 
       const {
-        data: { sessionId, uid },
+        data: { sessionId, uid, pageId },
       } = await parsePageResponse(pageResponse);
 
       const { cookie, localStorage } = await page.evaluate(() => {
@@ -103,9 +109,8 @@ describe('tracking script', () => {
 
       await page.click('button[data-testid="first-button"]');
 
-      /*
       const beaconResponse = await page.waitForResponse(
-        (resp: playwright.Response) =>
+        (resp: Response) =>
           resp.url() ===
           `${beaconServiceBaseURL}/v1/beacon/beat?OrgID=${I_ORG}&SessionID=${sessionId}&UserID=${uid}&PageID=${pageId}`
       );
@@ -131,8 +136,6 @@ describe('tracking script', () => {
       expect(beaconRequest.method()).toEqual('POST');
       expect(beaconRequestHeaders['content-type']).toEqual('application/json');
       expect(beaconRequest.resourceType()).toEqual('fetch');
-
-      */
 
       await browser.close();
     });
