@@ -36,7 +36,9 @@ describe('<SignUpForm />', () => {
     await findByText('Invalid email address');
     await findByText('Password must be at least 8 characters long');
 
+    userEvent.clear(emailInput);
     userEvent.type(emailInput, 'user@example.com');
+    userEvent.clear(passwordInput);
     userEvent.type(passwordInput, 'veryHardPassword');
 
     userEvent.click(submitButton);
