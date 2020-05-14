@@ -119,7 +119,7 @@ public class BeaconService {
 
               return Uni.combine()
                   .all()
-                  .unis(operations.collect(Collectors.toCollection()))
+                  .unis(operations.collect(Collectors.toList()))
                   .combinedWith(nothing -> null);
             });
   }
