@@ -3,7 +3,7 @@ package com.meemas.shared;
 import lombok.Data;
 
 @Data
-class Pair<K, V> {
+public class Pair<K, V> {
 
   private final K element0;
   private final V element1;

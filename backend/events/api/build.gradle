@@ -7,6 +7,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-reactive-pg-client'
+    implementation "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
+    implementation "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}"
     implementation project(":events:model")
     implementation project(':auth:auth-sidecar')
 

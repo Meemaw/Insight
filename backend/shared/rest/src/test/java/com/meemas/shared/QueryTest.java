@@ -38,7 +38,7 @@ public class QueryTest {
   @Test
   public void testParse() throws UnsupportedEncodingException, MalformedURLException {
     String input = "http://www.abc.com?field1=lte:123&sort_by=+field2,-age&field2=gte:matej";
-    Map<String, List<String>> params = splitQuery(new URL(input));
+    Map<String, List<String>> params = Parser.splitQuery(new URL(input));
     Query res = Parser.buildFromParams(params);
 
     Expression[] ex = { new TermExpression("field1", TermOperation.LTE, "123"),
@@ -48,20 +48,5 @@ public class QueryTest {
         new Sort(Arrays.asList(orders)));
 
     assertEquals(expected, res);
-  }
-
-  public static Map<String, List<String>> splitQuery(URL url) throws UnsupportedEncodingException {
-    final Map<String, List<String>> query_pairs = new LinkedHashMap<String, List<String>>();
-    final String[] pairs = url.getQuery().split("&");
-    for (String pair : pairs) {
-      final int idx = pair.indexOf("=");
-      final String key = idx > 0 ? pair.substring(0, idx) : pair;
-      if (!query_pairs.containsKey(key)) {
-        query_pairs.put(key, new LinkedList<String>());
-      }
-      final String value = idx > 0 && pair.length() > idx + 1 ? pair.substring(idx + 1) : null;
-      query_pairs.get(key).add(value);
-    }
-    return query_pairs;
   }
 }
