@@ -17,7 +17,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "test": "jest --env=jest-environment-jsdom-sixteen",
+    "test": "jest",
     "test:e2e": "testcafe chrome e2e/specs",
     "lint": "concurrently \"npm run prettier\" \"npm run eslint\"",
     "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
@@ -31,7 +31,7 @@
     "prebuild": "yarn workspace @insight/types build && yarn workspace @insight/storybook build"
   },
   "dependencies": {
-    "baseui": "^9.75.0",
+    "baseui": "^9.77.0",
     "formik": "^2.1.4",
     "ky": "^0.19.1",
     "ky-universal": "^0.6.0",
