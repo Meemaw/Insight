@@ -8,7 +8,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   displayName: pack.name,
   name: pack.name,
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom-sixteen',
   globals: {
     'ts-jest': {
       tsConfig: 'tsconfig.jest.json',
