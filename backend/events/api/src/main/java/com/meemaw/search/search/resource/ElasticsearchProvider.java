@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ElasticsearchProvider {
 
-  private static RestHighLevelClient esInstance;
+  protected static RestHighLevelClient esInstance;
 
   public RestHighLevelClient getInstance() {
     if (esInstance == null) {

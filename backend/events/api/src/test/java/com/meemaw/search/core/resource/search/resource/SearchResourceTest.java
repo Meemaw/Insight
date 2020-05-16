@@ -21,16 +21,15 @@ import static com.meemaw.test.matchers.SameJSON.sameJson;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-@Tag("integration")
 @Elasticsearch
 public class SearchResourceTest {
-    // How to override this provider in tests with the testcontainers one?
     @Inject ElasticsearchProvider es;
 
     @BeforeEach
     public void setup() throws IOException {
         RestHighLevelClient client = es.getInstance();
-        client.indices().delete(new DeleteIndexRequest("events"), RequestOptions.DEFAULT);
+        //client.indices().delete(new DeleteIndexRequest("events"), RequestOptions.DEFAULT);
+        // Why is start needed here?
         client.index(new IndexRequest("events").source("name", "abc"), RequestOptions.DEFAULT);
     }
 
