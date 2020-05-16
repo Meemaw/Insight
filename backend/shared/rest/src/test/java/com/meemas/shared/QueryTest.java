@@ -20,8 +20,11 @@ public class QueryTest {
     String input = "+field1,-age,name";
     Sort s = new Sort(Parser.parseSorts(input));
 
-    Pair[] arr = { new Pair(SortDirection.ASC, "field1"), new Pair(SortDirection.DESC, "age"),
-        new Pair(SortDirection.ASC, "name") };
+    Pair[] arr = {
+      new Pair("field1", SortDirection.ASC),
+      new Pair("age", SortDirection.DESC),
+      new Pair("name", SortDirection.ASC)
+    };
     Sort expected = new Sort(Arrays.asList(arr));
     assertEquals(s, expected);
   }
@@ -43,7 +46,7 @@ public class QueryTest {
 
     Expression[] ex = { new TermExpression("field1", TermOperation.LTE, "123"),
         new TermExpression("field2", TermOperation.GTE, "matej") };
-    Pair[] orders = { new Pair(SortDirection.ASC, "field2"), new Pair(SortDirection.DESC, "age") };
+    Pair[] orders = { new Pair("field2", SortDirection.ASC), new Pair("age", SortDirection.DESC) };
     Query expected = new Query(new BooleanExpression(BooleanOp.AND, Arrays.asList(ex)),
         new Sort(Arrays.asList(orders)));
 

@@ -4,6 +4,7 @@ import com.meemaw.search.events.resource.Event;
 import com.meemaw.search.search.resource.ElasticsearchProvider;
 import com.meemaw.test.testconainers.elasticsearch.Elasticsearch;
 import io.quarkus.test.junit.QuarkusTest;
+import org.eclipse.microprofile.context.ThreadContext;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
