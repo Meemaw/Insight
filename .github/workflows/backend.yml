@@ -27,14 +27,15 @@ jobs:
         run: |
           mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
           echo ::add-path::$HOME/bin
-      - name: Run reviewdog
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge reports
         run: |
           head -n 2 backend/auth/auth-api/build/reports/checkstyle/main.xml > report.xml
           for file in backend/**/build/reports/checkstyle/main.xml;do;cat $file | tail -n +3 | sed '$ d' >> report.xml;done
           tail -n 1 backend/auth/auth-api/build/reports/checkstyle/main.xml >> report.xml
-          cat report.xml
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           cat report.xml | reviewdog -f=checkstyle -reporter=github-pr-check
 
   test:
