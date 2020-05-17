@@ -3,6 +3,7 @@ plugins {
     id 'jacoco'
     id 'io.freefair.lombok'
     id 'checkstyle'
+    id 'pmd'
 }
 
 allprojects {
@@ -20,6 +21,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'io.freefair.lombok'
     apply plugin: "checkstyle"
+    apply plugin: 'pmd'
 
     java {
         sourceCompatibility = JavaVersion.VERSION_14
@@ -59,6 +61,12 @@ subprojects {
         configProperties = [
                 'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
         ]
+    }
+
+    pmd {
+        consoleOutput = true
+        toolVersion = "6.23.0"
+        ruleSets = ["category/java/bestpractices.xml", "category/java/performance.xml"]
     }
 }
 
