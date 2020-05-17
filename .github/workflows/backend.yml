@@ -29,6 +29,8 @@ jobs:
           head -n 2 backend/auth/auth-api/build/reports/checkstyle/main.xml > report.xml
           zsh -c "for file in backend/**/build/reports/checkstyle/main.xml;do;echo $file;done"
           tail -n 1 backend/auth/auth-api/build/reports/checkstyle/main.xml >> report.xml
+      - run: zsh -c "cat backend/**/build/reports/checkstyle/main.xml"
+      - run: zsh -c "for file in backend/**/build/reports/checkstyle/main.xml;do;echo $file;done"
       - name: Setup reviewdog
         run: |
           mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
