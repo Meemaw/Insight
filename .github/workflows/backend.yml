@@ -25,7 +25,7 @@ jobs:
           wrapper-directory: backend
       - name: Setup reviewdog
         run: |
-          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s
+          mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
           echo ::add-path::$HOME/bin
           shopt -s globstar
       - name: Run reviewdog
