@@ -45,12 +45,12 @@ public class InviteResourceImplTest {
 
   @Inject ObjectMapper objectMapper;
 
+  private static String sessionId;
+
   @BeforeEach
   void init() {
     mailbox.clear();
   }
-
-  private static String sessionId;
 
   public String getSessionId() {
     if (sessionId == null) {

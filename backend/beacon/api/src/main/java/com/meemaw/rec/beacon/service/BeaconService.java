@@ -36,12 +36,12 @@ public class BeaconService {
 
   @Inject
   @Channel(EventsStream.ALL)
-  @OnOverflow(value = Strategy.UNBOUNDED_BUFFER)
+  @OnOverflow(Strategy.UNBOUNDED_BUFFER)
   Emitter<UserEvent<?>> eventsEmitter;
 
   @Inject
   @Channel(EventsStream.UNLOAD)
-  @OnOverflow(value = Strategy.UNBOUNDED_BUFFER)
+  @OnOverflow(Strategy.UNBOUNDED_BUFFER)
   Emitter<UserEvent<?>> unloadEventsEmitter;
 
   private CompletionStage<Boolean> pageExists(UUID sessionID, UUID pageID, String orgID) {

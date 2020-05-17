@@ -66,7 +66,8 @@ subprojects {
     pmd {
         consoleOutput = true
         toolVersion = "6.23.0"
-        ruleSets = ["category/java/bestpractices.xml", "category/java/performance.xml"]
+        ruleSets = []
+        ruleSetFiles = rootProject.files("config/pmd/ruleset.xml")
     }
 }
 

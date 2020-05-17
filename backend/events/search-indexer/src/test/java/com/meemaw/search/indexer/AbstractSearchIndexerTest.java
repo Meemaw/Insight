@@ -36,7 +36,7 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 
 @Slf4j
-public abstract class AbstractSearchIndexerTest {
+public class AbstractSearchIndexerTest {
 
   protected final List<SearchIndexer> searchIndexers = new LinkedList<>();
 

@@ -134,8 +134,8 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
    * Validation of ID token;
    * https://developers.google.com/identity/sign-in/web/backend-auth#calling-the-tokeninfo-endpoint
    *
-   * @param token
-   * @return
+   * @param token from google response
+   * @return google user info
    */
   private CompletionStage<GoogleUserInfoResponse> userInfo(GoogleTokenResponse token) {
     return webClient
@@ -162,7 +162,7 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
       return objectMapper.readValue(jsonPayload, clazz);
     } catch (JsonProcessingException ex) {
       log.error("Failed to parse google access token claims", ex);
-      throw Boom.serverError().message(ex.getMessage()).exception();
+      throw Boom.serverError().message(ex.getMessage()).exception(ex);
     }
   }
 }
