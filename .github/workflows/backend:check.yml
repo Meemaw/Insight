@@ -21,24 +21,14 @@ jobs:
           java-version: 14
       - uses: eskatos/gradle-command-action@v1
         with:
-          arguments: pmdMain pmdTest --parallel
+          arguments: pmdMain pmdTest --parallel --continue
           build-root-directory: backend
           wrapper-directory: backend
-      - name: Merge reports
-        run: |
-          sudo apt-get install zsh
-          head -n 5 backend/auth/auth-api/build/reports/pmd/main.xml > report.xml
-          zsh -c 'for file in backend/**/build/reports/pmd/main.xml;do;cat "$file" | tail -n +3 | sed "$ d" >> report.xml;done'
-          tail -n 1 backend/auth/auth-api/build/reports/pmd/main.xml >> report.xml
-      - name: Setup reviewdog
-        run: |
-          mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
-          echo ::add-path::$HOME/bin
-      - name: Run reviewdog
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cat report.xml | reviewdog -f=checkstyle -reporter=github-pr-check
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-reports
+          path: backend/**/build/reports/pmd/**
 
   checkstyle:
     runs-on: ubuntu-latest

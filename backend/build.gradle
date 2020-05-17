@@ -65,7 +65,6 @@ subprojects {
 
     pmd {
         consoleOutput = true
-        ignoreFailures = true
         toolVersion = "6.23.0"
         ruleSets = ["category/java/bestpractices.xml", "category/java/performance.xml"]
     }
