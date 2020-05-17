@@ -25,7 +25,8 @@ jobs:
           wrapper-directory: backend
       - name: reviewdog
         run: |
-          cat **/reports/checkstyle/main.xml | reviewdog -f=checkstyle -reporter=github-pr-check
+          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s
+          cat backend/**/reports/checkstyle/main.xml | reviewdog -f=checkstyle -reporter=github-pr-check
 
   test:
     runs-on: ubuntu-latest
