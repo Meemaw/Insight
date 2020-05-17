@@ -23,12 +23,15 @@ jobs:
           arguments: checkstyleMain checkstyleTest --parallel
           build-root-directory: backend
           wrapper-directory: backend
+      - name: Setup reviewdog
+        run: |
+          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s
+          echo ::add-path::$HOME/bin
+          shopt -s globstar
       - name: Run reviewdog
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s
-          shopt -s globstar
           cat backend/**/reports/checkstyle/main.xml | ./bin/reviewdog -name="checkstyle" -f=checkstyle -reporter=github-pr-check
 
   test:
