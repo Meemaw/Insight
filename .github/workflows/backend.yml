@@ -32,7 +32,7 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           shopt -s globstar
-          cat backend/**/reports/checkstyle/main.xml | reviewdog -name="checkstyle" -f=checkstyle -reporter=github-pr-check
+          cat backend/auth/auth-api/build/reports/checkstyle/main.xml | reviewdog -name="checkstyle" -f=checkstyle -reporter=github-pr-check
 
   test:
     runs-on: ubuntu-latest
