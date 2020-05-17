@@ -33,7 +33,7 @@ public class BeaconBeatResourceValidationTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg3\":\"pageID required\",\"userID\":\"UserID required\",\"sessionID\":\"SessionID required\",\"orgID\":\"Organization ID is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"pageID\":\"pageID required\",\"userID\":\"UserID required\",\"sessionID\":\"SessionID required\",\"orgID\":\"Organization ID is required\"}}}"));
   }
 
   @ParameterizedTest

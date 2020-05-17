@@ -35,6 +35,10 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
+    dependencies {
+        implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    }
+
     jacocoTestReport {
         reports {
             xml.enabled true
