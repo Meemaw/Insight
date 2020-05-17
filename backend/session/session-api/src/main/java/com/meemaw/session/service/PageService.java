@@ -18,8 +18,8 @@ public class PageService {
   @Inject PageDatasource pageDatasource;
 
   /**
-   * @param createPageDTO
-   * @return
+   * @param createPageDTO payload
+   * @return page identity
    */
   public Uni<PageIdentity> process(CreatePageDTO createPageDTO) {
 

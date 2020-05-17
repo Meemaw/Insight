@@ -26,32 +26,6 @@ public class PgUserDatasource implements UserDatasource {
 
   @Inject PgPool pgPool;
 
-  private static final String INSERT_USER_RAW_SQL =
-      "INSERT INTO auth.user(email, org, role) VALUES($1, $2, $3) RETURNING id";
-
-  public CompletionStage<UUID> createUser(
-      Transaction transaction, String email, String org, UserRole role) {
-    Tuple values = Tuple.of(email, org, role.toString());
-    return transaction
-        .preparedQuery(INSERT_USER_RAW_SQL, values)
-        .thenApply(pgRowSet -> pgRowSet.iterator().next().getUUID("id"))
-        .exceptionally(
-            throwable -> {
-              Throwable cause = throwable.getCause();
-              if (cause instanceof PgException) {
-                PgException pgException = (PgException) cause;
-                if (pgException.getCode().equals(PgError.UNIQUE_VIOLATION.getCode())) {
-                  log.error("Email already exists email={} org={}", email, org);
-                  throw Boom.status(Response.Status.CONFLICT)
-                      .message("Email already exists")
-                      .exception();
-                }
-              }
-              log.error("Failed to create user email={} org={}", email, org, throwable);
-              throw new DatabaseException(throwable);
-            });
-  }
-
   private static final String FIND_USER_BY_EMAIL_RAW_SQL =
       "SELECT * FROM auth.user WHERE email = $1";
 
@@ -75,6 +49,34 @@ public class PgUserDatasource implements UserDatasource {
             });
   }
 
+  private static final String INSERT_USER_RAW_SQL =
+      "INSERT INTO auth.user(email, org, role) VALUES($1, $2, $3) RETURNING id";
+
+  @Override
+  public CompletionStage<UUID> createUser(
+      Transaction transaction, String email, String org, UserRole role) {
+    Tuple values = Tuple.of(email, org, role.toString());
+    return transaction
+        .preparedQuery(INSERT_USER_RAW_SQL, values)
+        .thenApply(pgRowSet -> pgRowSet.iterator().next().getUUID("id"))
+        .exceptionally(
+            throwable -> {
+              Throwable cause = throwable.getCause();
+              if (cause instanceof PgException) {
+                PgException pgException = (PgException) cause;
+                if (pgException.getCode().equals(PgError.UNIQUE_VIOLATION.getCode())) {
+                  log.error("Email already exists email={} org={}", email, org);
+                  throw Boom.status(Response.Status.CONFLICT)
+                      .message("Email already exists")
+                      .exception();
+                }
+              }
+              log.error("Failed to create user email={} org={}", email, org, throwable);
+              throw new DatabaseException(throwable);
+            });
+  }
+
+  @Override
   public CompletionStage<SignupRequest> createUser(
       Transaction transaction, SignupRequest signupRequest) {
     String email = signupRequest.email();
@@ -84,6 +86,7 @@ public class PgUserDatasource implements UserDatasource {
 
   private static final String INSERT_ORG_RAW_SQL = "INSERT INTO auth.org(id) VALUES($1)";
 
+  @Override
   public CompletionStage<SignupRequest> createOrganization(
       Transaction transaction, SignupRequest signupRequest) {
     String orgID = Organization.identifier();

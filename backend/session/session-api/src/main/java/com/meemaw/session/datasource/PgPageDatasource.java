@@ -24,7 +24,7 @@ public class PgPageDatasource implements PageDatasource {
   @Inject PgPool pgPool;
 
   @ConfigProperty(name = "quarkus.datasource.url")
-  String DATASOURCE_URL;
+  String datasourceURL;
 
   private static final String SELECT_LINK_DEVICE_SESSION_RAW_SQL =
       "SELECT session_id FROM session.page WHERE org_id = $1 AND uid = $2 AND page_start > now() - INTERVAL '30 min' ORDER BY page_start DESC LIMIT 1;";
@@ -130,7 +130,7 @@ public class PgPageDatasource implements PageDatasource {
         .invoke(
             throwable -> {
               log.error(
-                  "Failed to get page id={} datasourceURL={}", pageID, DATASOURCE_URL, throwable);
+                  "Failed to get page id={} datasourceURL={}", pageID, datasourceURL, throwable);
               throw new DatabaseException(throwable);
             });
   }

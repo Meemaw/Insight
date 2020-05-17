@@ -10,17 +10,17 @@ import java.util.UUID;
 public interface PageDatasource {
 
   /**
-   * @param orgId
-   * @param uid
+   * @param orgId organization id
+   * @param uid user id
    * @return optionally linked sessionID that has been a ctive in the last 30 minutes
    */
   Uni<Optional<UUID>> findUserSessionLink(String orgId, UUID uid);
 
   /**
-   * @param pageId
-   * @param uid
-   * @param sessionId
-   * @param page
+   * @param pageId page id
+   * @param uid user id
+   * @param sessionId session id
+   * @param page page
    * @return newly created Page
    */
   Uni<PageIdentity> insertPage(UUID pageId, UUID uid, UUID sessionId, CreatePageDTO page);
@@ -29,10 +29,10 @@ public interface PageDatasource {
   Uni<Integer> activePageCount();
 
   /**
-   * @param pageID
-   * @param sessionID
-   * @param orgID
-   * @return
+   * @param pageId page id
+   * @param sessionId session id
+   * @param orgId organization id
+   * @return page
    */
-  Uni<Optional<PageDTO>> getPage(UUID pageID, UUID sessionID, String orgID);
+  Uni<Optional<PageDTO>> getPage(UUID pageId, UUID sessionId, String orgId);
 }

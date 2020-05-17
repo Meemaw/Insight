@@ -69,12 +69,12 @@ public class BeaconService {
   }
 
   /**
-   * @param orgID
-   * @param sessionID
-   * @param uid
-   * @param pageID
-   * @param beacon
-   * @return
+   * @param orgID organization id
+   * @param sessionID session id
+   * @param uid user id
+   * @param pageID page id
+   * @param beacon beacon
+   * @return CompletionStage<?> of all operations
    */
   public CompletionStage<?> process(
       String orgID, UUID sessionID, UUID uid, UUID pageID, Beacon beacon) {
