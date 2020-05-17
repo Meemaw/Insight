@@ -26,6 +26,7 @@ jobs:
       - name: reviewdog
         run: |
           curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s
+          shopt -s globstar
           ls backend/auth/auth-api/build/reports/checkstyle
           cat backend/**/reports/checkstyle/main.xml | ./bin/reviewdog -name="checkstyle" -f=checkstyle -reporter=github-pr-check
 
