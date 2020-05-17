@@ -23,6 +23,9 @@ jobs:
           arguments: checkstyleMain checkstyleTest --parallel
           build-root-directory: backend
           wrapper-directory: backend
+      - name: reviewdog
+        run: |
+          cat **/reports/checkstyle/main.xml | reviewdog -f=checkstyle -reporter=github-pr-check
 
   test:
     runs-on: ubuntu-latest
