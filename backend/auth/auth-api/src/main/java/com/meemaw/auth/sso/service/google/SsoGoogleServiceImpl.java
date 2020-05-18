@@ -150,16 +150,16 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
     int statusCode = response.statusCode();
 
     try {
-      if (statusCode != 200) {
-        GoogleErrorResponse errorResponse =
-            objectMapper.readValue(jsonPayload, GoogleErrorResponse.class);
-        String errorDescription = errorResponse.getErrorDescription();
-        String error = errorResponse.getError();
-        String message = String.format("%s. %s", error, errorDescription);
-        throw Boom.status(statusCode).message(message).exception();
+      if (statusCode == Status.OK.getStatusCode()) {
+        return objectMapper.readValue(jsonPayload, clazz);
       }
 
-      return objectMapper.readValue(jsonPayload, clazz);
+      GoogleErrorResponse errorResponse =
+          objectMapper.readValue(jsonPayload, GoogleErrorResponse.class);
+      String errorDescription = errorResponse.getErrorDescription();
+      String error = errorResponse.getError();
+      String message = String.format("%s. %s", error, errorDescription);
+      throw Boom.status(statusCode).message(message).exception();
     } catch (JsonProcessingException ex) {
       log.error("Failed to parse google access token claims", ex);
       throw Boom.serverError().message(ex.getMessage()).exception(ex);

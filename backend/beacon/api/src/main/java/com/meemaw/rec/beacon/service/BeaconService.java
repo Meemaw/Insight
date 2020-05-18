@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -57,7 +58,7 @@ public class BeaconService {
             })
         .thenApply(
             response -> {
-              if (response.getStatus() == 404) {
+              if (response.getStatus() == Status.NOT_FOUND.getStatusCode()) {
                 return false;
               }
               DataResponse<PageDTO> dataResponse = response.readEntity(new GenericType<>() {});

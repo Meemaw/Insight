@@ -92,7 +92,10 @@ public class AbstractSearchIndexerTest {
       String path) throws IOException, URISyntaxException {
     String payload =
         Files.readString(
-            Path.of(Objects.requireNonNull(getClass().getClassLoader().getResource(path)).toURI()));
+            Path.of(
+                Objects.requireNonNull(
+                        Thread.currentThread().getContextClassLoader().getResource(path))
+                    .toURI()));
 
     Collection<UserEvent<AbstractBrowserEvent>> batch =
         JacksonMapper.get().readValue(payload, new TypeReference<>() {});
