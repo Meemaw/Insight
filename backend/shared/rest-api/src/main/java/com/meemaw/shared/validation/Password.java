@@ -6,7 +6,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import javax.validation.Constraint;
-import javax.validation.Payload;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -17,9 +16,6 @@ import javax.validation.constraints.Size;
 @Constraint(validatedBy = {})
 public @interface Password {
 
+  /** @return error message */
   String message() default "Password is invalid";
-
-  Class<?>[] groups() default {};
-
-  Class<? extends Payload>[] payload() default {};
 }
