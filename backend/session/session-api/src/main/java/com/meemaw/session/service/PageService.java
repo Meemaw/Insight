@@ -26,8 +26,6 @@ public class PageService {
     UUID uid = Optional.ofNullable(createPageDTO.getUid()).orElseGet(UUID::randomUUID);
     String orgID = createPageDTO.getOrgId();
 
-    String unused = "123";
-
     // unrecognized device; start a new session
     if (uid != createPageDTO.getUid()) {
       UUID sessionId = UUID.randomUUID();
