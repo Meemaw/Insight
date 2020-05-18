@@ -24,7 +24,7 @@ public class SessionSearchService {
   }
 
   public CompletionStage<List<UUID>> search() {
-    System.out.println(restClient.getLowLevelClient());
+    log.info(restClient.getLowLevelClient().toString());
     return CompletableFuture.completedStage(Collections.emptyList());
   }
 }

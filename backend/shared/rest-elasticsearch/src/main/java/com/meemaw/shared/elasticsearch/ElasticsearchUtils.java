@@ -17,6 +17,12 @@ public class ElasticsearchUtils {
   private static final String DEFAULT_HOSTS = "localhost:9200";
   private static final String DEFAULT_SCHEME = HttpHost.DEFAULT_SCHEME_NAME;
 
+  /**
+   * Helper method to parse array of http hosts from environment.
+   *
+   * @param name of environment variable
+   * @return array of parsed http hosts
+   */
   public static HttpHost[] fromEnvironment(String name) {
     String hosts = Optional.ofNullable(System.getenv(name)).orElse(DEFAULT_HOSTS);
     return Arrays.stream(hosts.split(","))
@@ -28,14 +34,29 @@ public class ElasticsearchUtils {
         .toArray(HttpHost[]::new);
   }
 
+  /**
+   * Helper method to parse array of http hosts from ELASTICSEARCH_NUM_THREADS environment variable.
+   *
+   * @return array of parsed http hosts
+   */
   public static HttpHost[] fromEnvironment() {
     return fromEnvironment(HOSTS);
   }
 
+  /**
+   * Helper method to parse number of threads from ELASTICSEARCH_NUM_THREADS environment variable.
+   *
+   * @return number of threads
+   */
   public static int getNumThreads() {
     return Integer.parseInt(Optional.ofNullable(System.getenv(NUM_THREADS)).orElse("10"));
   }
 
+  /**
+   * Helper method to construct a rest high level client from environment configurations.
+   *
+   * @return rest high level client
+   */
   public static RestHighLevelClient restClient() {
     HttpHost[] httpHosts = ElasticsearchUtils.fromEnvironment();
 
