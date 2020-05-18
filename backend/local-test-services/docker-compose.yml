@@ -114,7 +114,7 @@ services:
     networks:
       - elk
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.6.2
+    image: docker.elastic.co/logstash/logstash:7.7.0
     volumes:
       - source: $HOME/pipelines
         target: /usr/share/logstash/pipeline
