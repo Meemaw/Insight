@@ -25,9 +25,7 @@ jobs:
           build-root-directory: backend
           wrapper-directory: backend
       - name: Merge reports
-        run: |
-          sudo apt-get install zsh
-          zsh ./backend/config/pmd/merge_reports.sh
+        run: ./backend/config/pmd/merge_reports.sh
       - name: Setup reviewdog
         run: |
           mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
