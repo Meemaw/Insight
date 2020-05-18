@@ -1,23 +1,54 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: session-api
+  namespace: auth
+  labels:
+    team: auth
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: session-api
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-    type: RollingUpdate
   template:
     metadata:
       annotations:
         prometheus.io/scrape: 'true'
+      labels:
+        app: session-api
+        team: session
     spec:
       terminationGracePeriodSeconds: 30
       containers:
-        - image: eu.gcr.io/insight/beacon
-          name: api
+        - image: eu.gcr.io/insight/session-api
+          name: session-api
+          env:
+            - name: GOOGLE_OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google-oauth
+                  key: client_id
+            - name: GOOGLE_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google-oauth
+                  key: client_secret
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
           ports:
             - containerPort: 8080
               name: http

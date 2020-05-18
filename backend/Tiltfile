@@ -1,0 +1,17 @@
+print('Hello Tiltfile')
+
+k8s_yaml('base.yml')
+
+k8s_yaml(kustomize('auth/auth-api/k8/overlays/minikube'))
+k8s_resource('auth-api', port_forwards=8080)
+docker_build('eu.gcr.io/insight/auth-api', '.', {}, 'auth/auth-api/docker/Dockerfile.jvm')
+
+k8s_yaml(kustomize('beacon/api/k8/overlays/development'))
+k8s_resource('api', port_forwards=8081)
+docker_build('eu.gcr.io/insight/beacon', '.', {}, 'beacon/api/docker/Dockerfile.jvm')
+
+k8s_yaml(kustomize('session/session-api/k8/base'))
+k8s_resource('session-api', port_forwards=8082)
+docker_build('eu.gcr.io/insight/session-api', '.', {}, 'session/session-api/docker/Dockerfile.jvm')
+
+

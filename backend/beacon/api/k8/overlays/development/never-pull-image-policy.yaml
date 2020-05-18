@@ -6,6 +6,6 @@ spec:
   template:
     spec:
       containers:
-        - image: eu.gcr.io/insight/api
+        - image: eu.gcr.io/insight/beacon
           name: api
           imagePullPolicy: Never
