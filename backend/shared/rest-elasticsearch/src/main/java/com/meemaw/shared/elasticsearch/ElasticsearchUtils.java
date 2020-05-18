@@ -10,12 +10,12 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 public class ElasticsearchUtils {
 
-  private ElasticsearchUtils() {}
-
   private static final String NUM_THREADS = "ELASTICSEARCH_NUM_THREADS";
   private static final String HOSTS = "ELASTICSEARCH_HOSTS";
   private static final String DEFAULT_HOSTS = "localhost:9200";
   private static final String DEFAULT_SCHEME = HttpHost.DEFAULT_SCHEME_NAME;
+
+  private ElasticsearchUtils() {}
 
   /**
    * Helper method to parse array of http hosts from environment.
