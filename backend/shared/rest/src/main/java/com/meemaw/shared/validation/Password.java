@@ -1,4 +1,4 @@
-package com.meemas.shared.validation;
+package com.meemaw.shared.validation;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
