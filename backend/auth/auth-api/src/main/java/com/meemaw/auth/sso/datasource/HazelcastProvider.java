@@ -23,6 +23,8 @@ public class HazelcastProvider {
 
   public void shutdown(@Observes ShutdownEvent event) {
     log.info("Shutting down ...");
-    instance.shutdown();
+    if (instance != null) {
+      instance.shutdown();
+    }
   }
 }
