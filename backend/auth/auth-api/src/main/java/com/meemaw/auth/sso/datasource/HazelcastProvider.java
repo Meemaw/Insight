@@ -14,6 +14,11 @@ public class HazelcastProvider {
 
   private HazelcastInstance instance;
 
+  /**
+   * Lazy instantiate hazelcast instance for faster startup.
+   *
+   * @return hazelcast instance
+   */
   public HazelcastInstance getInstance() {
     if (instance == null) {
       instance = Hazelcast.newHazelcastInstance(new XmlConfigBuilder().build());
@@ -21,6 +26,11 @@ public class HazelcastProvider {
     return instance;
   }
 
+  /**
+   * Gracefully terminate hazelcast instance.
+   *
+   * @param event shutdown event
+   */
   public void shutdown(@Observes ShutdownEvent event) {
     log.info("Shutting down ...");
     if (instance != null) {
