@@ -1,6 +1,5 @@
 package com.meemaw.auth.sso.datasource;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -15,16 +14,15 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class HazelcastProvider {
 
-  @Getter private HazelcastInstance hazelcastInstance;
+  @Getter private HazelcastInstance instance;
 
   public void init(@Observes StartupEvent event) {
     log.info("Initializing ...");
-    Config hazConfig = new XmlConfigBuilder().build();
-    hazelcastInstance = Hazelcast.newHazelcastInstance(hazConfig);
+    instance = Hazelcast.newHazelcastInstance(new XmlConfigBuilder().build());
   }
 
   public void shutdown(@Observes ShutdownEvent event) {
     log.info("Shutting down ...");
-    hazelcastInstance.shutdown();
+    instance.shutdown();
   }
 }
