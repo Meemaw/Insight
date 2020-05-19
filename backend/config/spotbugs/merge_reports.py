@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 
 def transform(contents):
@@ -8,7 +8,6 @@ def transform(contents):
 
     project = root.findall('Project')[0]
     source_dir = project.findall('SrcDir')[1].text
-
 
     for child in root:
         if child.tag == 'BugInstance':
@@ -21,4 +20,6 @@ def transform(contents):
 
 
 if __name__ == "__main__":
-    transform(sys.stdin.read())
+    for path in Path('backend').rglob('**/build/reports/spotbugs/main.xml'):
+        with open(path, 'r') as report_file:
+            transform(report_file.read())
