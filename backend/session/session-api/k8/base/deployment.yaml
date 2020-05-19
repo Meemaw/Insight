@@ -7,7 +7,7 @@ metadata:
   labels:
     team: auth
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: session-api
@@ -49,6 +49,8 @@ spec:
                 secretKeyRef:
                   name: postgres-credentials
                   key: password
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://kafka:9092
           ports:
             - containerPort: 8080
               name: http

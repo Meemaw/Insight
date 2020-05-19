@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: api
 spec:
-  replicas: 3
+  replicas: 1
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -18,6 +18,9 @@ spec:
       containers:
         - image: eu.gcr.io/insight/beacon
           name: api
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://kafka:9092
           ports:
             - containerPort: 8080
               name: http

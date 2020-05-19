@@ -9,17 +9,24 @@ This helps us test our services in Kubernetes environment before they are pushed
 
 ```shell script
 brew install minikube
+minikube config set memory 8192
+minikube config set cpus 2
 minikube start
 minikube status
 minikube addons enable metrics-server
 ```
 
-### Deploy a service (example)
+### Start external requirements
 
-```shell script
-eval $(minikube docker-env)
-docker build . -f auth-service/Dockerfile.jvm -t eu.gcr.io/insight/auth-service
-kubectl apply -f auth-service/manifests.yaml
+Look into [infrastructure](../infrastructure/Readme.md)
+
+### Deploy services
+
+Requires `tilt`
+
+```
+tilt up
+tilt up auth-api
 ```
 
 ### Prometheus
