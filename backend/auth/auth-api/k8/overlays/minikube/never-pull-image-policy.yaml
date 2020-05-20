@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth-api
+  namespace: recording
 spec:
   template:
     spec:

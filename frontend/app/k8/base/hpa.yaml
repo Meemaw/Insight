@@ -2,17 +2,16 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: auth-api
-  namespace: recording
+  name: app
   labels:
-    team: auth
+    team: frontend
 spec:
   maxReplicas: 10
   minReplicas: 2
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: auth-api
+    name: app
   metrics:
     - type: Resource
       resource:
