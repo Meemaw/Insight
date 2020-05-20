@@ -71,7 +71,7 @@ public class SignupResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Email is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"Email is required\"}}}"));
   }
 
   @Test
@@ -85,7 +85,7 @@ public class SignupResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"must be a well-formed email address\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"email\":\"must be a well-formed email address\"}}}"));
   }
 
   @Test
@@ -97,7 +97,7 @@ public class SignupResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg2\":\"token is required\",\"arg1\":\"org is required\",\"arg0\":\"email is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"token\":\"token is required\",\"org\":\"org is required\",\"email\":\"email is required\"}}}"));
   }
 
   @Test
@@ -112,7 +112,7 @@ public class SignupResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg1\":\"org is required\",\"arg0\":\"must be a well-formed email address\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"org\":\"org is required\",\"email\":\"must be a well-formed email address\"}}}"));
   }
 
   @Test
@@ -151,7 +151,7 @@ public class SignupResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Payload is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"req\":\"Payload is required\"}}}"));
   }
 
   @Test
@@ -299,17 +299,25 @@ public class SignupResourceImplTest {
                 " {\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"Signup request does not exist.\"}}"));
   }
 
+  /**
+   * Sign up with the provided credentials.
+   *
+   * @param mailbox mocked mailbox
+   * @param objectMapper object mapper
+   * @param email address
+   * @param password for user
+   */
   public static void signup(
-      MockMailbox mailbox, ObjectMapper objectMapper, String signupEmail, String signupPassword) {
+      MockMailbox mailbox, ObjectMapper objectMapper, String email, String password) {
     given()
         .when()
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        .param("email", signupEmail)
+        .param("email", email)
         .post(SignupResource.PATH)
         .then()
         .statusCode(200);
 
-    List<Mail> sent = mailbox.getMessagesSentTo(signupEmail);
+    List<Mail> sent = mailbox.getMessagesSentTo(email);
     assertEquals(1, sent.size());
     Mail actual = sent.get(0);
     assertEquals("Insight Support <support@insight.com>", actual.getFrom());
@@ -329,7 +337,7 @@ public class SignupResourceImplTest {
     // verify that the SignupRequest still exists & is valid
     given()
         .when()
-        .formParam("email", signupEmail)
+        .formParam("email", email)
         .queryParam("org", orgId)
         .queryParam("token", token)
         .get(SignupResource.PATH + "/exists")
@@ -338,7 +346,7 @@ public class SignupResourceImplTest {
         .body(sameJson("{\"data\":true}"));
 
     SignupRequestCompleteDTO signupCompleteRequest =
-        new SignupRequestCompleteDTO(signupEmail, orgId, UUID.fromString(token), signupPassword);
+        new SignupRequestCompleteDTO(email, orgId, UUID.fromString(token), password);
 
     String body;
     try {

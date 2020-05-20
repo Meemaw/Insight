@@ -26,13 +26,6 @@
     <property name="eachLine" value="true"/>
   </module>
 
-  <module name="LineLength">
-    <property name="fileExtensions" value="java"/>
-    <property name="max" value="100"/>
-    <property name="ignorePattern"
-      value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-  </module>
-
   <module name="TreeWalker">
     <module name="OuterTypeFilename"/>
     <module name="IllegalTokenText">
@@ -223,7 +216,7 @@
     </module>
     <module name="AbbreviationAsWordInName">
       <property name="ignoreFinal" value="false"/>
-      <property name="allowedAbbreviationLength" value="1"/>
+      <property name="allowedAbbreviationLength" value="3"/>
       <property name="tokens"
         value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, ANNOTATION_DEF, ANNOTATION_FIELD_DEF,
                     PARAMETER_DEF, VARIABLE_DEF, METHOD_DEF"/>

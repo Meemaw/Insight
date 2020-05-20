@@ -45,13 +45,18 @@ public class InviteResourceImplTest {
 
   @Inject ObjectMapper objectMapper;
 
+  private static String sessionId;
+
   @BeforeEach
   void init() {
     mailbox.clear();
   }
 
-  private static String sessionId;
-
+  /**
+   * Signs up and logins with a test user if necessary.
+   *
+   * @return session id of the logged in test user
+   */
   public String getSessionId() {
     if (sessionId == null) {
       String email = "org_invite_test@gmail.com";
@@ -99,7 +104,7 @@ public class InviteResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Payload is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"teamInviteCreate\":\"Payload is required\"}}}"));
   }
 
   @Test
@@ -360,7 +365,7 @@ public class InviteResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"Payload is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"inviteSend\":\"Payload is required\"}}}"));
   }
 
   @Test

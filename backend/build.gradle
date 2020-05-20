@@ -2,6 +2,9 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'io.freefair.lombok'
+    id 'checkstyle'
+    id 'pmd'
+    id 'com.github.spotbugs'
 }
 
 allprojects {
@@ -15,6 +18,13 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
+
     java {
         sourceCompatibility = JavaVersion.VERSION_14
         targetCompatibility = JavaVersion.VERSION_14
@@ -29,9 +39,9 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    apply plugin: 'java'
-    apply plugin: 'jacoco'
-    apply plugin: 'io.freefair.lombok'
+    dependencies {
+        implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    }
 
     jacocoTestReport {
         reports {
@@ -45,5 +55,32 @@ subprojects {
         finalizedBy(tasks.jacocoTestReport)
         systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
         testLogging.showStandardStreams = true
+    }
+
+    checkstyle {
+        toolVersion = '8.32'
+        configFile = rootProject.file('config/checkstyle/.checkstyle.xml')
+        configProperties = [
+                'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
+        ]
+    }
+
+    pmd {
+        consoleOutput = true
+        ignoreFailures = true
+        toolVersion = "6.23.0"
+        ruleSets = []
+        ruleSetFiles = rootProject.files("config/pmd/ruleset.xml")
+    }
+
+    spotbugs {
+        ignoreFailures = true
+    }
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled true
+        html.enabled false
     }
 }

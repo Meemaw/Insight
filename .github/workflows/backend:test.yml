@@ -1,13 +1,13 @@
+---
 on:
   push:
     paths:
       - 'backend/**'
-      - '.github/workflows/backend.yml'
+      - '.github/workflows/backend:test.yml'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@master
       - uses: actions/cache@v1
@@ -30,7 +30,7 @@ jobs:
         if: failure()
         with:
           name: test-reports
-          path: backend/**/build/reports/**
+          path: backend/**/build/reports/tests/**
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

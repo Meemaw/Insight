@@ -7,13 +7,15 @@ pluginManagement {
 
     plugins {
         id 'io.quarkus' version "${quarkusPluginVersion}"
-        id "io.freefair.lombok" version "5.0.1"
+        id 'io.freefair.lombok' version '5.1.0'
+        id 'com.github.spotbugs' version '4.2.1'
     }
 }
 
 rootProject.name = 'backend'
 
 include ':shared:rest'
+include ':shared:rest-elasticsearch'
 include ':shared:rest-api'
 include ':shared:testing-utils'
 include ':events:model'

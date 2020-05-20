@@ -62,7 +62,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg1\":\"Required\",\"arg0\":\"Email is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"password\":\"Required\",\"email\":\"Email is required\"}}}"));
   }
 
   @Test
@@ -77,7 +77,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg1\":\"Password must be at least 8 characters long\",\"arg0\":\"must be a well-formed email address\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"password\":\"Password must be at least 8 characters long\",\"email\":\"must be a well-formed email address\"}}}"));
   }
 
   @Test
@@ -128,7 +128,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"SessionId cookie required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"SessionId cookie required\"}}}"));
   }
 
   @Test
@@ -154,7 +154,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"SessionId may not be blank\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"SessionId may not be blank\"}}}"));
   }
 
   @Test
@@ -177,7 +177,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"arg0\":\"SessionId may not be blank\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"SessionId may not be blank\"}}}"));
   }
 
   @Test
@@ -230,12 +230,28 @@ public class SsoResourceImplTest {
         .cookie(SsoSession.COOKIE_NAME, "");
   }
 
+  /**
+   * Sign up and then login with the provided credentials (assert it is successful).
+   *
+   * @param mailbox mailbox
+   * @param objectMapper object mapper
+   * @param email address
+   * @param password from user
+   * @return session id
+   */
   public static String signupAndLogin(
       MockMailbox mailbox, ObjectMapper objectMapper, String email, String password) {
     SignupResourceImplTest.signup(mailbox, objectMapper, email, password);
     return SsoResourceImplTest.login(email, password);
   }
 
+  /**
+   * Log in with provided credentials (assert is is successful).
+   *
+   * @param email address
+   * @param password from the user
+   * @return session id
+   */
   public static String login(String email, String password) {
     Response response =
         given()
