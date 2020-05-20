@@ -20,9 +20,17 @@ minikube addons enable metrics-server
 
 Look into [infrastructure](../infrastructure/Readme.md)
 
-### Deploy services
+## Deploy services
 
-Requires `tilt`
+### (One time setup)
+
+We use [tilt](https://github.com/tilt-dev/tilt) for development. Tilt automates all the steps from a code change to a new process: watching files, building container images, and bringing your environment up-to-date. Think docker build && kubectl apply or docker-compose up.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
+```
+
+### Spin up
 
 ```
 tilt up

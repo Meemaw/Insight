@@ -1,8 +1,18 @@
-## Dev setup
+# Infrastructure
 
-To start dependencies for dev cluster run:
+## Development
 
-`helmfile --file k8/dev/helmfile.yaml apply`
+Development dependencies are managed using [helm](https://github.com/helm/helm).
 
-The following binaries are required:
-`helm`, `helmfile` and helm-diff plugin `helm plugin install https://github.com/databus23/helm-diff`
+### Prerequisites
+
+```sh
+brew install helm helmfile
+helm plugin install https://github.com/databus23/helm-diff
+```
+
+### Applying
+
+```sh
+helmfile --file k8/dev/helmfile.yaml apply
+```
