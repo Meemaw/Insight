@@ -2,11 +2,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: beacon-api
+  name: session-api
 spec:
   template:
     spec:
       containers:
-        - image: eu.gcr.io/insight/beacon-api
-          name: beacon-api
+        - image: eu.gcr.io/insight/session-api
+          name: session-api
           imagePullPolicy: Never

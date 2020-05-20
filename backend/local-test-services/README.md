@@ -7,7 +7,7 @@ This is a collection of utilities and best practices for a local development env
 We are using [minikube](https://minikube.sigs.k8s.io/) to run Kubernetes locally.
 This helps us test our services in Kubernetes environment before they are pushed into the Cloud.
 
-### (One time) setup 
+### (One time) setup
 
 ```shell script
 ./bootstrap.sh # This will install & setup environment for local k8s
@@ -17,7 +17,7 @@ This helps us test our services in Kubernetes environment before they are pushed
 
 ```shell script
 eval $(minikube -p minikube docker-env)
-``` 
+```
 
 ### Deploying a service (example)
 
