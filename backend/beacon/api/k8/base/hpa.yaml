@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: beacon-api
+  namespace: recording
 spec:
   maxReplicas: 10
   minReplicas: 2

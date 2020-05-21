@@ -2,15 +2,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: session-api
-  namespace: recording
+  name: app
   labels:
-    team: session
+    team: frontend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: session-api
+      app: app
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -21,28 +20,15 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
       labels:
-        app: session-api
-        team: session
+        app: app
+        team: frontend
     spec:
       terminationGracePeriodSeconds: 30
       containers:
-        - image: eu.gcr.io/insight/session-api
-          name: session-api
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: password
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: PLAINTEXT://kafka:9092
+        - image: eu.gcr.io/insight/app
+          name: app
           ports:
-            - containerPort: 8080
+            - containerPort: 3000
               name: http
               protocol: TCP
           resources:
@@ -54,14 +40,14 @@ spec:
               memory: 200Mi
           livenessProbe:
             httpGet:
-              path: /health/live
-              port: 8080
+              path: /
+              port: 3000
             initialDelaySeconds: 60
             periodSeconds: 5
           readinessProbe:
             httpGet:
-              path: /health/ready
-              port: 8080
+              path: /
+              port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 1
