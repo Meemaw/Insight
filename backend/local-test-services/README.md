@@ -21,6 +21,7 @@ This helps us test services in Kubernetes environment before they are pushed int
 brew install minikube
 minikube config set memory 8192
 minikube config set cpus 4
+minikube config set disk-size 100GB
 minikube start
 minikube addons enable metrics-server
 ```
