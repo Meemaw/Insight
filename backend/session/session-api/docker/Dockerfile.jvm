@@ -5,6 +5,8 @@ WORKDIR /backend
 
 RUN gradle session:session-api:quarkusBuild --uber-jar
 
+CMD ["gradle", "session:session-api:quarkusDev"]
+
 FROM adoptopenjdk:14-jre-hotspot
 
 COPY --from=build /backend/session/session-api/build/session-api-1.0-runner.jar /usr/app/service-runner.jar
