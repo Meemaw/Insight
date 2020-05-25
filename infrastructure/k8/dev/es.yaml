@@ -1,3 +1,4 @@
+---
 # Permit co-located instances for solitary minikube virtual machines.
 antiAffinity: 'soft'
 
