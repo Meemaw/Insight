@@ -4,5 +4,6 @@
   "github": {
     "enabled": false
   },
-  "builds": [{ "src": "frontend/app/package.json", "use": "@now/next" }]
+  "builds": [{ "src": "frontend/app/package.json", "use": "@now/next" }],
+  "rewrites": [{ "source": "/(.*)", "destination": "/frontend/app/$1" }]
 }
