@@ -21,6 +21,7 @@ jobs:
       - uses: amondnet/vercel-action@v19
         env:
           TRY_BASE_URL: /try
+          APP_BASE_URL: /
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
