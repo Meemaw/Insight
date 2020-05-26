@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [master]
     paths:
-      - '.github/workflows/frontend:app:deploy.yml'
+      - '.github/workflows/frontend:preview.yml'
       - 'frontend/app/**'
       - 'frontend/try/**'
       - 'frontend/shared/**'
