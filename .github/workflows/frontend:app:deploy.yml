@@ -1,0 +1,27 @@
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/frontend:app:deploy.yml'
+      - 'frontend/app/**'
+      - 'frontend/shared/**'
+      - 'jest.config.js'
+      - 'lerna.json'
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'yarn.lock'
+
+env:
+  CI: true
+  ARTIFACTS_PATH: frontend/app/artifacts/
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: amondnet/vercel-action@v19
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-project-id: insight
