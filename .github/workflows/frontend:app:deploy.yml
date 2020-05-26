@@ -6,15 +6,12 @@ on:
       - '.github/workflows/frontend:app:deploy.yml'
       - 'frontend/app/**'
       - 'frontend/shared/**'
-      - 'jest.config.js'
-      - 'lerna.json'
       - 'package.json'
       - 'tsconfig.json'
       - 'yarn.lock'
 
 env:
   CI: true
-  ARTIFACTS_PATH: frontend/app/artifacts/
 
 jobs:
   deploy:
@@ -25,5 +22,5 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-org-id: Meemaw
+          vercel-org-id: meemaw
           vercel-project-id: insight
