@@ -1,5 +1,0 @@
-{
-  "version": 2,
-  "builds": [{ "src": "frontend/app/package.json", "use": "@now/next" }],
-  "rewrites": [{ "source": "/(.*)", "destination": "/packages/web-app/$1" }]
-}
