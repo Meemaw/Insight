@@ -1,11 +1,13 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: beacon-api
+  namespace: recording
 spec:
   template:
     spec:
       containers:
-        - image: eu.gcr.io/insight/api
-          name: api
+        - image: eu.gcr.io/insight/beacon-api
+          name: beacon-api
           imagePullPolicy: Never

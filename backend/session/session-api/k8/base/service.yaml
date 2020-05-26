@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-api
+  namespace: recording
+spec:
+  type: ClusterIP
+  selector:
+    app: session-api
+  ports:
+    - name: http
+      port: 8082
+      protocol: TCP
+      targetPort: 8080

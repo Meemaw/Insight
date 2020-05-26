@@ -1,0 +1,28 @@
+---
+repositories:
+  # To use official "stable" charts a.k.a https://github.com/helm/charts/tree/master/stable
+  - name: stable
+    url: https://kubernetes-charts.storage.googleapis.com
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: jaegertracing
+    url: https://jaegertracing.github.io/helm-charts
+  - name: elastic
+    url: https://helm.elastic.co
+
+releases:
+  - name: postgres
+    chart: bitnami/postgresql
+    namespace: recording
+    values:
+      - postgres.yaml
+  - name: kafka
+    chart: bitnami/kafka
+    namespace: recording
+    values:
+      - kafka.yaml
+  - name: es2
+    chart: elastic/elasticsearch
+    namespace: recording
+    values:
+      - es.yaml
