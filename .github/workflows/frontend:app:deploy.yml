@@ -1,3 +1,4 @@
+---
 on:
   pull_request:
     branches: [master]
@@ -24,4 +25,5 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-org-id: Meemaw
           vercel-project-id: insight
