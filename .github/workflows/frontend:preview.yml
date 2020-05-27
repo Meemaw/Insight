@@ -17,6 +17,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: rlespinasse/github-slug-action@v2.x
@@ -30,7 +31,10 @@ jobs:
 
   cleanup:
     runs-on: ubuntu-latest
+    # if: github.event.action == 'closed' && github.event.pull_request.merged == true
+
     steps:
+      - uses: actions/checkout@v2
       - uses: rlespinasse/github-slug-action@v2.x
       - uses: amondnet/vercel-action@v19
         with:
@@ -38,4 +42,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}}
-          vercel-args: 'ls --meta ref_slug=${{ env.GITHUB_HEAD_REF_SLUG }}'
+          vercel-args: 'ls -m ref_slug=${{ env.GITHUB_HEAD_REF_SLUG }}'
