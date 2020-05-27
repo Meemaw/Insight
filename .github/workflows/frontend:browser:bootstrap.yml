@@ -51,6 +51,7 @@ jobs:
       - name: Prepare files for deployment
         run: |
           mv frontend/browser/bootstrap/dist/insight.js.gz frontend/browser/bootstrap/dist/insight.js
+          mv frontend/browser/bootstrap/dist/development.insight.js.gz frontend/browser/bootstrap/dist/development.insight.js
       - uses: actions/upload-artifact@v1
         with:
           name: b
@@ -59,7 +60,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [unit_tests_build]
-    if: github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@master
