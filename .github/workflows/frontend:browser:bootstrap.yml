@@ -51,7 +51,7 @@ jobs:
       - name: Prepare files for deployment
         run: find ./ -name "*.js.gz" -exec sh -c 'mv $0 `basename "$0" .js.gz`.js' '{}' \;
         working-directory: frontend/browser/bootstrap/dist
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: b
           path: frontend/browser/bootstrap/dist
