@@ -52,7 +52,7 @@ jobs:
           node_modules/wait-on/bin/wait-on http-get://localhost:8081/health/ready --timeout 180000
           node_modules/wait-on/bin/wait-on http-get://localhost:8082/health/ready --timeout 180000
           xvfb-run --auto-servernum yarn workspace @insight/browser-tracking test --coverage --forceExit
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: artifacts
@@ -65,7 +65,7 @@ jobs:
         run: |
           mv frontend/browser/tracking/dist/insight.js.gz frontend/browser/tracking/dist/insight.js
           mv frontend/browser/tracking/dist/development.insight.js.gz frontend/browser/tracking/dist/development.insight.js
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: s
           path: frontend/browser/tracking/dist
