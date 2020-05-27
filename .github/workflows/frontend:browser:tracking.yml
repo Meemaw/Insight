@@ -63,7 +63,7 @@ jobs:
           flags: frontend
       - name: Prepare files for deployment
         run: find ./ -name "*.js.gz" -exec sh -c 'mv $0 `basename "$0" .js.gz`.js' '{}' \;
-        working-directory: frontend/browser/trackint/dist
+        working-directory: frontend/browser/tracking/dist
       - uses: actions/upload-artifact@v2
         with:
           name: s
