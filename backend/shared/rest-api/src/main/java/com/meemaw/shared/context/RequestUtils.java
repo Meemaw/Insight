@@ -10,6 +10,11 @@ public final class RequestUtils {
 
   private RequestUtils() {}
 
+  /**
+   * @param request http server request
+   * @return Optional<String> base URL as string
+   * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
+   */
   public static Optional<String> parseRefererBaseURL(HttpServerRequest request) {
     return Optional.ofNullable(request.getHeader("referer"))
         .map(
@@ -23,6 +28,10 @@ public final class RequestUtils {
         .map(RequestUtils::parseBaseURL);
   }
 
+  /**
+   * @param url URL
+   * @return String base url
+   */
   public static String parseBaseURL(URL url) {
     String base = url.getProtocol() + "://" + url.getHost();
     if (url.getPort() == -1) {
