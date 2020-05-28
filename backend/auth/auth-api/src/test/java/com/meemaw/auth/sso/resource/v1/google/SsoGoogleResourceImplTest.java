@@ -67,6 +67,45 @@ public class SsoGoogleResourceImplTest {
   }
 
   @Test
+  public void google_signIn_should_use_x_forwarded_headers_when_present() {
+    String forwardedProto = "https";
+    String forwardedHost = "auth-api.minikube.snuderls.eu";
+    String oAuth2CallbackURL =
+        forwardedProto
+            + "://"
+            + forwardedHost
+            + SsoGoogleResource.PATH
+            + "/"
+            + SsoGoogleResource.OAUTH_2_CALLBACK_PATH;
+
+    String encodedOAuth2CallbackURL = URLEncoder.encode(oAuth2CallbackURL, StandardCharsets.UTF_8);
+    String expectedLocationBase =
+        "https://accounts.google.com/o/oauth2/auth?client_id="
+            + googleOauthClientId
+            + "&redirect_uri="
+            + encodedOAuth2CallbackURL
+            + "&response_type=code&scope=openid+email+profile&state=";
+
+    String referer = "http://localhost:3000";
+    String dest = "/test";
+    Response response =
+        given()
+            .header("referer", referer)
+            .header("X-Forwarded-Proto", forwardedProto)
+            .header("X-Forwarded-Host", forwardedHost)
+            .config(newConfig().redirect(redirectConfig().followRedirects(false)))
+            .when()
+            .queryParam("dest", dest)
+            .get(SsoGoogleResource.PATH + "/signin");
+
+    response.then().statusCode(302).header("Location", startsWith(expectedLocationBase));
+
+    String state = response.header("Location").replace(expectedLocationBase, "");
+    String destination = state.substring(26);
+    assertEquals(URLEncoder.encode(referer + dest, StandardCharsets.UTF_8), destination);
+  }
+
+  @Test
   public void google_signIn_should_start_flow_by_redirecting_to_google() {
     String oauth2CallbackURL =
         URLEncoder.encode(oauth2CallbackURI.toString(), StandardCharsets.UTF_8);
