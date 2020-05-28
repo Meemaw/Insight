@@ -24,7 +24,7 @@ public class SsoGoogleResourceImplTest {
   @ConfigProperty(name = "google.oauth.client.id")
   String googleOauthClientId;
 
-  @TestHTTPResource(SsoGoogleResource.PATH + "/oauth2callback")
+  @TestHTTPResource(SsoGoogleResource.PATH + "/" + SsoGoogleResource.OAUTH2_CALLBACK_PATH)
   URI oauth2CallbackURI;
 
   @Test
@@ -76,7 +76,7 @@ public class SsoGoogleResourceImplTest {
             + forwardedHost
             + SsoGoogleResource.PATH
             + "/"
-            + SsoGoogleResource.OAUTH_2_CALLBACK_PATH;
+            + SsoGoogleResource.OAUTH2_CALLBACK_PATH;
 
     String encodedOAuth2CallbackURL = URLEncoder.encode(oAuth2CallbackURL, StandardCharsets.UTF_8);
     String expectedLocationBase =
