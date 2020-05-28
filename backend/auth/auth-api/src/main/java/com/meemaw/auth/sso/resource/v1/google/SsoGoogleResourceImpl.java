@@ -26,13 +26,7 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
   @Context HttpServerRequest request;
 
   private String getRedirectUri() {
-    String proto = request.getHeader("X-Forwarded-Proto");
-    String host = request.getHeader("X-Forwarded-Host");
-
-    if (proto != null && host != null) {
-      return proto + "://" + host + GOOGLE_OAUTH2_CALLBACK_PATH;
-    }
-    return info.getBaseUri() + GOOGLE_OAUTH2_CALLBACK_PATH;
+    return RequestUtils.getServerBaseURL(info, request) + GOOGLE_OAUTH2_CALLBACK_PATH;
   }
 
   @Override
