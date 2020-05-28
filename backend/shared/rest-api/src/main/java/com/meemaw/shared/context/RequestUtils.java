@@ -11,8 +11,10 @@ public final class RequestUtils {
   private RequestUtils() {}
 
   /**
+   * Extracts referer base URL from http server request if present.
+   *
    * @param request http server request
-   * @return Optional<String> base URL as string
+   * @return Optional String base URL as string
    * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
    */
   public static Optional<String> parseRefererBaseURL(HttpServerRequest request) {
@@ -29,6 +31,8 @@ public final class RequestUtils {
   }
 
   /**
+   * Parse base URL from an URL.
+   *
    * @param url URL
    * @return String base url
    */
