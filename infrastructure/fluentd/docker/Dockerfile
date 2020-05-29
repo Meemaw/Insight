@@ -1,10 +1,6 @@
 FROM fluent/fluentd:v1.10-1
 
-# Use root account to use apk
 USER root
-
-# below RUN includes plugin as examples elasticsearch is not required
-# you may customize including plugins as you wish
 RUN apk add --no-cache --update --virtual .build-deps \
         build-base ruby-dev \
         && gem install fluent-plugin-elasticsearch fluent-plugin-input-gelf \
