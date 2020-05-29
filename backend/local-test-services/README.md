@@ -10,6 +10,11 @@ For simple use-cases you can use `docker-compose`.
 docker-compose up
 ```
 
+## Logging
+
+If you are running EFK stack locally (Fluentd, Elasticsearch and Kibana), logs will automatically be delivered to Elasticsearch.
+You can visualize them in Kibana by visiting http://localhost:5601/.
+
 ## Kubernetes (minikube)
 
 We are using [minikube](https://minikube.sigs.k8s.io/) to run Kubernetes locally.
