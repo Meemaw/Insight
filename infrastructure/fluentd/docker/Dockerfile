@@ -8,7 +8,7 @@ RUN apk add --no-cache --update --virtual .build-deps \
         && apk del .build-deps \
         && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
 
-ARG fluent_conf=conf/fluent.dev.conf
+ARG fluent_conf=conf/fluent.conf
 COPY $fluent_conf /fluentd/etc/fluent.conf
 
 USER fluent

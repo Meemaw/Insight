@@ -137,6 +137,8 @@ services:
     build:
       context: ../../infrastructure/fluentd
       dockerfile: docker/Dockerfile
+      args:
+        - fluent_conf=conf/fluent.dev.conf
     ports:
       - '12201:12201/udp'
     depends_on:
