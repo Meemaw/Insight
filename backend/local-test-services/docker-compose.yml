@@ -135,9 +135,10 @@ services:
 
   fluentd:
     build:
-      context: fluentd
+      context: ../../infrastructure/fluentd
+      dockerfile: docker/Dockerfile
     ports:
-      - "12201:12201/udp"
+      - '12201:12201/udp'
     depends_on:
       - elasticsearch
 
