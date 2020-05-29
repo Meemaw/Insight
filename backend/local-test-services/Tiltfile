@@ -6,7 +6,7 @@ k8s_yaml('../auth/auth-api/migrations/manifests.yaml')
 k8s_resource('auth-api-migrations')
 docker_build('eu.gcr.io/insight/auth-api-migrations', '../auth/auth-api/migrations', {})
 
-k8s_yaml(kustomize('../auth/auth-api/k8/overlays/minikube'))
+k8s_yaml(kustomize('../auth/auth-api/k8/overlays/local'))
 k8s_resource('auth-api', port_forwards=8080, resource_deps=['auth-api-migrations'])
 docker_build('eu.gcr.io/insight/auth-api', '..', {}, '../auth/auth-api/docker/Dockerfile.jvm')
 
