@@ -64,9 +64,7 @@ subprojects {
         systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
         testLogging.showStandardStreams = true
     }
-
-    test.finalizedBy()
-
+    
     checkstyle {
         toolVersion = '8.32'
         configFile = rootProject.file('config/checkstyle/.checkstyle.xml')
