@@ -12,13 +12,13 @@ public final class RequestUtils {
   private RequestUtils() {}
 
   /**
-   * Extracts referer base URL from http server request if present.
+   * Extracts referer URL from http server request if present.
    *
    * @param request http server request
-   * @return Optional String base URL as string
+   * @return Optional URL
    * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
    */
-  public static Optional<String> parseRefererBaseURL(HttpServerRequest request) {
+  public static Optional<URL> parseRefererURL(HttpServerRequest request) {
     return Optional.ofNullable(request.getHeader("referer"))
         .map(
             referer -> {
@@ -27,8 +27,18 @@ public final class RequestUtils {
               } catch (MalformedURLException e) {
                 throw Boom.badRequest().message(e.getMessage()).exception(e);
               }
-            })
-        .map(RequestUtils::parseBaseURL);
+            });
+  }
+
+  /**
+   * Extracts referer base URL from http server request if present.
+   *
+   * @param request http server request
+   * @return Optional String base URL as string
+   * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
+   */
+  public static Optional<String> parseRefererBaseURL(HttpServerRequest request) {
+    return parseRefererURL(request).map(RequestUtils::parseBaseURL);
   }
 
   /**
@@ -61,5 +71,35 @@ public final class RequestUtils {
       return proto + "://" + host;
     }
     return info.getBaseUri().toString();
+  }
+
+  /**
+   * Parses top level domain of given URL.
+   *
+   * @param url associated with the http request
+   * @return Optional String top level domain
+   * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
+   */
+  public static Optional<String> parseTLD(String url) {
+    try {
+      String[] parts = new URL(url).getHost().split("\\.");
+      if (parts.length == 1) {
+        return Optional.empty();
+      }
+      return Optional.of(String.join(".", parts[parts.length - 2], parts[parts.length - 1]));
+    } catch (MalformedURLException e) {
+      throw Boom.badRequest().message(e.getMessage()).exception(e);
+    }
+  }
+
+  /**
+   * Parses top level cookie domain of a given URL.
+   *
+   * @param url associated with the http request
+   * @return String cookie domain if present else null
+   * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
+   */
+  public static String parseCookieDomain(String url) {
+    return parseTLD(url).orElse(null);
   }
 }
