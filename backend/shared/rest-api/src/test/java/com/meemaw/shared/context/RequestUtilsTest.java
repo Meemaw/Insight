@@ -23,6 +23,8 @@ public class RequestUtilsTest {
     assertEquals(Optional.of("insight.io"), RequestUtils.parseTLD("http://app.insight.io"));
     assertEquals(Optional.of("insight.io"), RequestUtils.parseTLD("https://app.insight.io"));
     assertEquals(Optional.of("insight.io"), RequestUtils.parseTLD("https://insight.io"));
+    assertEquals(Optional.empty(), RequestUtils.parseTLD("app"));
     assertEquals(Optional.empty(), RequestUtils.parseTLD("http://localhost:3000"));
+    assertEquals(Optional.empty(), RequestUtils.parseTLD(""));
   }
 }

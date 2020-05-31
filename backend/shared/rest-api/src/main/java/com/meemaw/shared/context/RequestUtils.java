@@ -9,6 +9,8 @@ import javax.ws.rs.core.UriInfo;
 
 public final class RequestUtils {
 
+  private static final int DOMAIN_MIN_PARTS = 2;
+
   private RequestUtils() {}
 
   /**
@@ -78,17 +80,16 @@ public final class RequestUtils {
    *
    * @param url associated with the http request
    * @return Optional String top level domain
-   * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
    */
   public static Optional<String> parseTLD(String url) {
     try {
       String[] parts = new URL(url).getHost().split("\\.");
-      if (parts.length == 1) {
+      if (parts.length < DOMAIN_MIN_PARTS) {
         return Optional.empty();
       }
       return Optional.of(String.join(".", parts[parts.length - 2], parts[parts.length - 1]));
     } catch (MalformedURLException e) {
-      throw Boom.badRequest().message(e.getMessage()).exception(e);
+      return Optional.empty();
     }
   }
 
@@ -97,7 +98,6 @@ public final class RequestUtils {
    *
    * @param url associated with the http request
    * @return String cookie domain if present else null
-   * @throws com.meemaw.shared.rest.exception.BoomException if malformed URL
    */
   public static String parseCookieDomain(String url) {
     return parseTLD(url).orElse(null);
