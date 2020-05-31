@@ -33,6 +33,7 @@ public class SsoResourceImpl implements SsoResource {
 
   @Override
   public CompletionStage<Response> logout(String sessionId) {
+    String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
     return ssoService
         .logout(sessionId)
         .thenApply(
@@ -42,21 +43,19 @@ public class SsoResourceImpl implements SsoResource {
                       ? Response.noContent()
                       : DataResponse.error(Boom.badRequest().message("Session does not exist"))
                           .builder();
-
-              String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
               return builder.cookie(SsoSession.clearCookie(cookieDomain)).build();
             });
   }
 
   @Override
   public CompletionStage<Response> session(String sessionId) {
+    String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
     return ssoService
         .findSession(sessionId)
         .thenApply(
             maybeUser -> {
               if (maybeUser.isEmpty()) {
                 log.info("sessionId={} not found", sessionId);
-                String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
                 return Response.noContent().cookie(SsoSession.clearCookie(cookieDomain)).build();
               }
               return DataResponse.ok(maybeUser.get());
