@@ -27,6 +27,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
       - uses: eskatos/gradle-command-action@v1
+        if: failure()
         with:
           arguments: testReport
           build-root-directory: backend
@@ -35,12 +36,7 @@ jobs:
         if: always()
         with:
           name: test-report-allTests
-          path: backend/build/reports/allTests # seems to not be generated
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: test-reports
-          path: backend/**/build/reports/tests/**
+          path: backend/build/reports/allTests
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
