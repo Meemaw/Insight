@@ -17,13 +17,6 @@ allprojects {
     version '1.0'
 }
 
-task testReport(type: TestReport) {
-    destinationDir = file("$buildDir/reports/allTests")
-    // Include the results from the `test` task in all subprojects
-    reportOn subprojects.collect { it.tasks.withType(Test) }
-}
-
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
@@ -60,11 +53,10 @@ subprojects {
 
     test {
         finalizedBy tasks.jacocoTestReport
-        finalizedBy rootProject.tasks.testReport
         systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
         testLogging.showStandardStreams = true
     }
-    
+
     checkstyle {
         toolVersion = '8.32'
         configFile = rootProject.file('config/checkstyle/.checkstyle.xml')
@@ -92,3 +84,11 @@ tasks.withType(Checkstyle) {
         html.enabled false
     }
 }
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects.collect { it.tasks.withType(Test) }
+}
+
+tasks.test.finalizedBy rootProject.tasks.testReport
