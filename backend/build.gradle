@@ -59,10 +59,13 @@ subprojects {
     }
 
     test {
-        finalizedBy(tasks.jacocoTestReport, rootProject.tasks.testReport)
+        finalizedBy tasks.jacocoTestReport
+        finalizedBy rootProject.tasks.testReport
         systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
         testLogging.showStandardStreams = true
     }
+
+    test.finalizedBy()
 
     checkstyle {
         toolVersion = '8.32'
