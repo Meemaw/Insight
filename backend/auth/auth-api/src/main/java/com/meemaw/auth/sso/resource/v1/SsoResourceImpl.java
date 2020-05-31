@@ -23,15 +23,12 @@ public class SsoResourceImpl implements SsoResource {
 
   @Override
   public CompletionStage<Response> login(String email, String password) {
+    String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
     return ssoService
         .login(email, password)
         .thenApply(
-            sessionId -> {
-              String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
-              return Response.noContent()
-                  .cookie(SsoSession.cookie(sessionId, cookieDomain))
-                  .build();
-            });
+            sessionId ->
+                Response.noContent().cookie(SsoSession.cookie(sessionId, cookieDomain)).build());
   }
 
   @Override

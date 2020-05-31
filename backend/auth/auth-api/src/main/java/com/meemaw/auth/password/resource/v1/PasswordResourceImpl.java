@@ -29,13 +29,13 @@ public class PasswordResourceImpl implements PasswordResource {
 
   @Override
   public CompletionStage<Response> reset(PasswordResetRequestDTO payload) {
+    String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
     return passwordService
         .reset(payload)
         .thenCompose(
             x -> {
               String email = payload.getEmail();
               String password = payload.getPassword();
-              String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
               return ssoService
                   .login(email, password)
                   .thenApply(

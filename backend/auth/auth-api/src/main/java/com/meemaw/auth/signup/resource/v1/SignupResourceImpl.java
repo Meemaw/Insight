@@ -31,13 +31,13 @@ public class SignupResourceImpl implements SignupResource {
 
   @Override
   public CompletionStage<Response> signupComplete(SignupRequestCompleteDTO payload) {
+    String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
     return signupService
         .complete(payload)
         .thenCompose(
             x -> {
               String email = payload.getEmail();
               String password = payload.getPassword();
-              String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
               return ssoService
                   .login(email, password)
                   .thenApply(
