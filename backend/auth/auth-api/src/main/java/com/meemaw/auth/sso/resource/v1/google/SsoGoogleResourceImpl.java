@@ -31,12 +31,18 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
 
   @Override
   public Response signIn(String destinationPath) {
+    String serverRedirectURI = getRedirectUri();
     String refererBaseURL =
         RequestUtils.parseRefererBaseURL(request)
             .orElseThrow(() -> Boom.badRequest().message("referer required").exception());
 
+    log.info(
+        "Google SinIn serverRedirectURI: {}, refererBaseURL: {}",
+        serverRedirectURI,
+        refererBaseURL);
+
     String state = ssoGoogleService.secureState(refererBaseURL + destinationPath);
-    URI Location = ssoGoogleService.buildAuthorizationURI(state, getRedirectUri());
+    URI Location = ssoGoogleService.buildAuthorizationURI(state, serverRedirectURI);
     NewCookie sessionCookie = new NewCookie("state", state);
     return Response.status(Status.FOUND).cookie(sessionCookie).header("Location", Location).build();
   }

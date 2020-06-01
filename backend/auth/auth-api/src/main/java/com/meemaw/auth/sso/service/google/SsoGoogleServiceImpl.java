@@ -88,6 +88,7 @@ public class SsoGoogleServiceImpl implements SsoGoogleService {
   public CompletionStage<SsoSocialLogin> oauth2callback(
       String state, String sessionState, String code, String redirectURI) {
     if (!Optional.ofNullable(sessionState).orElse("").equals(state)) {
+      log.info("State miss-match, session: {}, query: {}", sessionState, state);
       throw Boom.status(Status.UNAUTHORIZED).message("Invalid state parameter").exception();
     }
 
