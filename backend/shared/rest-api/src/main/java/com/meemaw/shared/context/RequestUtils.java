@@ -72,7 +72,7 @@ public final class RequestUtils {
     if (proto != null && host != null) {
       return proto + "://" + host;
     }
-    return info.getBaseUri().toString();
+    return info.getBaseUri().toString().replaceAll("/$", "");
   }
 
   /**
