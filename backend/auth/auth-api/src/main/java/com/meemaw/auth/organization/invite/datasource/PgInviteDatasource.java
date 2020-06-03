@@ -54,14 +54,16 @@ public class PgInviteDatasource implements InviteDatasource {
   @Override
   public CompletionStage<Optional<TeamInvite>> findTeamInvite(UUID token) {
     return pgPool
-        .preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(token))
+        .preparedQuery(FIND_INVITE_RAW_SQL)
+        .execute(Tuple.of(token))
         .thenApply(this::inviteFromRowSet);
   }
 
   @Override
   public CompletionStage<Optional<TeamInvite>> findTeamInvite(UUID token, Transaction transaction) {
     return transaction
-        .preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(token))
+        .preparedQuery(FIND_INVITE_RAW_SQL)
+        .execute(Tuple.of(token))
         .thenApply(this::inviteFromRowSet);
   }
 
@@ -69,7 +71,8 @@ public class PgInviteDatasource implements InviteDatasource {
   public CompletionStage<Optional<Pair<TeamInvite, Organization>>> findTeamInviteWithOrganization(
       UUID token) {
     return pgPool
-        .preparedQuery(FIND_TEAM_INVITE_WITH_ORGANIZATION_RAW_SQL, Tuple.of(token))
+        .preparedQuery(FIND_TEAM_INVITE_WITH_ORGANIZATION_RAW_SQL)
+        .execute(Tuple.of(token))
         .thenApply(
             pgRowSet -> {
               if (!pgRowSet.iterator().hasNext()) {
@@ -85,7 +88,8 @@ public class PgInviteDatasource implements InviteDatasource {
   @Override
   public CompletionStage<List<TeamInvite>> findTeamInvites(String orgId) {
     return pgPool
-        .preparedQuery(FIND_ALL_INVITES_RAW_SQL, Tuple.of(orgId))
+        .preparedQuery(FIND_ALL_INVITES_RAW_SQL)
+        .execute(Tuple.of(orgId))
         .thenApply(
             pgRowSet ->
                 StreamSupport.stream(pgRowSet.spliterator(), false)
@@ -95,15 +99,18 @@ public class PgInviteDatasource implements InviteDatasource {
 
   @Override
   public CompletionStage<Boolean> deleteTeamInvite(UUID token) {
-    return pgPool.preparedQuery(DELETE_INVITE_RAW_SQL, Tuple.of(token)).thenApply(pgRowSet -> true);
+    return pgPool
+        .preparedQuery(DELETE_INVITE_RAW_SQL)
+        .execute(Tuple.of(token))
+        .thenApply(pgRowSet -> true);
   }
 
   @Override
   public CompletionStage<Boolean> deleteTeamInvites(
       String email, String org, Transaction transaction) {
-    Tuple values = Tuple.of(email, org);
     return transaction
-        .preparedQuery(DELETE_ALL_INVITES_RAW_SQL, values)
+        .preparedQuery(DELETE_ALL_INVITES_RAW_SQL)
+        .execute(Tuple.of(email, org))
         .thenApply(pgRowSet -> true);
   }
 
@@ -115,7 +122,8 @@ public class PgInviteDatasource implements InviteDatasource {
 
     Tuple values = Tuple.of(creatorId, email, orgId, role.toString());
     return transaction
-        .preparedQuery(CREATE_INVITE_RAW_SQL, values)
+        .preparedQuery(CREATE_INVITE_RAW_SQL)
+        .execute(values)
         .thenApply(
             pgRowSet -> {
               Row row = pgRowSet.iterator().next();

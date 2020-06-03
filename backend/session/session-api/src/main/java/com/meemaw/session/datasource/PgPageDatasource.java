@@ -40,19 +40,20 @@ public class PgPageDatasource implements PageDatasource {
 
   @Override
   public Uni<Optional<UUID>> findUserSessionLink(String orgId, UUID uid) {
-    Tuple values = Tuple.of(orgId, uid);
     return pgPool
-        .preparedQuery(SELECT_LINK_DEVICE_SESSION_RAW_SQL, values)
-        .map(this::extractSessionId)
+        .preparedQuery(SELECT_LINK_DEVICE_SESSION_RAW_SQL)
+        .execute(Tuple.of(orgId, uid))
+        .map(this::mapSessionId)
         .onFailure()
-        .invoke(
-            throwable -> {
-              log.error("Failed to findDeviceSession", throwable);
-              throw new DatabaseException(throwable);
-            });
+        .invoke(this::onFindUserSessionLinkException);
   }
 
-  private Optional<UUID> extractSessionId(RowSet<Row> pgRowSet) {
+  private Optional<UUID> onFindUserSessionLinkException(Throwable throwable) {
+    log.error("Failed to findUserSessionLinkException", throwable);
+    throw new DatabaseException(throwable);
+  }
+
+  private Optional<UUID> mapSessionId(RowSet<Row> pgRowSet) {
     RowIterator<Row> iterator = pgRowSet.iterator();
     if (!iterator.hasNext()) {
       return Optional.empty();
@@ -79,34 +80,38 @@ public class PgPageDatasource implements PageDatasource {
                 page.getCompiledTs()));
 
     return pgPool
-        .preparedQuery(INSERT_PAGE_RAW_SQL, values)
+        .preparedQuery(INSERT_PAGE_RAW_SQL)
+        .execute(values)
         .map(rowSet -> PageIdentity.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
         .onFailure()
-        .invoke(
-            throwable -> {
-              log.error("Failed to insertPage", throwable);
-              throw new DatabaseException(throwable);
-            });
+        .invoke(this::onInsertPageException);
+  }
+
+  private <T> T onInsertPageException(Throwable throwable) {
+    log.error("Failed to insertPage", throwable);
+    throw new DatabaseException(throwable);
   }
 
   @Override
   public Uni<Integer> activePageCount() {
     return pgPool
         .preparedQuery(SELECT_ACTIVE_PAGE_COUNT)
+        .execute()
         .map(rowSet -> rowSet.iterator().next().getInteger("count"))
         .onFailure()
-        .invoke(
-            throwable -> {
-              log.error("Failed to COUNT(*) active pages", throwable);
-              throw new DatabaseException(throwable);
-            });
+        .invoke(this::onActivePageCountException);
+  }
+
+  private <T> T onActivePageCountException(Throwable throwable) {
+    log.error("Failed to COUNT(*) active pages", throwable);
+    throw new DatabaseException(throwable);
   }
 
   @Override
   public Uni<Optional<PageDTO>> getPage(UUID pageID, UUID sessionID, String orgID) {
-    Tuple values = Tuple.of(pageID, sessionID, orgID);
     return pgPool
-        .preparedQuery(SELECT_PAGE_RAW_SWL, values)
+        .preparedQuery(SELECT_PAGE_RAW_SWL)
+        .execute(Tuple.of(pageID, sessionID, orgID))
         .map(
             rowSet -> {
               if (!rowSet.iterator().hasNext()) {
@@ -129,11 +134,11 @@ public class PgPageDatasource implements PageDatasource {
             })
         .map(Optional::ofNullable)
         .onFailure()
-        .invoke(
-            throwable -> {
-              log.error(
-                  "Failed to get page id={} datasourceURL={}", pageID, datasourceURL, throwable);
-              throw new DatabaseException(throwable);
-            });
+        .invoke(this::onGetPageException);
+  }
+
+  private <T> T onGetPageException(Throwable throwable) {
+    log.error("Failed to get page", throwable);
+    throw new DatabaseException(throwable);
   }
 }
