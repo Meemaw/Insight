@@ -1,20 +1,12 @@
-import React from 'react';
 import { NextPageContext } from 'next';
 import Router from 'next/router';
-import { SignupRequest } from '@insight/types';
 import SignupApi from 'api/signup';
-import SignupComplete from 'modules/auth/components/SignupComplete';
 
-type Props = {
-  signupRequest: SignupRequest;
-};
-
-const SignupCompletePage = ({ signupRequest }: Props) => {
-  return <SignupComplete {...signupRequest} />;
-};
+// eslint-disable-next-line lodash/prefer-constant
+const SignupCompletePage = () => null;
 
 SignupCompletePage.getInitialProps = async (ctx: NextPageContext) => {
-  const { email, orgId, token } = ctx.query;
+  const { token } = ctx.query;
 
   const invalidSignupRedirect = () => {
     const Location = '/invalid-sign-up';
@@ -26,21 +18,24 @@ SignupCompletePage.getInitialProps = async (ctx: NextPageContext) => {
     }
   };
 
-  if (!email || !orgId || !token) {
+  if (!token) {
     invalidSignupRedirect();
   }
 
-  const response = await SignupApi.verify({
-    email: email as string,
-    token: token as string,
-    org: orgId as string,
-  });
-
+  const response = await SignupApi.verify(token as string);
   if (response.data === false) {
     invalidSignupRedirect();
+  } else {
+    const Location = '/';
+    const resp = await SignupApi.complete(token as string);
+    console.log(resp.headers);
+    if (ctx.res) {
+      ctx.res.writeHead(302, { Location });
+      ctx.res.end();
+    } else {
+      Router.push(Location);
+    }
   }
-
-  return { signupRequest: { email, token, org: orgId } };
 };
 
 export default SignupCompletePage;

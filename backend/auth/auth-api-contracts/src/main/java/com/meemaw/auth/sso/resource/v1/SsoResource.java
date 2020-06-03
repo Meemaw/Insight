@@ -46,7 +46,9 @@ public interface SsoResource {
   @GET
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
-  CompletionStage<Response> me(
+  default CompletionStage<Response> me(
       @NotNull(message = "SessionId may not be blank") @CookieParam(SsoSession.COOKIE_NAME)
-          String sessionId);
+          String sessionId) {
+    return session(sessionId);
+  }
 }

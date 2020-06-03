@@ -8,9 +8,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.auth.password.model.dto.PasswordForgotRequestDTO;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
-import com.meemaw.auth.signup.resource.v1.SignupResourceImplTest;
 import com.meemaw.auth.sso.model.SsoSession;
 import com.meemaw.auth.sso.resource.v1.SsoResource;
+import com.meemaw.test.setup.SsoTestSetupUtils;
 import com.meemaw.test.testconainers.pg.PostgresTestResource;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
@@ -67,7 +67,7 @@ public class PasswordResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"passwordForgotRequestDTO\":\"Payload is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"body\":\"Required\"}}}"));
   }
 
   @Test
@@ -137,7 +137,7 @@ public class PasswordResourceImplTest {
   public void forgot_should_send_email_on_existing_user() throws JsonProcessingException {
     String email = "test-forgot-password-flow@gmail.com";
     String password = "superHardPassword";
-    SignupResourceImplTest.signup(mailbox, objectMapper, email, password);
+    SsoTestSetupUtils.signUpAndLogin(mailbox, objectMapper, email, password);
     PasswordResourceImplTest.passwordForgot(email, objectMapper);
     // can trigger the forgot flow multiple times!!
     PasswordResourceImplTest.passwordForgot(email, objectMapper);
@@ -190,7 +190,7 @@ public class PasswordResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"passwordResetRequestDTO\":\"Payload is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"body\":\"Required\"}}}"));
   }
 
   @Test
@@ -204,14 +204,13 @@ public class PasswordResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"password\":\"Required\",\"org\":\"Required\",\"email\":\"Required\",\"token\":\"Required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"password\":\"Required\",\"token\":\"Required\"}}}"));
   }
 
   @Test
   public void reset_should_fail_when_invalid_payload() throws JsonProcessingException {
     String payload =
-        objectMapper.writeValueAsString(
-            new PasswordResetRequestDTO("email", "org", UUID.randomUUID(), "pass"));
+        objectMapper.writeValueAsString(new PasswordResetRequestDTO(UUID.randomUUID(), "pass"));
 
     given()
         .when()
@@ -222,15 +221,14 @@ public class PasswordResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"password\":\"Password must be at least 8 characters long\",\"email\":\"must be a well-formed email address\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"password\":\"Password must be at least 8 characters long\"}}}"));
   }
 
   @Test
   public void reset_should_fail_when_missing_payload() throws JsonProcessingException {
     String payload =
         objectMapper.writeValueAsString(
-            new PasswordResetRequestDTO(
-                "isEmail@gmail.com", "org", UUID.randomUUID(), "passLongEnough"));
+            new PasswordResetRequestDTO(UUID.randomUUID(), "passLongEnough"));
 
     given()
         .when()
@@ -253,7 +251,7 @@ public class PasswordResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"token\":\"token is required\",\"org\":\"org is required\",\"email\":\"email is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"token\":\"Required\"}}}"));
   }
 
   @Test
@@ -261,7 +259,6 @@ public class PasswordResourceImplTest {
     given()
         .when()
         .queryParam("email", "test@gmail.com")
-        .queryParam("org", "random")
         .queryParam("token", "4f113105-94d9-4470-8621-0e633fa4697")
         .get(PasswordResource.PATH + "/reset/exists")
         .then()
@@ -271,22 +268,22 @@ public class PasswordResourceImplTest {
 
   @Test
   public void reset_flow_should_succeed_after_signup() throws JsonProcessingException {
-    String signupEmail = "reset-password-flow@gmail.com";
+    String signUpEmail = "reset-password-flow@gmail.com";
     String oldPassword = "superHardPassword";
-    SignupResourceImplTest.signup(mailbox, objectMapper, signupEmail, oldPassword);
-    PasswordResourceImplTest.passwordForgot(signupEmail, objectMapper);
+    SsoTestSetupUtils.signUpAndLogin(mailbox, objectMapper, signUpEmail, oldPassword);
+    PasswordResourceImplTest.passwordForgot(signUpEmail, objectMapper);
 
     // login with "oldPassword" should succeed
     given()
         .when()
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        .param("email", signupEmail)
+        .param("email", signUpEmail)
         .param("password", oldPassword)
         .post(SsoResource.PATH + "/login")
         .then()
         .statusCode(204);
 
-    List<Mail> sent = mailbox.getMessagesSentTo(signupEmail);
+    List<Mail> sent = mailbox.getMessagesSentTo(signUpEmail);
     assertEquals(2, sent.size());
     Mail actual = sent.get(1);
     assertEquals("Insight Support <support@insight.com>", actual.getFrom());
@@ -295,23 +292,15 @@ public class PasswordResourceImplTest {
     Elements link = doc.select("a");
     String passwordForgotLink = link.attr("href");
 
-    Matcher orgMatcher = Pattern.compile("^.*orgId=(.*)&.*$").matcher(passwordForgotLink);
-    orgMatcher.matches();
-    String orgId = orgMatcher.group(1);
-
     Matcher tokenMatcher = Pattern.compile("^.*token=(.*)$").matcher(passwordForgotLink);
     tokenMatcher.matches();
     String token = tokenMatcher.group(1);
 
-    Matcher emailMatcher = Pattern.compile("^.*email=(.*\\.com).*$").matcher(passwordForgotLink);
-    emailMatcher.matches();
-    String email = emailMatcher.group(1);
+    assertEquals(passwordForgotLink, "http://localhost:8081/password-reset?token=" + token);
 
     // reset request should exist
     given()
         .when()
-        .queryParam("email", email)
-        .queryParam("org", orgId)
         .queryParam("token", token)
         .get(PasswordResource.PATH + "/reset/exists")
         .then()
@@ -321,7 +310,7 @@ public class PasswordResourceImplTest {
     String newPassword = "superDuperNewFancyPassword";
     String resetPasswordPayload =
         objectMapper.writeValueAsString(
-            new PasswordResetRequestDTO(email, orgId, UUID.fromString(token), newPassword));
+            new PasswordResetRequestDTO(UUID.fromString(token), newPassword));
 
     // successful reset should login the user
     given()
@@ -337,7 +326,7 @@ public class PasswordResourceImplTest {
     given()
         .when()
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        .param("email", signupEmail)
+        .param("email", signUpEmail)
         .param("password", oldPassword)
         .post(SsoResource.PATH + "/login")
         .then()
@@ -350,7 +339,7 @@ public class PasswordResourceImplTest {
     given()
         .when()
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        .param("email", signupEmail)
+        .param("email", signUpEmail)
         .param("password", newPassword)
         .post(SsoResource.PATH + "/login")
         .then()

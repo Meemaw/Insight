@@ -11,18 +11,20 @@ import {
   COUNTRIES,
 } from 'baseui/phone-input';
 import { useForm, Controller } from 'react-hook-form';
+import { APIErrorDataResponse, APIError } from '@insight/types';
+import FormError from 'shared/components/FormError';
+import Router from 'next/router';
 
-export type FormData = {
-  firstName: string;
-  lastName: string;
+export type SignUpFormData = {
+  fullName: string;
   company: string;
-  phoneNumber?: string;
   email: string;
   password: string;
+  phoneNumber?: string;
 };
 
 export type Props = {
-  onSubmit: <T>(data: FormData) => Promise<T>;
+  onSubmit: (data: SignUpFormData) => Promise<unknown>;
   minPasswordLength?: number;
 };
 
@@ -31,23 +33,29 @@ const SignUpForm = ({
   minPasswordLength = 8,
 }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<APIError | undefined>();
   const [country, setCountry] = useState<Country>(COUNTRIES.US);
   const [css, theme] = useStyletron();
-  const { register, handleSubmit, errors, control } = useForm<FormData>();
+  const { register, handleSubmit, errors, control } = useForm<SignUpFormData>();
 
   const onSubmit = handleSubmit(({ phoneNumber, ...rest }) => {
     if (isSubmitting) {
       return;
     }
     setIsSubmitting(true);
+    setFormError(undefined);
 
-    const formData = phoneNumber
+    const signUpFormData = phoneNumber
       ? { ...rest, phoneNumber: `${country.dialCode}${phoneNumber}` }
       : rest;
 
-    onSubmitProp(formData).finally(() => {
-      setIsSubmitting(false);
-    });
+    onSubmitProp(signUpFormData)
+      .then(() => Router.push('/signup-confirm'))
+      .catch(async (error) => {
+        const errorDTO: APIErrorDataResponse = await error.response.json();
+        setFormError(errorDTO.error);
+      })
+      .finally(() => setIsSubmitting(false));
   });
 
   const inputBorderRadius = {
@@ -64,31 +72,17 @@ const SignUpForm = ({
 
   return (
     <form onSubmit={onSubmit} noValidate>
-      <Block display="flex">
-        <Block width="100%" marginRight={theme.sizing.scale600}>
-          <FormControl label="First name" error={errors.firstName?.message}>
-            <Input
-              overrides={inputOverrides}
-              name="firstName"
-              placeholder="First name"
-              required
-              inputRef={register({ required: 'Required' })}
-              error={Boolean(errors.firstName)}
-            />
-          </FormControl>
-        </Block>
-        <Block width="100%" marginLeft={theme.sizing.scale600}>
-          <FormControl label="Last Name" error={errors.lastName?.message}>
-            <Input
-              overrides={inputOverrides}
-              name="lastName"
-              placeholder="Last name"
-              required
-              inputRef={register({ required: 'Required' })}
-              error={Boolean(errors.lastName)}
-            />
-          </FormControl>
-        </Block>
+      <Block>
+        <FormControl label="Full name" error={errors.fullName?.message}>
+          <Input
+            overrides={inputOverrides}
+            name="fullName"
+            placeholder="Full name"
+            required
+            inputRef={register({ required: 'Required' })}
+            error={Boolean(errors.fullName)}
+          />
+        </FormControl>
       </Block>
 
       <Block>
@@ -190,6 +184,8 @@ const SignUpForm = ({
       <Button type="submit" $style={{ width: '100%' }} isLoading={isSubmitting}>
         Get started
       </Button>
+
+      {formError && <FormError error={formError} />}
     </form>
   );
 };
