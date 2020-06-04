@@ -14,7 +14,7 @@ services:
       - JAEGER_AGENT_HOST=jaeger:6831
       - MAILER_USERNAME=${MAILER_USERNAME}
       - MAILER_PASSWORD=${MAILER_PASSWORD}
-      - MAILER_MOCK={MAILER_MOCK:true}
+      - MAILER_MOCK={MAILER_MOCK:-true}
     depends_on:
       - auth-api-migrations
   auth-api-migrations:
