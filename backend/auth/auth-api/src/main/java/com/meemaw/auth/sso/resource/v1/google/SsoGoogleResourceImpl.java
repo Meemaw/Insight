@@ -37,9 +37,9 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
             .orElseThrow(() -> Boom.badRequest().message("referer required").exception());
 
     String state = ssoGoogleService.secureState(refererBaseURL + destinationPath);
-    URI Location = ssoGoogleService.buildAuthorizationURI(state, serverRedirectURI);
+    URI location = ssoGoogleService.buildAuthorizationURI(state, serverRedirectURI);
     NewCookie sessionCookie = new NewCookie("state", state);
-    return Response.status(Status.FOUND).cookie(sessionCookie).header("Location", Location).build();
+    return Response.status(Status.FOUND).cookie(sessionCookie).header("Location", location).build();
   }
 
   @Override

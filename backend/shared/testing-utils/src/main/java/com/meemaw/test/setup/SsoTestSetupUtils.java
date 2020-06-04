@@ -42,7 +42,7 @@ public final class SsoTestSetupUtils {
    * @param email String email address
    * @param password String password
    * @return String session id
-   * @throws JsonProcessingException
+   * @throws JsonProcessingException if problems serializing
    */
   public static String signUpAndLogin(
       MockMailbox mockMailbox, ObjectMapper objectMapper, String email, String password)
@@ -57,7 +57,7 @@ public final class SsoTestSetupUtils {
    * @param objectMapper jackson object mapper
    * @param signUpRequestDTO sign up request data
    * @return String SessionId
-   * @throws JsonProcessingException
+   * @throws JsonProcessingException if problems serializing
    */
   public static String signUpAndLogin(
       MockMailbox mailbox, ObjectMapper objectMapper, SignUpRequestDTO signUpRequestDTO)
@@ -125,7 +125,7 @@ public final class SsoTestSetupUtils {
   }
 
   /**
-   * Extract session cookie from rest assured response
+   * Extract session cookie from rest assured response.
    *
    * @param response rest assured response
    * @return Cookie

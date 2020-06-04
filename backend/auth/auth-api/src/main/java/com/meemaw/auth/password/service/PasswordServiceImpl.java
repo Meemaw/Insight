@@ -166,9 +166,6 @@ public class PasswordServiceImpl implements PasswordService {
 
   private CompletionStage<PasswordResetRequest> reset(
       PasswordResetRequest request, String password) {
-    UUID token = request.getToken();
-    String email = request.getEmail();
-
     if (request.hasExpired()) {
       throw Boom.badRequest().message("Password reset request expired").exception();
     }
@@ -178,10 +175,11 @@ public class PasswordServiceImpl implements PasswordService {
         .thenCompose(
             transaction ->
                 passwordResetDatasource
-                    .deletePasswordResetRequest(token, transaction)
+                    .deletePasswordResetRequest(request.getToken(), transaction)
                     .thenCompose(
                         deleted ->
-                            createPassword(request.getUserId(), email, password, transaction))
+                            createPassword(
+                                request.getUserId(), request.getEmail(), password, transaction))
                     .thenCompose(created -> transaction.commit())
                     .thenApply(nothing -> request));
   }

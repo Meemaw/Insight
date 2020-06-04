@@ -24,7 +24,7 @@ public class SsoUser implements AuthUser, IdentifiedDataSerializable {
   OffsetDateTime createdAt;
 
   /**
-   * Create a SsoUser from an existing AuthUser
+   * Create a SsoUser from an existing AuthUser.
    *
    * @param user AuthUser
    */
