@@ -9,7 +9,6 @@ import { Button } from 'baseui/button';
 import { createInputOverrides } from 'shared/styles/input';
 import { useRouter } from 'next/router';
 import { APIError, APIErrorDataResponse } from '@insight/types';
-import Link from 'next/link';
 import PasswordApi from 'api/password';
 import FormError from 'shared/components/FormError';
 import { PASSWORD_VALIDATION } from 'modules/auth/validation/password';

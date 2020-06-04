@@ -1,5 +1,4 @@
 import React from 'react';
-import { PasswordResetRequest } from '@insight/types';
 import PasswordApi from 'api/password';
 import { GetServerSideProps } from 'next';
 import InvalidPasswordResetRequest from 'modules/auth/components/InvalidPasswordResetRequest';
