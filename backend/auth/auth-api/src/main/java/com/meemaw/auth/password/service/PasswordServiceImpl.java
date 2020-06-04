@@ -19,6 +19,7 @@ import io.vertx.axle.pgclient.PgPool;
 import io.vertx.axle.sqlclient.Transaction;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ public class PasswordServiceImpl implements PasswordService {
 
   @Override
   public CompletionStage<AuthUser> verifyPassword(String email, String password) {
+    log.info("[verifyPassword]: request for email: {}", email);
     return passwordDatasource
         .findUserWithPassword(email)
         .thenApply(
@@ -76,19 +78,24 @@ public class PasswordServiceImpl implements PasswordService {
   }
 
   @Override
-  public CompletionStage<AuthUser> forgotPassword(String email, String passwordResetBaseURL) {
+  public CompletionStage<Optional<AuthUser>> forgotPassword(
+      String email, String passwordResetBaseURL) {
+    log.info("[forgotPassword]: request for email: {}", email);
     String passwordResetURL = String.join("/", passwordResetBaseURL, "password-reset");
 
     return userDatasource
         .findUser(email)
-        .thenApply(
-            maybeUser ->
-                maybeUser.orElseThrow(
-                    () -> {
-                      log.info("User {} not found", email);
-                      throw new BoomException(Boom.notFound().message("User not found"));
-                    }))
-        .thenCompose(user -> this.forgotPassword(user, passwordResetURL));
+        .thenCompose(
+            maybeUser -> {
+              // Don't leak that email is in use
+              if (maybeUser.isEmpty()) {
+                log.info("[forgotPassword]: no user associated with email: {}", email);
+                return CompletableFuture.completedStage(maybeUser);
+              }
+
+              return this.forgotPassword(maybeUser.get(), passwordResetURL)
+                  .thenApply(ignores -> maybeUser);
+            });
   }
 
   private CompletionStage<AuthUser> forgotPassword(AuthUser authUser, String passwordResetURL) {
@@ -148,6 +155,7 @@ public class PasswordServiceImpl implements PasswordService {
       PasswordResetRequestDTO passwordResetRequestDTO) {
     UUID token = passwordResetRequestDTO.getToken();
     String password = passwordResetRequestDTO.getPassword();
+    log.info("[resetPassword]: request with token: {}", token);
     return passwordResetDatasource
         .findPasswordResetRequest(token)
         .thenApply(
@@ -186,6 +194,7 @@ public class PasswordServiceImpl implements PasswordService {
   @Override
   public CompletionStage<Boolean> createPassword(
       UUID userId, String email, String password, Transaction transaction) {
+    log.info("[createPassword]: request for email: {}", email);
     return passwordDatasource
         .storePassword(userId, hashPassword(password), transaction)
         .thenApply(x -> true);
@@ -193,6 +202,7 @@ public class PasswordServiceImpl implements PasswordService {
 
   @Override
   public CompletionStage<Boolean> passwordResetRequestExists(UUID token) {
+    log.info("[passwordResetRequestExists]: request for token: {}", token);
     return passwordResetDatasource.findPasswordResetRequest(token).thenApply(Optional::isPresent);
   }
 }

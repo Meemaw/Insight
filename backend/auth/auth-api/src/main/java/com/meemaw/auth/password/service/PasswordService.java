@@ -4,6 +4,7 @@ import com.meemaw.auth.password.model.PasswordResetRequest;
 import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.user.model.AuthUser;
 import io.vertx.axle.sqlclient.Transaction;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import org.mindrot.jbcrypt.BCrypt;
@@ -24,9 +25,9 @@ public interface PasswordService {
    *
    * @param email String user email address
    * @param passwordResetBaseURL String password reset base URL address
-   * @return Boolean true
+   * @return maybe AuthUser
    */
-  CompletionStage<AuthUser> forgotPassword(String email, String passwordResetBaseURL);
+  CompletionStage<Optional<AuthUser>> forgotPassword(String email, String passwordResetBaseURL);
 
   /**
    * Reset password.

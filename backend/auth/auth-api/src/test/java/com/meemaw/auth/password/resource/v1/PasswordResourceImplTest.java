@@ -117,7 +117,8 @@ public class PasswordResourceImplTest {
   }
 
   @Test
-  public void forgot_should_fail_on_missing_email() throws JsonProcessingException {
+  public void forgot_should_succeed_on_missing_email_to_not_leak_users()
+      throws JsonProcessingException {
     String payload =
         objectMapper.writeValueAsString(new PasswordForgotRequestDTO("missing@test.com"));
 
@@ -127,10 +128,8 @@ public class PasswordResourceImplTest {
         .body(payload)
         .post(PasswordResource.PATH + "/forgot")
         .then()
-        .statusCode(404)
-        .body(
-            sameJson(
-                "{\"error\":{\"statusCode\":404,\"reason\":\"Not Found\",\"message\":\"User not found\"}}"));
+        .statusCode(201)
+        .body(sameJson("{\"data\":true}"));
   }
 
   @Test
