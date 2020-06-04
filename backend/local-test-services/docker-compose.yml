@@ -11,12 +11,13 @@ services:
       - LOG_LEVEL=INFO
       - POSTGRES_HOST=db
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - JAEGER_AGENT_HOST=jaeger:6831
+      - JAEGER_AGENT_HOST=${JAEGER_HOST:-jaeger:6831}
       - MAILER_USERNAME=${MAILER_USERNAME}
       - MAILER_PASSWORD=${MAILER_PASSWORD}
-      - MAILER_MOCK={MAILER_MOCK:-true}
+      - MAILER_MOCK={MAILER_MOCK}
     depends_on:
       - auth-api-migrations
+
   auth-api-migrations:
     build:
       context: ../auth/auth-api/migrations
@@ -24,7 +25,7 @@ services:
     depends_on:
       - db
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
       - POSTGRES_DB=${POSTGRES_DB:-postgres}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
@@ -41,8 +42,8 @@ services:
     environment:
       - LOG_LEVEL=INFO
       - KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
-      - POSTGRES_HOST=db
-      - JAEGER_AGENT_HOST=jaeger:6831
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - JAEGER_AGENT_HOST=${JAEGER_HOST:-jaeger:6831}
       - SESSION_SERVICE_BASE_URL=http://session-api:8080
 
   session-api:
@@ -57,8 +58,9 @@ services:
     environment:
       - LOG_LEVEL=INFO
       - KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
-      - POSTGRES_HOST=db
-      - JAEGER_AGENT_HOST=jaeger:6831
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - JAEGER_AGENT_HOST=${JAEGER_HOST:-jaeger:6831}
+
   session-api-migrations:
     build:
       context: ../session/session-api/migrations
@@ -66,7 +68,7 @@ services:
     depends_on:
       - db
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
       - POSTGRES_DB=${POSTGRES_DB:-postgres}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
