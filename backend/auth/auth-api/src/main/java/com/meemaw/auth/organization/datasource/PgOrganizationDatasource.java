@@ -67,7 +67,7 @@ public class PgOrganizationDatasource implements OrganizationDatasource {
   }
 
   /**
-   * Map SQL row to organization
+   * Map SQL row to organization.
    *
    * @param row SQL row
    * @return mapped OrganizationDTO
