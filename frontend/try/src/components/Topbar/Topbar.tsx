@@ -23,10 +23,6 @@ const Topbar = ({ appBaseURL, helpBaseURL }: Props) => {
         <H6 margin={0}>Insight</H6>
         <Block>
           <a
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-            }}
             href={helpBaseURL}
             className={css({
               marginRight: theme.sizing.scale600,
