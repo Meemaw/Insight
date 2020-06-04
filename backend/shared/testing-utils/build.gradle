@@ -15,7 +15,7 @@ dependencies {
     api 'org.testcontainers:testcontainers:1.14.1'
     api 'org.testcontainers:junit-jupiter:1.14.1'
     api 'org.testcontainers:postgresql:1.14.1'
-    api 'org.testcontainers:kafka:1.14.1'
+    api 'org.testcontainers:kafka:1.14.3'
     api 'org.testcontainers:elasticsearch:1.14.1'
     implementation project(':shared:rest-api')
 }
