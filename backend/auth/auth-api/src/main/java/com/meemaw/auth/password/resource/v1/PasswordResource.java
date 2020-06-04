@@ -10,8 +10,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -20,20 +20,20 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public interface PasswordResource {
 
-  String PATH = "/v1/password";
+  String PATH = "/v1";
 
   @POST
-  @Path("forgot")
+  @Path("password_forgot")
   CompletionStage<Response> forgotPassword(
       @NotNull(message = "Required") @Valid PasswordForgotRequestDTO body);
 
   @POST
-  @Path("reset")
+  @Path("password_reset/{token}")
   CompletionStage<Response> resetPassword(
+      @PathParam("token") UUID token,
       @NotNull(message = "Required") @Valid PasswordResetRequestDTO body);
 
   @GET
-  @Path("reset/exists")
-  CompletionStage<Response> passwordResetRequestExists(
-      @NotNull(message = "Required") @QueryParam("token") UUID token);
+  @Path("password_reset/{token}/exists")
+  CompletionStage<Response> passwordResetRequestExists(@PathParam("token") UUID token);
 }

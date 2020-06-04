@@ -35,17 +35,16 @@ public class PasswordResourceImpl implements PasswordResource {
   }
 
   @Override
-  public CompletionStage<Response> resetPassword(PasswordResetRequestDTO payload) {
+  public CompletionStage<Response> resetPassword(UUID token, PasswordResetRequestDTO payload) {
+    String password = payload.getPassword();
     String cookieDomain = RequestUtils.parseCookieDomain(request.absoluteURI());
     return passwordService
-        .resetPassword(payload)
+        .resetPassword(token, password)
         .thenCompose(
-            passwordResetRequest -> {
-              String password = payload.getPassword();
-              return ssoService
-                  .login(passwordResetRequest.getEmail(), password)
-                  .thenApply(sessionId -> SsoSession.cookieResponse(sessionId, cookieDomain));
-            });
+            passwordResetRequest ->
+                ssoService
+                    .login(passwordResetRequest.getEmail(), password)
+                    .thenApply(sessionId -> SsoSession.cookieResponse(sessionId, cookieDomain)));
   }
 
   @Override

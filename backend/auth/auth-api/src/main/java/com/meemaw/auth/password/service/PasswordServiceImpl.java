@@ -4,7 +4,6 @@ import com.meemaw.auth.core.MailingConstants;
 import com.meemaw.auth.password.datasource.PasswordDatasource;
 import com.meemaw.auth.password.datasource.PasswordResetDatasource;
 import com.meemaw.auth.password.model.PasswordResetRequest;
-import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.user.datasource.UserDatasource;
 import com.meemaw.auth.user.model.AuthUser;
 import com.meemaw.auth.user.model.UserWithHashedPassword;
@@ -151,10 +150,7 @@ public class PasswordServiceImpl implements PasswordService {
   }
 
   @Override
-  public CompletionStage<PasswordResetRequest> resetPassword(
-      PasswordResetRequestDTO passwordResetRequestDTO) {
-    UUID token = passwordResetRequestDTO.getToken();
-    String password = passwordResetRequestDTO.getPassword();
+  public CompletionStage<PasswordResetRequest> resetPassword(UUID token, String password) {
     log.info("[resetPassword]: request with token: {}", token);
     return passwordResetDatasource
         .findPasswordResetRequest(token)
@@ -169,11 +165,11 @@ public class PasswordServiceImpl implements PasswordService {
   }
 
   private CompletionStage<PasswordResetRequest> reset(
-      PasswordResetRequest passwordResetRequest, String newPassword) {
-    UUID token = passwordResetRequest.getToken();
-    String email = passwordResetRequest.getEmail();
+      PasswordResetRequest request, String password) {
+    UUID token = request.getToken();
+    String email = request.getEmail();
 
-    if (passwordResetRequest.hasExpired()) {
+    if (request.hasExpired()) {
       throw Boom.badRequest().message("Password reset request expired").exception();
     }
 
@@ -185,10 +181,9 @@ public class PasswordServiceImpl implements PasswordService {
                     .deletePasswordResetRequest(token, transaction)
                     .thenCompose(
                         deleted ->
-                            createPassword(
-                                passwordResetRequest.getUserId(), email, newPassword, transaction))
+                            createPassword(request.getUserId(), email, password, transaction))
                     .thenCompose(created -> transaction.commit())
-                    .thenApply(nothing -> passwordResetRequest));
+                    .thenApply(nothing -> request));
   }
 
   @Override

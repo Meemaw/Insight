@@ -1,7 +1,6 @@
 package com.meemaw.auth.password.service;
 
 import com.meemaw.auth.password.model.PasswordResetRequest;
-import com.meemaw.auth.password.model.dto.PasswordResetRequestDTO;
 import com.meemaw.auth.user.model.AuthUser;
 import io.vertx.axle.sqlclient.Transaction;
 import java.util.Optional;
@@ -32,11 +31,11 @@ public interface PasswordService {
   /**
    * Reset password.
    *
-   * @param passwordResetRequestDTO PasswordResetRequestDTO payload
+   * @param token UUID confirmation token
+   * @param password String new password
    * @return PasswordResetRequest password reset request that was executed
    */
-  CompletionStage<PasswordResetRequest> resetPassword(
-      PasswordResetRequestDTO passwordResetRequestDTO);
+  CompletionStage<PasswordResetRequest> resetPassword(UUID token, String password);
 
   /**
    * Create password associated with user.
