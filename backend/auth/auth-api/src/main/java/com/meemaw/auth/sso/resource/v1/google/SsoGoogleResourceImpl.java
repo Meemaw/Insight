@@ -48,13 +48,13 @@ public class SsoGoogleResourceImpl implements SsoGoogleResource {
         .oauth2callback(state, sessionState, code, getRedirectUri())
         .thenApply(
             ssoSocialLogin -> {
-              String Location = ssoSocialLogin.getLocation();
-              String SessionId = ssoSocialLogin.getSessionId();
+              String location = ssoSocialLogin.getLocation();
+              String sessionId = ssoSocialLogin.getSessionId();
               String cookieDomain = ssoSocialLogin.getCookieDomain();
 
               return Response.status(Status.FOUND)
-                  .header("Location", Location)
-                  .cookie(SsoSession.cookie(SessionId, cookieDomain))
+                  .header("Location", location)
+                  .cookie(SsoSession.cookie(sessionId, cookieDomain))
                   .build();
             });
   }

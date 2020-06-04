@@ -52,14 +52,6 @@ public class PgInviteDatasource implements InviteDatasource {
       "INSERT INTO auth.team_invite(creator_id, email, org_id, role) VALUES($1, $2, $3, $4) RETURNING token, created_at";
 
   @Override
-  public CompletionStage<Optional<TeamInvite>> findTeamInvite(UUID token) {
-    return pgPool
-        .preparedQuery(FIND_INVITE_RAW_SQL)
-        .execute(Tuple.of(token))
-        .thenApply(this::inviteFromRowSet);
-  }
-
-  @Override
   public CompletionStage<Optional<TeamInvite>> findTeamInvite(UUID token, Transaction transaction) {
     return transaction
         .preparedQuery(FIND_INVITE_RAW_SQL)
@@ -161,6 +153,12 @@ public class PgInviteDatasource implements InviteDatasource {
     return Optional.of(mapInviteDTO(rowSet.iterator().next()));
   }
 
+  /**
+   * Map sql row to TeamInvite.
+   *
+   * @param row sql row
+   * @return mapped TeamInvite
+   */
   public static TeamInvite mapInviteDTO(Row row) {
     return new TeamInvite(
         row.getUUID("token"),

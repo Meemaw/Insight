@@ -25,9 +25,6 @@ public class PgSignUpDatasource implements SignUpDatasource {
   private static final String SELECT_SIGN_UP_RAW_SQL =
       "SELECT * FROM auth.sign_up_request WHERE token = $1";
 
-  private static final String SELECT_ACTIVE_SIGN_UP_RAW_SQL =
-      "SELECT * FROM auth.sign_up_request WHERE email = $1 AND created_at > now() - INTERVAL '1 DAY';";
-
   private static final String DELETE_SIGN_UP_RAW_SQL =
       "DELETE FROM auth.sign_up_request WHERE token = $1";
 
@@ -98,24 +95,6 @@ public class PgSignUpDatasource implements SignUpDatasource {
   }
 
   @Override
-  public CompletionStage<Optional<SignUpRequest>> findActiveSignUpRequest(
-      String email, Transaction transaction) {
-    return transaction
-        .preparedQuery(SELECT_ACTIVE_SIGN_UP_RAW_SQL)
-        .execute(Tuple.of(email))
-        .exceptionally(
-            throwable -> {
-              log.error("Failed to find active sign up request", throwable);
-              throw new DatabaseException(throwable);
-            })
-        .thenApply(
-            pgRowSet ->
-                pgRowSet.iterator().hasNext()
-                    ? Optional.of(mapSignUpRequest(pgRowSet.iterator().next()))
-                    : Optional.empty());
-  }
-
-  @Override
   public CompletionStage<Boolean> selectIsEmailTaken(String email, Transaction transaction) {
     return transaction
         .preparedQuery(SELECT_EMAIL_TAKEN_RAW_SQL)
@@ -123,6 +102,12 @@ public class PgSignUpDatasource implements SignUpDatasource {
         .thenApply(pgRowSet -> pgRowSet.iterator().next().getInteger("count") > 0);
   }
 
+  /**
+   * Map SQL row to SignUpRequest.
+   *
+   * @param row SQL row
+   * @return mapped SignUpRequest
+   */
   public static SignUpRequest mapSignUpRequest(Row row) {
     return new SignUpRequest(
         row.getUUID("token"),

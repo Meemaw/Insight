@@ -23,10 +23,27 @@ public final class SsoTestSetupUtils {
 
   private SsoTestSetupUtils() {}
 
+  /**
+   * Create a sign up request mock with pre-filled values.
+   *
+   * @param email String email address
+   * @param password String password
+   * @return SignUpRequestDTO sign up request
+   */
   public static SignUpRequestDTO signUpRequestMock(String email, String password) {
     return new SignUpRequestDTO(email, password, "Marko Novak", "Insight", null);
   }
 
+  /**
+   * Sign up as a new user and complete the flow.
+   *
+   * @param mockMailbox mailbox mock
+   * @param objectMapper object mapper
+   * @param email String email address
+   * @param password String password
+   * @return String session id
+   * @throws JsonProcessingException
+   */
   public static String signUpAndLogin(
       MockMailbox mockMailbox, ObjectMapper objectMapper, String email, String password)
       throws JsonProcessingException {
@@ -63,15 +80,26 @@ public final class SsoTestSetupUtils {
     return extractSessionCookie(response).getValue();
   }
 
+  /**
+   * Parse an anchor element link from mail.
+   *
+   * @param mail that was sent to the user
+   * @return String
+   */
   public static String parseLink(Mail mail) {
     Document htmlDocument = Jsoup.parse(mail.getHtml());
     Elements link = htmlDocument.select("a");
     return link.attr("href");
   }
 
-  public static String parseCompleteSignUpToken(Mail completeSignUpMail) {
-    String signUpCompleteURL = parseLink(completeSignUpMail);
-    Matcher tokenMatcher = Pattern.compile("^.*token=(.*)$").matcher(signUpCompleteURL);
+  /**
+   * Parse token from confirmation link.
+   *
+   * @param mail that was sent to the user
+   * @return String token
+   */
+  public static String parseConfirmationToken(Mail mail) {
+    Matcher tokenMatcher = Pattern.compile("^.*token=(.*)$").matcher(parseLink(mail));
     tokenMatcher.matches();
     return tokenMatcher.group(1);
   }
@@ -96,6 +124,12 @@ public final class SsoTestSetupUtils {
     return extractSessionCookie(response).getValue();
   }
 
+  /**
+   * Extract session cookie from rest assured response
+   *
+   * @param response rest assured response
+   * @return Cookie
+   */
   public static Cookie extractSessionCookie(Response response) {
     return response.getDetailedCookie(SsoSession.COOKIE_NAME);
   }

@@ -67,6 +67,12 @@ public class PgPasswordResetDatasource implements PasswordResetDatasource {
     return Optional.of(mapPasswordResetRequest(rowSet.iterator().next()));
   }
 
+  /**
+   * Map SQL row to PasswordResetRequest.
+   *
+   * @param row SQL row
+   * @return mapped PasswordResetRequest
+   */
   public static PasswordResetRequest mapPasswordResetRequest(Row row) {
     return new PasswordResetRequest(
         row.getUUID("token"),

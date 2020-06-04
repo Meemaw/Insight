@@ -26,7 +26,7 @@ public interface PasswordResetDatasource {
   CompletionStage<Optional<PasswordResetRequest>> findPasswordResetRequest(UUID token);
 
   /**
-   * Create password reset request
+   * Create password reset request.
    *
    * @param email String email address
    * @param userId UUID user id

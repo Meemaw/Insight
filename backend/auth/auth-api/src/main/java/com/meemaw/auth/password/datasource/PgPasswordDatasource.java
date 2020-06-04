@@ -52,6 +52,12 @@ public class PgPasswordDatasource implements PasswordDatasource {
     return Optional.of(mapUserWithHashedPassword(rowSet.iterator().next()));
   }
 
+  /**
+   * Map sql row to UserWithHashedPassword.
+   *
+   * @param row sql row
+   * @return mapped UserWithHashedPassword
+   */
   public static UserWithHashedPassword mapUserWithHashedPassword(Row row) {
     return new UserWithHashedPassword(
         row.getUUID("id"),

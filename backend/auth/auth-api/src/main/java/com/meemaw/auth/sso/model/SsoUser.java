@@ -23,7 +23,11 @@ public class SsoUser implements AuthUser, IdentifiedDataSerializable {
   String fullName;
   OffsetDateTime createdAt;
 
-  /** @param user auth user */
+  /**
+   * Create a SsoUser from an existing AuthUser
+   *
+   * @param user AuthUser
+   */
   public SsoUser(AuthUser user) {
     this.id = user.getId();
     this.email = user.getEmail();

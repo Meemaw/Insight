@@ -16,14 +16,6 @@ public interface InviteDatasource {
    * Find an existing team invite by confirmation token.
    *
    * @param token UUID team invite confirmation token
-   * @return maybe InviteDTO
-   */
-  CompletionStage<Optional<TeamInvite>> findTeamInvite(UUID token);
-
-  /**
-   * Find an existing team invite by confirmation token.
-   *
-   * @param token UUID team invite confirmation token
    * @param transaction Transaction context
    * @return maybe InviteDTO
    */

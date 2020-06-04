@@ -44,16 +44,6 @@ public interface SignUpDatasource {
   CompletionStage<Boolean> deleteSignUpRequest(UUID token, Transaction transaction);
 
   /**
-   * Find active sign up request associated with email.
-   *
-   * @param email associated with sign up request
-   * @param transaction context
-   * @return Optional SignUpRequest if exists
-   */
-  CompletionStage<Optional<SignUpRequest>> findActiveSignUpRequest(
-      String email, Transaction transaction);
-
-  /**
    * Check if email address is taken.
    *
    * @param email String email address

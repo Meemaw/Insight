@@ -179,7 +179,7 @@ public class SignUpResourceImplTest {
 
     Mail completeSignUpMail = sent.get(0);
     assertEquals("Insight Support <support@insight.com>", completeSignUpMail.getFrom());
-    String token = SsoTestSetupUtils.parseCompleteSignUpToken(completeSignUpMail);
+    String token = SsoTestSetupUtils.parseConfirmationToken(completeSignUpMail);
 
     assertThat(
         completeSignUpMail.getHtml(),

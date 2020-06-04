@@ -20,7 +20,7 @@ public interface PasswordDatasource {
       UUID userId, String hashedPassword, Transaction transaction);
 
   /**
-   * Find user with its password
+   * Find user with its password.
    *
    * @param email String email address
    * @return maybe UserWithHashedPassword
