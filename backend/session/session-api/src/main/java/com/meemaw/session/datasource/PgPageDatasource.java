@@ -35,20 +35,19 @@ public class PgPageDatasource implements PageDatasource {
   private static final String SELECT_ACTIVE_PAGE_COUNT =
       "SELECT COUNT(*) FROM session.page WHERE page_end IS NULL;";
 
-  private static final String SELECT_PAGE_RAW_SWL =
+  private static final String SELECT_PAGE_RAW_SQL =
       "SELECT * FROM session.page WHERE id=$1 AND session_id=$2 AND org_id=$3;";
 
   @Override
-  public Uni<Optional<UUID>> findUserSessionLink(String orgId, UUID uid) {
+  public Uni<Optional<UUID>> findUserSessionLink(String organizationId, UUID uid) {
     return pgPool
-        .preparedQuery(SELECT_LINK_DEVICE_SESSION_RAW_SQL)
-        .execute(Tuple.of(orgId, uid))
+        .preparedQuery(SELECT_LINK_DEVICE_SESSION_RAW_SQL, Tuple.of(organizationId, uid))
         .map(this::mapSessionId)
         .onFailure()
         .invoke(this::onFindUserSessionLinkException);
   }
 
-  private Optional<UUID> onFindUserSessionLinkException(Throwable throwable) {
+  private <T> T onFindUserSessionLinkException(Throwable throwable) {
     log.error("Failed to findUserSessionLinkException", throwable);
     throw new DatabaseException(throwable);
   }
@@ -80,8 +79,7 @@ public class PgPageDatasource implements PageDatasource {
                 page.getCompiledTs()));
 
     return pgPool
-        .preparedQuery(INSERT_PAGE_RAW_SQL)
-        .execute(values)
+        .preparedQuery(INSERT_PAGE_RAW_SQL, values)
         .map(rowSet -> PageIdentity.builder().pageId(pageId).sessionId(sessionId).uid(uid).build())
         .onFailure()
         .invoke(this::onInsertPageException);
@@ -96,7 +94,6 @@ public class PgPageDatasource implements PageDatasource {
   public Uni<Integer> activePageCount() {
     return pgPool
         .preparedQuery(SELECT_ACTIVE_PAGE_COUNT)
-        .execute()
         .map(rowSet -> rowSet.iterator().next().getInteger("count"))
         .onFailure()
         .invoke(this::onActivePageCountException);
@@ -108,10 +105,9 @@ public class PgPageDatasource implements PageDatasource {
   }
 
   @Override
-  public Uni<Optional<PageDTO>> getPage(UUID pageID, UUID sessionID, String orgID) {
+  public Uni<Optional<PageDTO>> getPage(UUID pageID, UUID sessionID, String organizationID) {
     return pgPool
-        .preparedQuery(SELECT_PAGE_RAW_SWL)
-        .execute(Tuple.of(pageID, sessionID, orgID))
+        .preparedQuery(SELECT_PAGE_RAW_SQL, Tuple.of(pageID, sessionID, organizationID))
         .map(
             rowSet -> {
               if (!rowSet.iterator().hasNext()) {

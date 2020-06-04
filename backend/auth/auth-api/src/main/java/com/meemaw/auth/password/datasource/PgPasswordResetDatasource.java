@@ -31,17 +31,13 @@ public class PgPasswordResetDatasource implements PasswordResetDatasource {
 
   @Override
   public CompletionStage<Boolean> deletePasswordResetRequest(UUID token, Transaction transaction) {
-    return transaction
-        .preparedQuery(DELETE_RAW_SQL)
-        .execute(Tuple.of(token))
-        .thenApply(pgRowSet -> true);
+    return transaction.preparedQuery(DELETE_RAW_SQL, Tuple.of(token)).thenApply(pgRowSet -> true);
   }
 
   @Override
   public CompletionStage<Optional<PasswordResetRequest>> findPasswordResetRequest(UUID token) {
     return pgPool
-        .preparedQuery(FIND_RAW_SQL)
-        .execute(Tuple.of(token))
+        .preparedQuery(FIND_RAW_SQL, Tuple.of(token))
         .thenApply(this::mapMaybePasswordResetRequest);
   }
 
@@ -49,8 +45,7 @@ public class PgPasswordResetDatasource implements PasswordResetDatasource {
   public CompletionStage<PasswordResetRequest> createPasswordResetRequest(
       String email, UUID userId, Transaction transaction) {
     return transaction
-        .preparedQuery(CREATE_RAW_SQL)
-        .execute(Tuple.of(email, userId))
+        .preparedQuery(CREATE_RAW_SQL, Tuple.of(email, userId))
         .thenApply(
             pgRowSet -> {
               Row row = pgRowSet.iterator().next();

@@ -54,8 +54,7 @@ public class PgInviteDatasource implements InviteDatasource {
   @Override
   public CompletionStage<Optional<TeamInvite>> findTeamInvite(UUID token, Transaction transaction) {
     return transaction
-        .preparedQuery(FIND_INVITE_RAW_SQL)
-        .execute(Tuple.of(token))
+        .preparedQuery(FIND_INVITE_RAW_SQL, Tuple.of(token))
         .thenApply(this::inviteFromRowSet);
   }
 
@@ -63,8 +62,7 @@ public class PgInviteDatasource implements InviteDatasource {
   public CompletionStage<Optional<Pair<TeamInvite, Organization>>> findTeamInviteWithOrganization(
       UUID token) {
     return pgPool
-        .preparedQuery(FIND_TEAM_INVITE_WITH_ORGANIZATION_RAW_SQL)
-        .execute(Tuple.of(token))
+        .preparedQuery(FIND_TEAM_INVITE_WITH_ORGANIZATION_RAW_SQL, Tuple.of(token))
         .thenApply(
             pgRowSet -> {
               if (!pgRowSet.iterator().hasNext()) {
@@ -78,10 +76,9 @@ public class PgInviteDatasource implements InviteDatasource {
   }
 
   @Override
-  public CompletionStage<List<TeamInvite>> findTeamInvites(String orgId) {
+  public CompletionStage<List<TeamInvite>> findTeamInvites(String organizationId) {
     return pgPool
-        .preparedQuery(FIND_ALL_INVITES_RAW_SQL)
-        .execute(Tuple.of(orgId))
+        .preparedQuery(FIND_ALL_INVITES_RAW_SQL, Tuple.of(organizationId))
         .thenApply(
             pgRowSet ->
                 StreamSupport.stream(pgRowSet.spliterator(), false)
@@ -91,37 +88,35 @@ public class PgInviteDatasource implements InviteDatasource {
 
   @Override
   public CompletionStage<Boolean> deleteTeamInvite(UUID token) {
-    return pgPool
-        .preparedQuery(DELETE_INVITE_RAW_SQL)
-        .execute(Tuple.of(token))
-        .thenApply(pgRowSet -> true);
+    return pgPool.preparedQuery(DELETE_INVITE_RAW_SQL, Tuple.of(token)).thenApply(pgRowSet -> true);
   }
 
   @Override
   public CompletionStage<Boolean> deleteTeamInvites(
-      String email, String org, Transaction transaction) {
+      String email, String organizationId, Transaction transaction) {
     return transaction
-        .preparedQuery(DELETE_ALL_INVITES_RAW_SQL)
-        .execute(Tuple.of(email, org))
+        .preparedQuery(DELETE_ALL_INVITES_RAW_SQL, Tuple.of(email, organizationId))
         .thenApply(pgRowSet -> true);
   }
 
   @Override
   public CompletionStage<TeamInvite> createTeamInvite(
-      String orgId, UUID creatorId, TeamInviteTemplateData teamInvite, Transaction transaction) {
+      String organizationId,
+      UUID creatorId,
+      TeamInviteTemplateData teamInvite,
+      Transaction transaction) {
     String email = teamInvite.getRecipientEmail();
     UserRole role = teamInvite.getRecipientRole();
 
-    Tuple values = Tuple.of(creatorId, email, orgId, role.toString());
     return transaction
-        .preparedQuery(CREATE_INVITE_RAW_SQL)
-        .execute(values)
+        .preparedQuery(
+            CREATE_INVITE_RAW_SQL, Tuple.of(creatorId, email, organizationId, role.toString()))
         .thenApply(
             pgRowSet -> {
               Row row = pgRowSet.iterator().next();
               UUID token = row.getUUID("token");
               OffsetDateTime createdAt = row.getOffsetDateTime("created_at");
-              return new TeamInvite(token, email, orgId, role, creatorId, createdAt);
+              return new TeamInvite(token, email, organizationId, role, creatorId, createdAt);
             })
         .exceptionally(
             throwable -> {
@@ -129,7 +124,7 @@ public class PgInviteDatasource implements InviteDatasource {
               if (cause instanceof PgException) {
                 PgException pgException = (PgException) cause;
                 if (pgException.getCode().equals(PgError.UNIQUE_VIOLATION.getCode())) {
-                  log.error("User has already been invited user={} org={}", email, orgId);
+                  log.error("User has already been invited user={} org={}", email, organizationId);
                   throw Boom.status(Response.Status.CONFLICT)
                       .message("User has already been invited")
                       .exception();
@@ -138,7 +133,7 @@ public class PgInviteDatasource implements InviteDatasource {
               log.error(
                   "Failed to create invite user={} org={} creator={} role={}",
                   email,
-                  orgId,
+                  organizationId,
                   creatorId,
                   role,
                   throwable);
@@ -154,7 +149,7 @@ public class PgInviteDatasource implements InviteDatasource {
   }
 
   /**
-   * Map sql row to TeamInvite.
+   * Map SQL row to TeamInvite.
    *
    * @param row sql row
    * @return mapped TeamInvite

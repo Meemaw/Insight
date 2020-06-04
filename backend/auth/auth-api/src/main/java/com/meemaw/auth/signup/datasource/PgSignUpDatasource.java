@@ -36,8 +36,8 @@ public class PgSignUpDatasource implements SignUpDatasource {
       SignUpRequest signUpRequest, Transaction transaction) {
 
     return transaction
-        .preparedQuery(INSERT_SIGN_UP_RAW_SQL)
-        .execute(
+        .preparedQuery(
+            INSERT_SIGN_UP_RAW_SQL,
             Tuple.of(
                 signUpRequest.getEmail(),
                 signUpRequest.getHashedPassword(),
@@ -62,8 +62,7 @@ public class PgSignUpDatasource implements SignUpDatasource {
   public CompletionStage<Optional<SignUpRequest>> findSignUpRequest(
       UUID token, Transaction transaction) {
     return transaction
-        .preparedQuery(SELECT_SIGN_UP_RAW_SQL)
-        .execute(Tuple.of(token))
+        .preparedQuery(SELECT_SIGN_UP_RAW_SQL, Tuple.of(token))
         .exceptionally(
             throwable -> {
               log.error("Failed to fetch sign up request", throwable);
@@ -82,10 +81,8 @@ public class PgSignUpDatasource implements SignUpDatasource {
 
   @Override
   public CompletionStage<Boolean> deleteSignUpRequest(UUID token, Transaction transaction) {
-    Tuple values = Tuple.of(token);
     return transaction
-        .preparedQuery(DELETE_SIGN_UP_RAW_SQL)
-        .execute(values)
+        .preparedQuery(DELETE_SIGN_UP_RAW_SQL, Tuple.of(token))
         .thenApply(pgRowSet -> true)
         .exceptionally(
             throwable -> {
@@ -97,8 +94,7 @@ public class PgSignUpDatasource implements SignUpDatasource {
   @Override
   public CompletionStage<Boolean> selectIsEmailTaken(String email, Transaction transaction) {
     return transaction
-        .preparedQuery(SELECT_EMAIL_TAKEN_RAW_SQL)
-        .execute(Tuple.of(email))
+        .preparedQuery(SELECT_EMAIL_TAKEN_RAW_SQL, Tuple.of(email))
         .thenApply(pgRowSet -> pgRowSet.iterator().next().getInteger("count") > 0);
   }
 
