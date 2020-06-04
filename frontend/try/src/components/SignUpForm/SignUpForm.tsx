@@ -11,20 +11,12 @@ import {
   COUNTRIES,
 } from 'baseui/phone-input';
 import { useForm, Controller } from 'react-hook-form';
-import { APIErrorDataResponse, APIError } from '@insight/types';
+import { APIErrorDataResponse, APIError, SignUpFormDTO } from '@insight/types';
 import FormError from 'shared/components/FormError';
 import Router from 'next/router';
 
-export type SignUpFormData = {
-  fullName: string;
-  company: string;
-  email: string;
-  password: string;
-  phoneNumber?: string;
-};
-
 export type Props = {
-  onSubmit: (data: SignUpFormData) => Promise<unknown>;
+  onSubmit: (data: SignUpFormDTO) => Promise<unknown>;
   minPasswordLength?: number;
 };
 
@@ -36,7 +28,7 @@ const SignUpForm = ({
   const [formError, setFormError] = useState<APIError | undefined>();
   const [country, setCountry] = useState<Country>(COUNTRIES.US);
   const [css, theme] = useStyletron();
-  const { register, handleSubmit, errors, control } = useForm<SignUpFormData>();
+  const { register, handleSubmit, errors, control } = useForm<SignUpFormDTO>();
 
   const onSubmit = handleSubmit(({ phoneNumber, ...rest }) => {
     if (isSubmitting) {

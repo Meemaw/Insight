@@ -5,17 +5,11 @@ import { H5, Paragraph3 } from 'baseui/typography';
 import { Block } from 'baseui/block';
 import SignUpForm from 'components/SignUpForm';
 import config from 'shared/config';
-import { SignUpFormData } from 'components/SignUpForm/SignUpForm';
-import ky from 'ky-universal';
-import { authApiBaseURL } from 'api/base';
 import Topbar from 'components/Topbar';
+import { SignupApi } from 'api/signup';
 
 const GetStarted = () => {
   const [_css, theme] = useStyletron();
-
-  const onSubmit = async (data: SignUpFormData) => {
-    return ky.post(`${authApiBaseURL}/v1/signup`, { json: data }).json();
-  };
 
   return (
     <Block display="flex" flexDirection="column" height="100%">
@@ -49,7 +43,7 @@ const GetStarted = () => {
             </Paragraph3>
           </Block>
 
-          <SignUpForm onSubmit={onSubmit} />
+          <SignUpForm onSubmit={SignupApi.signup} />
         </Block>
       </Block>
     </Block>
