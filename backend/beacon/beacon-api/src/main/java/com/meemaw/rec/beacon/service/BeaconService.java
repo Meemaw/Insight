@@ -45,9 +45,9 @@ public class BeaconService {
   @OnOverflow(Strategy.UNBOUNDED_BUFFER)
   Emitter<UserEvent<?>> unloadEventsEmitter;
 
-  private CompletionStage<Boolean> pageExists(UUID sessionID, UUID pageID, String orgID) {
+  private CompletionStage<Boolean> pageExists(UUID sessionId, UUID pageId, String organizationId) {
     return sessionResource
-        .get(sessionID, pageID, orgID)
+        .get(sessionId, pageId, organizationId)
         .exceptionally(
             throwable -> {
               if (throwable.getCause() instanceof WebApplicationException) {
@@ -63,26 +63,31 @@ public class BeaconService {
               }
               DataResponse<PageDTO> dataResponse = response.readEntity(new GenericType<>() {});
               PageDTO page = dataResponse.getData();
-              return page.getSessionID().equals(sessionID)
-                  && page.getId().equals(pageID)
-                  && page.getOrgID().equals(orgID);
+              return page.getSessionID().equals(sessionId)
+                  && page.getId().equals(pageId)
+                  && page.getOrgID().equals(organizationId);
             });
   }
 
   /**
-   * @param orgID
-   * @param sessionID
-   * @param uid
-   * @param pageID
-   * @param beacon
-   * @return
+   * Process a beacon of events. First figure out if page is associated with any of the existing
+   * pages, to prevent malicious data injection.
+   *
+   * <p>After, send all events to Kafka stream.
+   *
+   * @param organizationId String organization id
+   * @param sessionId String session id
+   * @param uid String user (device) id
+   * @param pageId String page id
+   * @param beacon Beacon
+   * @return CompletionStage if successful processing
    */
   public CompletionStage<?> process(
-      String orgID, UUID sessionID, UUID uid, UUID pageID, Beacon beacon) {
-    MDC.put("orgID", orgID);
+      String organizationId, UUID sessionId, UUID uid, UUID pageId, Beacon beacon) {
+    MDC.put("organizationId", organizationId);
     MDC.put("uid", uid.toString());
-    MDC.put("pageID", pageID.toString());
-    MDC.put("sessionID", sessionID.toString());
+    MDC.put("pageId", pageId.toString());
+    MDC.put("sessionId", sessionId.toString());
     MDC.put("beacon.sequence", String.valueOf(beacon.getSequence()));
     MDC.put("beacon.timestamp", String.valueOf(beacon.getTimestamp()));
 
@@ -90,20 +95,21 @@ public class BeaconService {
         (event) ->
             UserEvent.builder()
                 .event(event)
-                .orgID(orgID)
-                .sessionID(sessionID)
-                .pageId(pageID)
+                .orgID(organizationId)
+                .sessionID(sessionId)
+                .pageId(pageId)
                 .uid(uid)
                 .build();
 
-    return pageExists(sessionID, pageID, orgID)
+    log.info("Processing beacon");
+    return pageExists(sessionId, pageId, organizationId)
         .thenApply(
             exists -> {
               if (!exists) {
-                log.warn("Unlinked beacon");
+                log.warn("Unlinked beacon, ignoring ...");
                 throw Boom.badRequest().message("Unlinked beacon").exception();
               }
-              log.info("Sending {} beacon events", beacon.getEvents().size());
+              log.info("Sending {} beacon events to Kafka", beacon.getEvents().size());
 
               List<AbstractBrowserEvent> events = beacon.getEvents();
               Stream<Uni<Void>> operations =
@@ -112,6 +118,7 @@ public class BeaconService {
               // BrowserUnloadEvent always comes last!
               AbstractBrowserEvent maybeUnloadEvent = events.get(events.size() - 1);
               if (maybeUnloadEvent instanceof BrowserUnloadEvent) {
+                log.info("Sending BrowserUnloadEvent to Kafka");
                 operations =
                     Stream.concat(
                         operations,

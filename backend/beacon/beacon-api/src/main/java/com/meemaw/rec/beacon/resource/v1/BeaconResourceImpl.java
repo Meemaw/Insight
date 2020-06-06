@@ -3,7 +3,7 @@ package com.meemaw.rec.beacon.resource.v1;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meemaw.rec.beacon.model.Beacon;
-import com.meemaw.rec.beacon.model.BeaconDTO;
+import com.meemaw.rec.beacon.model.dto.BeaconDTO;
 import com.meemaw.rec.beacon.service.BeaconService;
 import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.status.MissingStatus;
@@ -28,8 +28,8 @@ public class BeaconResourceImpl implements BeaconResource {
   @Inject Validator validator;
 
   @Override
-  public CompletionStage<Response> textBeacon(
-      String orgID, UUID sessionID, UUID userID, UUID pageID, String payload) {
+  public CompletionStage<Response> beacon(
+      String organizationId, UUID sessionId, UUID userId, UUID pageId, String payload) {
     BeaconDTO beaconDTO;
     try {
       beaconDTO = objectMapper.readValue(payload, BeaconDTO.class);
@@ -46,7 +46,7 @@ public class BeaconResourceImpl implements BeaconResource {
       throw new ConstraintViolationException(constraintViolations);
     }
 
-    return beacon(orgID, sessionID, userID, pageID, beaconDTO);
+    return beacon(organizationId, sessionId, userId, pageId, beaconDTO);
   }
 
   private CompletionStage<Response> beacon(

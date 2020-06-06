@@ -19,10 +19,10 @@ public interface BeaconResource {
   @POST
   @Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
   @Path("/beat")
-  CompletionStage<Response> textBeacon(
-      @OrganizationId @QueryParam("OrgID") String orgID,
+  CompletionStage<Response> beacon(
+      @OrganizationId @QueryParam("OrgID") String organizationId,
       @NotNull(message = "SessionID required") @QueryParam("SessionID") UUID sessionID,
-      @NotNull(message = "UserID required") @QueryParam("UserID") UUID userID,
-      @NotNull(message = "pageID required") @QueryParam("PageID") UUID pageID,
+      @NotNull(message = "UserID required") @QueryParam("UserID") UUID userId,
+      @NotNull(message = "pageID required") @QueryParam("PageID") UUID pageId,
       String payload);
 }
