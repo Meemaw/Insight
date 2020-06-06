@@ -7,3 +7,11 @@ dependencies {
 
     testImplementation project(":shared:testing-utils")
 }
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat = 'full'
+    }
+}
