@@ -33,7 +33,7 @@ public class BeaconBeatResourceValidationTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"pageID\":\"pageID required\",\"userID\":\"UserID required\",\"sessionID\":\"SessionID required\",\"orgID\":\"Organization ID is required\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"organizationId\":\"Organization ID is required\",\"sessionID\":\"SessionID required\",\"pageId\":\"pageID required\",\"userId\":\"UserID required\"}}}"));
   }
 
   @ParameterizedTest
@@ -121,7 +121,7 @@ public class BeaconBeatResourceValidationTest {
 
   @ParameterizedTest
   @ValueSource(strings = {"application/json", "text/plain"})
-  public void postBeaconAsJson_shouldThrowError_invalidOrgIdLength(String contentType)
+  public void postBeaconAsJson_shouldThrowError_invalid_organizationId_length(String contentType)
       throws IOException, URISyntaxException {
     String payload =
         Files.readString(Path.of(getClass().getResource("/beacon/initial.json").toURI()));
@@ -139,6 +139,6 @@ public class BeaconBeatResourceValidationTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"orgID\":\"Organization ID must be 6 characters long\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"organizationId\":\"Organization ID must be 6 characters long\"}}}"));
   }
 }
