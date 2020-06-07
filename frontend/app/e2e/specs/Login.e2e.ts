@@ -4,7 +4,13 @@ import {
   getAllByText,
 } from '@testing-library/testcafe';
 
-import { emailInput, passwordInput, signInButton, getLocation } from '../utils';
+import {
+  emailInput,
+  passwordInput,
+  signInButton,
+  getLocation,
+  forgotPasswordButton,
+} from '../utils';
 import config from '../config';
 
 fixture('/login').page(config.appBaseURL);
@@ -46,7 +52,7 @@ test('Login form should be validated both client & server side', async (t) => {
 
 test('Can navigate forth and back to /password/forgot', async (t) => {
   await t
-    .click(getByText('Forgot?'))
+    .click(forgotPasswordButton)
     .expect(getLocation())
     .eql(`${config.appBaseURL}/password-forgot`)
     .click(getByText('Remember password?'))

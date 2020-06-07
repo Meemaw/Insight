@@ -14,6 +14,13 @@ export const fullNameInput = getByPlaceholderText('Full name');
 export const companyInput = getByPlaceholderText('Company');
 export const getStartedButton = getByText('Get started');
 
+/* Password forgot */
+export const forgotPasswordButton = getByText('Forgot?');
+export const startPasswordResetButton = getByText('Reset password');
+export const finishPasswordResetButton = getByText(
+  'Reset password and sign in'
+);
+
 type LoginCredentials = { email: string; password: string };
 
 export const login = (
