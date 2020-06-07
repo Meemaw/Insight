@@ -4,8 +4,10 @@ import { readFileSync } from 'fs';
 const linkPattern = /.*href="(http:\/\/.*)".*$/;
 
 export const findLinkFromDockerLog = () => {
-  const basePath =
-    process.env.ARTIFACTS_PATH || join(process.cwd(), '..', '..');
+  let basePath = join(process.cwd(), '..', '..');
+  if (process.env.ARTIFACTS_PATH) {
+    basePath = join(basePath, process.env.ARTIFACTS_PATH);
+  }
 
   const dockerLogFile = join(basePath, 'docker.log');
   const lines = String(readFileSync(dockerLogFile)).split('\n');
