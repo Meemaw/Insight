@@ -15,6 +15,6 @@ test('Should be able to log in to app', async (t) => {
   });
 
   await t
-    .expect(getByText('THIS IS WHERE THE MAGIC WILL HAPEN').visible)
+    .expect(getByText('THIS IS WHERE THE MAGIC WILL HAPPEN').visible)
     .ok('Should be signed in to app');
 });
