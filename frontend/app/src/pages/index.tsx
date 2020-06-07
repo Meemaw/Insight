@@ -22,7 +22,7 @@ const Home = () => {
   }, []);
   */
 
-  return <AppLayout>TODO</AppLayout>;
+  return <AppLayout>THIS IS WHERE THE MAGIC WILL HAPEN</AppLayout>;
 };
 
 export default authenticated(Home);

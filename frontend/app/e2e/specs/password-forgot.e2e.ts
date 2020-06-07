@@ -5,7 +5,7 @@ import config from '../config';
 
 const page = '/password-forgot';
 
-fixture(page).page(`${config.baseURL}${page}`);
+fixture(page).page(`${config.appBaseURL}${page}`);
 
 test('Password forgot form should be validated both client & server side & go through even on random emails', async (t) => {
   const emailInput = getByPlaceholderText('Email');
