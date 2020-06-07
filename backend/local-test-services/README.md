@@ -23,7 +23,7 @@ minikube config set memory 8192
 minikube config set cpus 4
 minikube config set disk-size 100GB
 minikube start
-minikube addons enable metrics-server
+minikube addons enable metrics-server ingress
 ```
 
 ### Point your shell to minikube's docker-deamon
@@ -44,7 +44,7 @@ brew install kustomize
 
 ```sh
 docker build . -f auth/auth-api/docker/Dockerfile.jvm -t eu.gcr.io/insight/auth-api
-kustomize build auth/auth-api/k8/overlays/minikube | kubectl apply -f -
+kustomize build auth/auth-api/k8/overlays/local | kubectl apply -f -
 ```
 
 ## Tilt
