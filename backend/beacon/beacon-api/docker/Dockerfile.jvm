@@ -16,7 +16,7 @@ RUN gradle beacon:beacon-api:quarkusBuild --uber-jar
 
 FROM adoptopenjdk:14-jre-hotspot
 
-COPY --from=build /backend/beacon/beacon-api/build/api-1.0-runner.jar /usr/app/service-runner.jar
+COPY --from=build /backend/beacon/beacon-api/build/beacon-api-1.0-runner.jar /usr/app/service-runner.jar
 
 WORKDIR /usr/app/
 
