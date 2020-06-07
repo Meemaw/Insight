@@ -71,10 +71,15 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: frontend/app | install
         run: yarn install --frozen-lockfile
-      - name: Cache .next/cache
+      - name: Cache .next/cache app
         uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/frontend/app/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache .next/cache try
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/frontend/try/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}
       - name: frontend/app | build
         run: |

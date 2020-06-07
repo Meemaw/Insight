@@ -6,7 +6,7 @@ import { signUpAndLogin } from '../utils';
 
 fixture('/').page(config.appBaseURL);
 
-test('do that', async (t) => {
+test('Should be able to log in to app', async (t) => {
   await signUpAndLogin(t, {
     fullName: 'Matej Snuderl',
     company: 'Insight',
