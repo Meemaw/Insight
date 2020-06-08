@@ -7,6 +7,7 @@ import com.meemaw.events.stream.EventsStream;
 import com.meemaw.rec.beacon.model.Beacon;
 import com.meemaw.session.model.PageDTO;
 import com.meemaw.session.resource.v1.SessionResource;
+import com.meemaw.shared.logging.LoggingConstants;
 import com.meemaw.shared.rest.response.Boom;
 import com.meemaw.shared.rest.response.DataResponse;
 import io.smallrye.mutiny.Uni;
@@ -84,12 +85,10 @@ public class BeaconService {
    */
   public CompletionStage<?> process(
       String organizationId, UUID sessionId, UUID uid, UUID pageId, Beacon beacon) {
-    MDC.put("organizationId", organizationId);
-    MDC.put("uid", uid.toString());
-    MDC.put("pageId", pageId.toString());
-    MDC.put("sessionId", sessionId.toString());
-    MDC.put("beacon.sequence", String.valueOf(beacon.getSequence()));
-    MDC.put("beacon.timestamp", String.valueOf(beacon.getTimestamp()));
+    MDC.put(LoggingConstants.ORGANIZATION_ID, organizationId);
+    MDC.put(LoggingConstants.DEVICE_ID, uid.toString());
+    MDC.put(LoggingConstants.PAGE_ID, pageId.toString());
+    MDC.put(LoggingConstants.SESSION_ID, sessionId.toString());
 
     Function<AbstractBrowserEvent, UserEvent<?>> identify =
         (event) ->

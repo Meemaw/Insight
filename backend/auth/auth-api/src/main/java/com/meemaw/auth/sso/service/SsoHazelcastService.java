@@ -57,6 +57,7 @@ public class SsoHazelcastService implements SsoService {
               if (maybeUser.isPresent()) {
                 return CompletableFuture.completedFuture(maybeUser.get());
               }
+              log.info("Creating new user for social sign in");
               return signUpService.socialSignUp(email, fullName);
             });
   }
