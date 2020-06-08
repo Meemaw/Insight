@@ -15,16 +15,12 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 @Slf4j
 public class PgPageDatasource implements PageDatasource {
 
   @Inject PgPool pgPool;
-
-  @ConfigProperty(name = "quarkus.datasource.url")
-  String datasourceURL;
 
   private static final String SELECT_LINK_DEVICE_SESSION_RAW_SQL =
       "SELECT session_id FROM session.page WHERE org_id = $1 AND uid = $2 AND page_start > now() - INTERVAL '30 min' ORDER BY page_start DESC LIMIT 1;";
