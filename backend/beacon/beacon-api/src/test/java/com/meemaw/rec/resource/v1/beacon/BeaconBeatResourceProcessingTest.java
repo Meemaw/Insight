@@ -69,7 +69,7 @@ public class BeaconBeatResourceProcessingTest {
     return Uni.createFrom()
         .completionStage(
             sessionResource
-                .page(payload)
+                .createPage(payload)
                 .thenApply(
                     response -> {
                       DataResponse<PageIdentity> dataResponse =
