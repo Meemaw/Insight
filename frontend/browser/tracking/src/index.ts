@@ -135,7 +135,7 @@ declare global {
   backend
     .page({
       organizationId,
-      deviceId: identity.uid(),
+      deviceId: identity.deviceId(),
       compiledTs,
       doctype: '<!DOCTYPE html>',
       height: window.innerHeight,

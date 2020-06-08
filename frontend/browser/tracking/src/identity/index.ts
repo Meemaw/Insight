@@ -15,7 +15,7 @@ import {
 import { Cookie, InsightIdentity, Connected } from './types';
 
 class Identity implements Connected {
-  private static storageKey = '_is_uid' as const;
+  private static storageKey = '_is_device_id' as const;
   private readonly _cookie: Cookie;
 
   constructor(cookie: Cookie) {
@@ -26,7 +26,7 @@ class Identity implements Connected {
     const cookies = document.cookie.split('; ').reduce((acc, value) => {
       const valueSplit = value.split('=');
       return { ...acc, [valueSplit[0]]: valueSplit[1] };
-    }, {} as { _is_uid?: string });
+    }, {} as { _is_device_id?: string });
 
     if (process.env.NODE_ENV !== 'production') {
       console.debug('[initFromCookie]', { cookies, host, organizationId });
@@ -64,7 +64,7 @@ class Identity implements Connected {
       expiresSeconds: yearFromNow(),
       host,
       organizationId,
-      uid: '',
+      deviceId: '',
       sessionId: '',
     };
 
@@ -138,8 +138,8 @@ class Identity implements Connected {
     document.cookie = cookie;
   };
 
-  public uid = () => {
-    return this._cookie.uid;
+  public deviceId = () => {
+    return this._cookie.deviceId;
   };
 }
 
