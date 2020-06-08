@@ -11,7 +11,7 @@ import {
   mouseEventWithTargetArgs,
 } from 'event';
 import Backend from 'backend';
-import { PageResponse } from 'backend/types';
+import { CreatePageResponse } from '@insight/types';
 import Identity from 'identity';
 import { MILLIS_IN_SECOND } from 'time';
 import type { InsightWindow } from 'types';
@@ -115,7 +115,7 @@ declare global {
     backend.sendBeacon(eventQueue.events());
   };
 
-  const startBeaconing = (pageResponse: PageResponse) => {
+  const startBeaconing = (pageResponse: CreatePageResponse) => {
     const { data: pageIdentity } = pageResponse;
     backend.connect(pageIdentity);
     identity.connect(pageIdentity);

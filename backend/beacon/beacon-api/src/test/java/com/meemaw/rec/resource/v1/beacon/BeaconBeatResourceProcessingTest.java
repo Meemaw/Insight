@@ -38,9 +38,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 @Tag("integration")
 public class BeaconBeatResourceProcessingTest {
 
-  @Inject @RestClient SessionResource sessionResource;
-
+  private static final String BEACON_RESOURCE_BEAT_PATH = BeaconResource.PATH + "/beat";
   private static final String ORGANIZATION_ID = Organization.identifier();
+
+  @Inject @RestClient SessionResource sessionResource;
 
   private static List<UserEvent<?>> events;
   private static List<UserEvent<?>> unloadEvents;
@@ -94,9 +95,7 @@ public class BeaconBeatResourceProcessingTest {
     PageIdentity pageIdentity = insertPage(deviceId).await().indefinitely();
     UUID sessionID = pageIdentity.getSessionId();
     UUID pageID = pageIdentity.getPageId();
-
-    String payload =
-        Files.readString(Path.of(getClass().getResource("/beacon/initial.json").toURI()));
+    String body = Files.readString(Path.of(getClass().getResource("/beacon/initial.json").toURI()));
 
     given()
         .when()
@@ -105,8 +104,8 @@ public class BeaconBeatResourceProcessingTest {
         .queryParam("deviceId", deviceId)
         .queryParam("pageId", pageID)
         .queryParam("organizationId", ORGANIZATION_ID)
-        .body(payload)
-        .post(BeaconResource.PATH + "/beat")
+        .body(body)
+        .post(BEACON_RESOURCE_BEAT_PATH)
         .then()
         .statusCode(204);
 
@@ -129,20 +128,18 @@ public class BeaconBeatResourceProcessingTest {
     PageIdentity pageIdentity = insertPage(deviceId).await().indefinitely();
     UUID sessionID = pageIdentity.getSessionId();
     UUID pageID = pageIdentity.getPageId();
-
-    String payload =
-        Files.readString(Path.of(getClass().getResource("/beacon/small.json").toURI()));
+    String body = Files.readString(Path.of(getClass().getResource("/beacon/small.json").toURI()));
 
     for (int i = 0; i < 100; i++) {
       given()
           .when()
           .contentType(contentType)
           .queryParam("sessionId", sessionID)
-          .queryParam("userId", deviceId)
+          .queryParam("deviceId", deviceId)
           .queryParam("pageId", pageID)
           .queryParam("organizationId", ORGANIZATION_ID)
-          .body(payload)
-          .post(BeaconResource.PATH + "/beat")
+          .body(body)
+          .post(BEACON_RESOURCE_BEAT_PATH)
           .then()
           .statusCode(204);
 
@@ -165,18 +162,18 @@ public class BeaconBeatResourceProcessingTest {
     UUID sessionID = pageIdentity.getSessionId();
     UUID pageID = pageIdentity.getPageId();
 
-    String payload =
+    String body =
         Files.readString(Path.of(getClass().getResource("/beacon/withUnloadEvent.json").toURI()));
 
     given()
         .when()
         .contentType(contentType)
         .queryParam("sessionId", sessionID)
-        .queryParam("userId", deviceId)
+        .queryParam("deviceId", deviceId)
         .queryParam("pageId", pageID)
         .queryParam("organizationId", ORGANIZATION_ID)
-        .body(payload)
-        .post(BeaconResource.PATH + "/beat")
+        .body(body)
+        .post(BEACON_RESOURCE_BEAT_PATH)
         .then()
         .statusCode(204);
 
