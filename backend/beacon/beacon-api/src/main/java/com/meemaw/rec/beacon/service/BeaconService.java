@@ -67,7 +67,7 @@ public class BeaconService {
               PageDTO page = dataResponse.getData();
               return page.getSessionID().equals(sessionId)
                   && page.getId().equals(pageId)
-                  && page.getOrgID().equals(organizationId);
+                  && page.getOrganizationId().equals(organizationId);
             });
   }
 
@@ -79,16 +79,16 @@ public class BeaconService {
    *
    * @param organizationId String organization id
    * @param sessionId String session id
-   * @param uid String user (device) id
+   * @param deviceId String user (device) id
    * @param pageId String page id
    * @param beacon Beacon
    * @return CompletionStage if successful processing
    */
   @Timed(name = "processBeacon", description = "A measure of how long it takes to process beacon")
   public CompletionStage<?> process(
-      String organizationId, UUID sessionId, UUID uid, UUID pageId, Beacon beacon) {
+      String organizationId, UUID sessionId, UUID deviceId, UUID pageId, Beacon beacon) {
     MDC.put(LoggingConstants.ORGANIZATION_ID, organizationId);
-    MDC.put(LoggingConstants.DEVICE_ID, uid.toString());
+    MDC.put(LoggingConstants.DEVICE_ID, deviceId.toString());
     MDC.put(LoggingConstants.PAGE_ID, pageId.toString());
     MDC.put(LoggingConstants.SESSION_ID, sessionId.toString());
 
@@ -96,10 +96,10 @@ public class BeaconService {
         (event) ->
             UserEvent.builder()
                 .event(event)
-                .orgID(organizationId)
-                .sessionID(sessionId)
+                .organizationId(organizationId)
+                .sessionId(sessionId)
                 .pageId(pageId)
-                .uid(uid)
+                .deviceId(deviceId)
                 .build();
 
     log.info("Processing beacon");

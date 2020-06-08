@@ -39,7 +39,7 @@ public interface SessionResource {
   CompletionStage<Response> getPage(
       @PathParam("sessionId") UUID sessionId,
       @PathParam("pageId") UUID pageId,
-      @OrganizationId @QueryParam("orgID") String organizationId);
+      @OrganizationId @QueryParam("organizationId") String organizationId);
 
   // TODO: this should be authenticated
   @GET

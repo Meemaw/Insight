@@ -22,14 +22,14 @@ class Identity implements Connected {
     this._cookie = cookie;
   }
 
-  public static initFromCookie = (host: string, orgId: string) => {
+  public static initFromCookie = (host: string, organizationId: string) => {
     const cookies = document.cookie.split('; ').reduce((acc, value) => {
       const valueSplit = value.split('=');
       return { ...acc, [valueSplit[0]]: valueSplit[1] };
     }, {} as { _is_uid?: string });
 
     if (process.env.NODE_ENV !== 'production') {
-      console.debug('[initFromCookie]', { cookies, host, orgId });
+      console.debug('[initFromCookie]', { cookies, host, organizationId });
     }
     let maybeCookie = cookies[Identity.storageKey];
     if (!maybeCookie) {
@@ -47,14 +47,14 @@ class Identity implements Connected {
 
     const decoded = Identity.decodeIdentity(maybeCookie);
     if (decoded) {
-      if (decoded.orgId === orgId) {
+      if (decoded.organizationId === organizationId) {
         if (process.env.NODE_ENV !== 'production') {
-          console.debug('Matching orgId, setting identity', decoded);
+          console.debug('Matching organizationId, setting identity', decoded);
         }
         return new Identity(decoded);
       }
       if (process.env.NODE_ENV !== 'production') {
-        console.debug('Unmatching identity', { decoded, orgId });
+        console.debug('Unmatching identity', { decoded, organizationId });
       }
     } else if (process.env.NODE_ENV !== 'production') {
       console.debug('Could not parse identity');
@@ -63,7 +63,7 @@ class Identity implements Connected {
     const newIdentity = {
       expiresSeconds: yearFromNow(),
       host,
-      orgId,
+      organizationId,
       uid: '',
       sessionId: '',
     };
@@ -94,23 +94,23 @@ class Identity implements Connected {
       return undefined;
     }
 
-    const [uid, sessionId] = identitySplit[2].split(':');
+    const [deviceId, sessionId] = identitySplit[2].split(':');
 
     return {
-      uid,
+      deviceId,
       sessionId,
       host: identitySplit[0],
-      orgId: identitySplit[1],
+      organizationId: identitySplit[1],
       expiresSeconds,
     };
   };
 
   private encode = (expiresSeconds: number) => {
-    return `${this._cookie.host}#${this._cookie.orgId}#${this._cookie.uid}:${this._cookie.sessionId}/${expiresSeconds}`;
+    return `${this._cookie.host}#${this._cookie.organizationId}#${this._cookie.deviceId}:${this._cookie.sessionId}/${expiresSeconds}`;
   };
 
   public connect = (identity: PageIdentity) => {
-    this._cookie.uid = identity.uid;
+    this._cookie.deviceId = identity.deviceId;
     this._cookie.sessionId = identity.sessionId;
     this.writeIdentity();
   };

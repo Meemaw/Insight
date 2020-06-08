@@ -35,23 +35,23 @@ public class PageService {
   @Timed(name = "createPage", description = "A measure of how long it takes to create a page")
   public Uni<PageIdentity> createPage(CreatePageDTO page) {
     UUID pageId = UUID.randomUUID();
-    UUID uid = Optional.ofNullable(page.getUid()).orElseGet(UUID::randomUUID);
-    String organizationId = page.getOrgId();
+    UUID deviceId = Optional.ofNullable(page.getDeviceId()).orElseGet(UUID::randomUUID);
+    String organizationId = page.getOrganizationId();
     MDC.put(LoggingConstants.PAGE_ID, pageId.toString());
-    MDC.put(LoggingConstants.DEVICE_ID, uid.toString());
+    MDC.put(LoggingConstants.DEVICE_ID, deviceId.toString());
     MDC.put(LoggingConstants.ORGANIZATION_ID, organizationId);
 
     // unrecognized device; start a new session
-    if (uid != page.getUid()) {
+    if (deviceId != page.getDeviceId()) {
       UUID sessionId = UUID.randomUUID();
       MDC.put(LoggingConstants.SESSION_ID, sessionId.toString());
       log.info("Creating new session");
-      return pageDatasource.insertPage(pageId, uid, sessionId, page);
+      return pageDatasource.insertPage(pageId, deviceId, sessionId, page);
     }
 
     // recognized device; try to link it with an existing session
     return pageDatasource
-        .findUserSessionLink(organizationId, uid)
+        .findUserSessionLink(organizationId, deviceId)
         .onItem()
         .produceUni(
             maybeSessionId -> {
@@ -61,7 +61,7 @@ public class PageService {
                         log.info("Failed to link to an existing session");
                         return UUID.randomUUID();
                       });
-              return pageDatasource.insertPage(pageId, uid, sessionId, page);
+              return pageDatasource.insertPage(pageId, deviceId, sessionId, page);
             });
   }
 
@@ -69,7 +69,7 @@ public class PageService {
     return pageDatasource.activePageCount();
   }
 
-  public Uni<Optional<PageDTO>> getPage(UUID pageID, UUID sessionID, String orgID) {
-    return pageDatasource.getPage(pageID, sessionID, orgID);
+  public Uni<Optional<PageDTO>> getPage(UUID pageID, UUID sessionID, String organizationId) {
+    return pageDatasource.getPage(pageID, sessionID, organizationId);
   }
 }
