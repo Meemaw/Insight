@@ -16,6 +16,7 @@ public class PageIdentitySerializationTest {
     PageIdentity deserialized = JacksonMapper.get().readValue(payload, PageIdentity.class);
     assertEquals(PageIdentity.class, deserialized.getClass());
 
-    assertEquals(UUID.fromString("9babcb5a-2249-4f50-93ee-8634118e684e"), deserialized.getDeviceId()));
+    assertEquals(
+        UUID.fromString("9babcb5a-2249-4f50-93ee-8634118e684e"), deserialized.getDeviceId());
   }
 }
