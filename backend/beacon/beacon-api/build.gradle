@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-rest-client'
     implementation project(":auth:auth-model")
     implementation project(":events:model")
