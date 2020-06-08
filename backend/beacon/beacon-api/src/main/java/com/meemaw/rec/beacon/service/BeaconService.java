@@ -23,6 +23,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response.Status;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
@@ -48,7 +49,7 @@ public class BeaconService {
 
   private CompletionStage<Boolean> pageExists(UUID sessionId, UUID pageId, String organizationId) {
     return sessionResource
-        .get(sessionId, pageId, organizationId)
+        .getPage(sessionId, pageId, organizationId)
         .exceptionally(
             throwable -> {
               if (throwable.getCause() instanceof WebApplicationException) {
@@ -83,6 +84,7 @@ public class BeaconService {
    * @param beacon Beacon
    * @return CompletionStage if successful processing
    */
+  @Timed(name = "processBeacon", description = "A measure of how long it takes to process beacon")
   public CompletionStage<?> process(
       String organizationId, UUID sessionId, UUID uid, UUID pageId, Beacon beacon) {
     MDC.put(LoggingConstants.ORGANIZATION_ID, organizationId);
