@@ -4,7 +4,7 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-underscore-dangle */
 
-import { PageIdentity } from 'backend/types';
+import { PageIdentity } from '@insight/types';
 import {
   MILLIS_IN_SECOND,
   currentTimeSeconds,
