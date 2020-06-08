@@ -15,7 +15,7 @@ import {
 import { Cookie, InsightIdentity, Connected } from './types';
 
 class Identity implements Connected {
-  private static storageKey = '_is_device_id' as const;
+  public static storageKey = '_is_device_id' as const;
   private readonly _cookie: Cookie;
 
   constructor(cookie: Cookie) {

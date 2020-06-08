@@ -6,6 +6,7 @@ import fs from 'fs';
 import { CreatePageResponse } from '@insight/types';
 import { chromium, Response, Page } from 'playwright';
 import type { InsightWindow } from 'types';
+import Identity from 'identity';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -101,10 +102,9 @@ describe('tracking script', () => {
       const expiresSeconds = cookie.split('/')[1];
       const encodedIdentity = `${I_HOST}#${I_ORGANIZATION}#${deviceId}:${sessionId}/${expiresSeconds}`;
 
-      const storageKey = '_is_uid';
-      expect(cookie).toEqual(`${storageKey}=${encodedIdentity}`);
+      expect(cookie).toEqual(`${Identity.storageKey}=${encodedIdentity}`);
       expect(localStorage).toEqual(
-        JSON.stringify({ [storageKey]: encodedIdentity })
+        JSON.stringify({ [Identity.storageKey]: encodedIdentity })
       );
 
       await page.click('button[data-testid="first-button"]');
