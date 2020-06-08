@@ -154,7 +154,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"May not be blank\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"Required\"}}}"));
   }
 
   @Test
@@ -177,7 +177,7 @@ public class SsoResourceImplTest {
         .statusCode(400)
         .body(
             sameJson(
-                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"May not be blank\"}}}"));
+                "{\"error\":{\"statusCode\":400,\"reason\":\"Bad Request\",\"message\":\"Validation Error\",\"errors\":{\"sessionId\":\"Required\"}}}"));
   }
 
   @Test

@@ -40,14 +40,13 @@ public interface SsoResource {
   @Path("session")
   @Produces(MediaType.APPLICATION_JSON)
   CompletionStage<Response> session(
-      @NotNull(message = "May not be blank") @QueryParam("id") String sessionId);
+      @NotNull(message = "Required") @QueryParam("id") String sessionId);
 
   @GET
   @Path("me")
   @Produces(MediaType.APPLICATION_JSON)
   default CompletionStage<Response> me(
-      @NotNull(message = "May not be blank") @CookieParam(SsoSession.COOKIE_NAME)
-          String sessionId) {
+      @NotNull(message = "Required") @CookieParam(SsoSession.COOKIE_NAME) String sessionId) {
     return session(sessionId);
   }
 }
